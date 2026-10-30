@@ -1,0 +1,157 @@
+/* R42J — generated from tokens.json */
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("../fonts/IBMPlexSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("../fonts/IBMPlexSans-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("../fonts/IBMPlexSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("../fonts/IBMPlexSans-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --size-control: 44px;
+  --size-control-lg: 52px;
+  --size-icon: 20px;
+  --size-sidebar: 248px;
+  --size-content: 1120px;
+  --size-prose: 68ch;
+  --z-dialog: 40;
+  --z-palette: 45;
+  --z-toast: 50;
+}
+
+:root, [data-theme="light"] {
+  --surface: #f5f7fa;
+  --surface-raised: #ffffff;
+  --surface-sunken: #eaeef3;
+  --line: #d5dbe3;
+  --line-strong: #76808e;
+  --ink: #17202b;
+  --ink-muted: #4a5563;
+  --focus: #174a88;
+  --overlay: rgba(16,21,27,0.48);
+  --accent: var(--blau-accent);
+  --accent-strong: var(--blau-accent-strong);
+  --accent-soft: var(--blau-accent-soft);
+  --on-accent: var(--blau-on-accent);
+  --blau-accent: #1f5fae;
+  --blau-accent-strong: #174a88;
+  --blau-accent-soft: #e3edf9;
+  --blau-on-accent: #ffffff;
+  --petrol-accent: #0e6870;
+  --petrol-accent-strong: #0a5157;
+  --petrol-accent-soft: #ddf0f1;
+  --petrol-on-accent: #ffffff;
+  --gruen-accent: #2a6a3b;
+  --gruen-accent-strong: #1f522d;
+  --gruen-accent-soft: #e1f1e5;
+  --gruen-on-accent: #ffffff;
+  --violett-accent: #5847a6;
+  --violett-accent-strong: #463887;
+  --violett-accent-soft: #ebe8f8;
+  --violett-on-accent: #ffffff;
+  --graphit-accent: #3b4552;
+  --graphit-accent-strong: #2a323c;
+  --graphit-accent-soft: #e6e9ed;
+  --graphit-on-accent: #ffffff;
+  --success: #1c6a39;
+  --success-soft: #e1f2e6;
+  --danger: #a5321f;
+  --danger-soft: #fbe5e0;
+  --warning: #875200;
+  --warning-soft: #fcefd8;
+  --info: #1f5fae;
+  --info-soft: #e3edf9;
+  --progress: #0e6870;
+  --progress-soft: #ddf0f1;
+  --neutral: #4a5563;
+  --neutral-soft: #eaeef3;
+  --on-danger: #ffffff;
+  --shadow-1: 0 1px 2px rgba(16,21,27,0.08), 0 1px 1px rgba(16,21,27,0.04);
+  --shadow-2: 0 12px 32px rgba(16,21,27,0.18);
+}
+
+[data-theme="dark"] {
+  --surface: #10151b;
+  --surface-raised: #19212a;
+  --surface-sunken: #0a0e12;
+  --line: #2b3540;
+  --line-strong: #7e8a98;
+  --ink: #eef1f5;
+  --ink-muted: #a9b4c0;
+  --focus: #a8cbf5;
+  --overlay: rgba(0,0,0,0.64);
+  --accent: var(--blau-accent);
+  --accent-strong: var(--blau-accent-strong);
+  --accent-soft: var(--blau-accent-soft);
+  --on-accent: var(--blau-on-accent);
+  --blau-accent: #7fb0ec;
+  --blau-accent-strong: #a3c7f2;
+  --blau-accent-soft: #172638;
+  --blau-on-accent: #0b1622;
+  --petrol-accent: #62c3ca;
+  --petrol-accent-strong: #8ad5da;
+  --petrol-accent-soft: #112a2c;
+  --petrol-on-accent: #061416;
+  --gruen-accent: #82cd96;
+  --gruen-accent-strong: #a5dcb3;
+  --gruen-accent-soft: #152a1b;
+  --gruen-on-accent: #08160c;
+  --violett-accent: #b3a8ef;
+  --violett-accent-strong: #cbc3f5;
+  --violett-accent-soft: #241f3d;
+  --violett-on-accent: #120e24;
+  --graphit-accent: #c3cbd5;
+  --graphit-accent-strong: #dde2e8;
+  --graphit-accent-soft: #252c35;
+  --graphit-on-accent: #10151b;
+  --success: #88d6a1;
+  --success-soft: #15291c;
+  --danger: #ffa18c;
+  --danger-soft: #3a1a13;
+  --warning: #f2c26c;
+  --warning-soft: #33260d;
+  --info: #8dbbf0;
+  --info-soft: #16263a;
+  --progress: #7fd3d9;
+  --progress-soft: #122a2c;
+  --neutral: #b4bec9;
+  --neutral-soft: #222a33;
+  --on-danger: #1a0905;
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.5);
+  --shadow-2: 0 12px 32px rgba(0,0,0,0.6);
+}
