@@ -122,7 +122,7 @@ for (const channel of kanaele()) {
   await p.waitForSelector(".rj-shell");
   await p.waitForTimeout(200);
   ok("Fokus nach Entsperren im Inhalt", await p.evaluate(() => document.activeElement.tagName === "MAIN"));
-  ok("Regression: 8 Navigationslinks", (await p.locator(".rj-nav a").count()) === 8);
+  ok("Regression: 9 Navigationslinks", (await p.locator(".rj-nav a").count()) === 9);
 
   // Inhalt über die Kern-API einspielen, dann Klartext-Prüfung auf der Datei.
   await p.evaluate((g) => {
