@@ -1,0 +1,11 @@
+# Persönliche Daten der Nutzer
+daten/
+*.r42j
+*.r42jb
+*.enc
+
+# Lokale Einstellungen
+.claude/
+CLAUDE.local.md
+.env
+.env.*
