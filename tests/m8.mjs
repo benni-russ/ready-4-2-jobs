@@ -200,8 +200,6 @@ for (const channel of kanaele()) {
   await p.waitForFunction(() => window.R42J_CORE.ablauf.get().phase === "profile");
   await einloggen(p);
   await hin(p, "#/wissen");
-  await p.waitForTimeout(8000);
-  console.log("DIAG", await p.evaluate(() => JSON.stringify({ hash: location.hash, phase: window.R42J_CORE.ablauf.get().phase, dialoge: document.querySelectorAll("dialog[open],[role=dialog],[role=alertdialog]").length, text: document.body.innerText.slice(0, 900) })));
   await p.getByRole("heading", { name: "Wissen", exact: true }).waitFor();
   await p.getByRole("link", { name: "Mein Testartikel" }).waitFor();
   ok("Eigener Artikel in der Liste", true);
@@ -258,7 +256,8 @@ for (const channel of kanaele()) {
   ok("Nav-Eintrag", await p.locator('.rj-nav a[href="#/checklisten"]').isVisible());
   await p.getByLabel("LinkedIn-Profil prüfen").check({ force: true });
   ok("Einmal-Punkt gespeichert", await p.evaluate(() => window.R42J_CORE.tresor.daten().checklisten.einmal.linkedin === true));
-  ok("Stand einmalig", await p.getByText("1 von 5 erledigt").isVisible());
+  await p.getByText("1 von 5 erledigt").waitFor();
+  ok("Stand einmalig", true);
   ok("Stand pro Bewerbung", await p.getByText("2 von 8 erledigt").isVisible());
   ok("Fortschrittsbalken je Bewerbung", (await p.locator(".rj-datatable [role=progressbar]").count()) === 7);
   await p.getByRole("link", { name: "Erfundene GmbH" }).click();

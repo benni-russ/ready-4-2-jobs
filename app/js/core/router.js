@@ -21,6 +21,8 @@
         paar[1](lesen());
       }
       window.addEventListener("hashchange", wechsel);
+      // Der Hash kann sich zwischen erstem Zeichnen und diesem Effekt geändert haben.
+      if (JSON.stringify(lesen()) !== JSON.stringify(paar[0])) wechsel();
       return function () {
         window.removeEventListener("hashchange", wechsel);
       };
