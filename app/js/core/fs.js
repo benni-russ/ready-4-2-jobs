@@ -188,6 +188,23 @@
       }
     },
 
+    // Der Nutzer wählt das Ziel selbst, die Datei liegt dort unverschlüsselt.
+    speichernUnter: async function (name, bytes, beschreibung) {
+      try {
+        var griff = await window.showSaveFilePicker({
+          suggestedName: name,
+          types: [{ description: beschreibung, accept: { "application/pdf": [".pdf"] } }],
+        });
+        var strom = await griff.createWritable();
+        await strom.write(bytes);
+        await strom.close();
+        return true;
+      } catch (e) {
+        if (e && e.name === "AbortError") return false;
+        throw uebersetzen(e);
+      }
+    },
+
     ordner: function (basis, teile) {
       return sicher(function () {
         return unterordner(basis, teile, true);

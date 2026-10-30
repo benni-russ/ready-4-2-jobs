@@ -14,13 +14,14 @@
     statistik: "chart-column",
   };
 
-  var EIGENE = ["einstellungen", "stammdaten", "anlagen"];
+  var EIGENE = ["einstellungen", "stammdaten", "anlagen", "lebenslauf"];
 
   function seitenInhalt(seite, teile) {
     if (seite === "einstellungen") return html`<${S.Einstellungen} />`;
     if (seite === "komponenten") return html`<${S.Komponenten} />`;
     if (seite === "stammdaten") return html`<${S.Stammdaten} teile=${teile} />`;
     if (seite === "anlagen") return html`<${S.Anlagen} teile=${teile} />`;
+    if (seite === "lebenslauf") return html`<${S.Lebenslauf} />`;
     if (PLATZHALTER[seite]) return html`<${S.Platzhalter} seite=${seite} icon=${PLATZHALTER[seite]} key=${seite} />`;
     return html`<${UI.EmptyState} icon="search-x" titel=${K.t("fehler.seiteTitel")} text=${K.t("fehler.seiteText")}>
       <${UI.Button} variante="primary" href="#/uebersicht">${K.t("fehler.seiteAktion")}<//>

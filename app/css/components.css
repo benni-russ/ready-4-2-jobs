@@ -500,6 +500,9 @@ h1, h2, h3, p { margin: 0; }
 
 /* Schmale Fenster und starker Zoom: kein Querscrollen (WCAG 1.4.10). */
 @media (max-width: 600px) {
+  .rj-shell, .rj-shell[data-collapsed="true"] { --rj-side: 76px; }
+  .rj-main { grid-column: 2; }
+  .rj-shell[data-collapsed="false"] .rj-sidebar { position: fixed; inset: 0 auto 0 0; width: var(--size-sidebar); z-index: calc(var(--z-dialog) - 1); box-shadow: var(--shadow-2); }
   .rj-topbar { padding-left: var(--space-4); padding-right: var(--space-4); }
   .rj-content { padding: var(--space-4); }
   .rj-empty { padding-left: 0; padding-right: 0; }

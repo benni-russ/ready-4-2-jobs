@@ -60,11 +60,13 @@
 **Akzeptanz:** Vollständiges Profil anlegbar; Suche findet Kompetenz über Synonym; Anlage nach Neustart wieder anzeigbar; KI-Import mit fehlerhaftem JSON zeigt verständliche Meldung.
 
 ### M3 · Lebenslauf-PDF
-- [ ] CV-Layout laut SPEC §6.5 mit pdfmake, Schrift eingebettet.
-- [ ] Auswahl nach Ausrichtung, Priorisierung nach Keywords (Stub bis M4).
-- [ ] Foto-Regel (DE an, EN aus), Akzentfarbe aus Einstellungen.
-- [ ] Seitenumbruch-Regeln, Überlängen-Warnung.
-- [ ] Dateinamen-Normalisierung.
+- [x] CV-Layout laut SPEC §6.5 mit pdfmake, Schrift eingebettet.
+- [x] Auswahl nach Ausrichtung, Priorisierung nach Keywords (Stub bis M4).
+- [x] Foto-Regel (DE an, EN aus), Akzentfarbe aus Einstellungen.
+- [x] Seitenumbruch-Regeln, Überlängen-Warnung.
+- [x] Dateinamen-Normalisierung.
+
+Stand: Lesereihenfolge, DE/EN und Dateiname sind per Textextraktion geprüft. Offen ist die manuelle Prüfung mit 2 ATS-Checkern.
 
 **Akzeptanz (ATS-Test):** Text aus PDF kopieren ergibt korrekte Lesereihenfolge; Prüfung mit mind. 2 kostenlosen ATS-Checkern ohne Strukturfehler; DE- und EN-Variante; Datei heißt `vorname-nachname-lebenslauf.pdf`.
 
