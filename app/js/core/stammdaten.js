@@ -122,6 +122,9 @@
           });
           if (d.profil.foto === id) delete d.profil.foto;
           if (d.profil.unterschrift === id) delete d.profil.unterschrift;
+          d.bewerbungen.forEach(function (b) {
+            b.dokumente.anlagenAuswahl = ohne(b.dokumente.anlagenAuswahl, id);
+          });
         }
       });
     },

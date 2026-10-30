@@ -58,6 +58,21 @@
       });
     },
 
+    // Macht aus einer Bild-Anlage ein JPEG für pdfmake, auf Weiß gelegt und auf hoehe begrenzt.
+    bildDatenUrl: async function (bytes, mime, hoehe) {
+      var bild = await window.createImageBitmap(new Blob([bytes], { type: mime }));
+      var faktor = Math.min(1, hoehe / bild.height);
+      var c = document.createElement("canvas");
+      c.width = Math.round(bild.width * faktor);
+      c.height = Math.round(bild.height * faktor);
+      var g = c.getContext("2d");
+      g.fillStyle = "#fff";
+      g.fillRect(0, 0, c.width, c.height);
+      g.drawImage(bild, 0, 0, c.width, c.height);
+      bild.close();
+      return c.toDataURL("image/jpeg", 0.9);
+    },
+
     seiten: async function (bytes) {
       return (await window.PDFLib.PDFDocument.load(bytes, { updateMetadata: false })).getPageCount();
     },

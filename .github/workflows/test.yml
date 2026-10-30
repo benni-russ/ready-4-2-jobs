@@ -1,0 +1,64 @@
+name: Tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  statisch:
+    name: Statische Prüfung
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - run: node tests/statisch.mjs
+
+  browser:
+    name: Browser (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: Windows Edge, os: windows-latest, kanal: msedge }
+          - { name: Windows Chrome, os: windows-latest, kanal: chrome }
+          - { name: macOS Chrome, os: macos-latest, kanal: chrome }
+    env:
+      R42J_KANAELE: ${{ matrix.kanal }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Testwerkzeuge außerhalb des Repos installieren
+        shell: bash
+        run: |
+          python -m pip install pypdf==6.21.4
+          npm install --no-save --prefix "$RUNNER_TEMP/pw" playwright-core@1.64.1
+          echo "R42J_PLAYWRIGHT=$RUNNER_TEMP/pw" >> "$GITHUB_ENV"
+          echo "R42J_AUSGABE=$RUNNER_TEMP/ausgabe" >> "$GITHUB_ENV"
+      - name: M1 Tresor und Profile
+        shell: bash
+        run: node tests/m1.mjs
+      - name: M2 Stammdaten und Anlagen
+        shell: bash
+        run: node tests/m2.mjs
+      - name: M3 Lebenslauf
+        shell: bash
+        run: node tests/m3.mjs
+      - name: M4 Stelle bis Versand
+        shell: bash
+        run: node tests/m4.mjs

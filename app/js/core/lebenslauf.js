@@ -26,7 +26,7 @@
     return name + "." + endung;
   };
 
-  // Vorläufig einfacher Textabgleich. M4 liefert die Keywords aus der Stellenanzeige.
+  // Keywords kommen aus der Stellenanzeige (K.keywords).
   function treffer(text, keywords) {
     var t = K.normalisieren(text);
     return keywords.filter(function (k) {
@@ -72,21 +72,6 @@
     };
   }
 
-  function fotoLaden(bytes, mime) {
-    return window.createImageBitmap(new Blob([bytes], { type: mime })).then(function (bild) {
-      var faktor = Math.min(1, FOTO_HOEHE / bild.height);
-      var c = document.createElement("canvas");
-      c.width = Math.round(bild.width * faktor);
-      c.height = Math.round(bild.height * faktor);
-      var g = c.getContext("2d");
-      g.fillStyle = "#fff";
-      g.fillRect(0, 0, c.width, c.height);
-      g.drawImage(bild, 0, 0, c.width, c.height);
-      bild.close();
-      return c.toDataURL("image/jpeg", 0.9);
-    });
-  }
-
   async function foto(t, hinweise) {
     var a = t.anlagen.filter(function (x) {
       return x.id === t.profil.foto;
@@ -99,7 +84,7 @@
       hinweise.push({ text: "cv.hinweisFotoTyp" });
       return null;
     }
-    return fotoLaden(await K.tresor.anlageLesen(a.id), a.mime);
+    return K.pdf.bildDatenUrl(await K.tresor.anlageLesen(a.id), a.mime, FOTO_HOEHE);
   }
 
   // Trennt die Auswahl vom Layout: templates/cv.js bekommt nur fertige Texte.

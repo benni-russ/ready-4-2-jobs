@@ -71,15 +71,15 @@ Stand: Lesereihenfolge, DE/EN und Dateiname sind per Textextraktion geprüft. Of
 **Akzeptanz (ATS-Test):** Text aus PDF kopieren ergibt korrekte Lesereihenfolge; Prüfung mit mind. 2 kostenlosen ATS-Checkern ohne Strukturfehler; DE- und EN-Variante; Datei heißt `vorname-nachname-lebenslauf.pdf`.
 
 ### M4 · Stelle, Anschreiben, Anlagen-PDF, Versand
-- [ ] Stelle erfassen (Text einfügen, Markdown-Import mit Frontmatter).
-- [ ] Keyword-Extraktion + Match-Score + Lücken (SPEC §6.4), mitgelieferte Skill-Liste.
-- [ ] KI-Stellenanalyse (optional).
-- [ ] Anschreiben-Bausteine DE-Sie/DE-Du/EN, Editor mit Vorschau, Varianten-Rotation.
-- [ ] KI-Anschreiben + KI-Korrektur.
-- [ ] Unterschrift optional (Standard aus, Warnhinweis).
-- [ ] Anlagen-PDF: Auswahl, Reihenfolge, Deckblatt, Komprimierung, Größenanzeige, Gesamt-PDF.
-- [ ] `.eml`-Erzeugung, Speicherung im Tresor, Löschen, Öffnen über `export/`.
-- [ ] Portal-Ansicht mit Kopier-Buttons.
+- [x] Stelle erfassen (Text einfügen, Markdown-Import mit Frontmatter).
+- [x] Keyword-Extraktion + Match-Score + Lücken (SPEC §6.4), mitgelieferte Skill-Liste.
+- [x] KI-Stellenanalyse (optional).
+- [x] Anschreiben-Bausteine DE-Sie/DE-Du/EN, Editor mit Vorschau, Varianten-Rotation.
+- [x] KI-Anschreiben + KI-Korrektur.
+- [x] Unterschrift optional (Standard aus, Warnhinweis).
+- [x] Anlagen-PDF: Auswahl, Reihenfolge, Deckblatt, Komprimierung, Größenanzeige, Gesamt-PDF.
+- [x] `.eml`-Erzeugung, Speicherung im Tresor, Löschen, Öffnen über `export/`.
+- [x] Portal-Ansicht mit Kopier-Buttons.
 
 **Akzeptanz:** `.eml` öffnet sich in Outlook (Windows) und Apple Mail als Entwurf mit Anhängen; Anlagen-PDF „Klein“ bei 10 Scans < 5 MB und lesbar; Anschreiben passt auf 1 Seite.
 
