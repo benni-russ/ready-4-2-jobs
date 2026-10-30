@@ -159,6 +159,7 @@ Tresor {
   bewerbungen: Bewerbung[]
   gewichtung: Gewichtung
   lernstand: Lernstand[]
+  starTraining?: StarEintrag[]
   checklisten: ChecklistenStand
   einstellungen: Einstellungen
 }
@@ -208,6 +209,7 @@ Bewerbung {
   angebot?: Angebot,
   notizen: string,                // "Wichtige Angaben"
   checkliste: Record<string, boolean>,
+  unternehmensfragen?: Frage[],   // per KI erzeugt, typ "karte"
   spaeter?: { rueckfrage?, keineAntwort? },   // Erinnerung ausgeblendet bis zu diesem Zeitpunkt
   erstellt, versendetAm?
 }
@@ -227,7 +229,8 @@ Angebot { bruttoJahr, bonusJahr?, nettoMonat? (manuell), wochenstunden, urlaubst
   achtenAuf: string[], bewertungen: Record<KriteriumId, 0-10>, pruefliste: Record<string, boolean> }
 
 Gewichtung { kriterien: { id, name, gewicht: 0-5, typ: "auto"|"manuell" }[] }
-Lernstand { kartenId, box: 1-5, faellig, richtig, falsch }
+Lernstand { kartenId, box: 1-5, faellig, richtig, falsch }   // faellig: Kalendertag JJJJ-MM-TT in Ortszeit
+StarEintrag { id, frageId, frage, sekunden, bewertung: 1-5, notiz?, am }
 Einstellungen { sprache, theme: "system"|"hell"|"dunkel", farbschema: string,
   schriftgroesse: "normal"|"gross"|"sehr-gross", sperreMinuten, rueckfrageTage (Std. 14),
   updatePruefung: boolean, backupZiel2?: boolean, kiPlatzhalter: boolean,
@@ -344,13 +347,15 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - **Multiple Choice** (1 richtige oder Mehrfachauswahl), sofortige Auflösung mit Erklärung.
 - **Kategorien (mitgeliefert):** Allgemeinwissen · Mathe & Dreisatz · Logik & Zahlenreihen · Deutsch (Rechtschreibung, Grammatik) · Englisch · Typische Interviewfragen.
 - **STAR-Training:** Interviewfragen („Erzählen Sie von einer Situation, in der …“) → passende Erfolge aus dem Profil vorschlagen → Nutzer übt Antwort (Timer, Selbstbewertung).
-- **Unternehmenswissen:** per KI-Prompt (6.3) erzeugt, pro Bewerbung gespeichert.
+- **Unternehmenswissen:** per KI-Prompt (6.3) erzeugt, pro Bewerbung gespeichert. Gelöschte Bewerbungen nehmen ihren Lernstand mit.
+- **Lernen:** Alle Fragentypen laufen über denselben Lernstand. Gewusst rückt eine Box vor, nicht gewusst führt zurück in Box 1 und damit zum Folgetag. Eine Sitzung umfasst höchstens 20 Fragen, fällige vor neuen. Die Lern-ID eigener Kataloge enthält den Dateinamen, damit gleiche IDs in zwei Dateien nicht kollidieren.
 - Fragenformat (mitgeliefert als `app/fragen/*.js`, eigene Kataloge als reines JSON in `daten/fragen/*.json` oder per Import):
   ```json
   { "kategorie": "logik", "sprache": "de", "fragen": [
     { "id": "...", "typ": "karte|mc|mc-multi|zahlenreihe",
       "frage": "...", "antworten": ["..."], "richtig": [0], "erklaerung": "..." } ] }
   ```
+  Optional: `star: true` und `stichworte: []` kennzeichnen Fragen fürs STAR-Training und finden passende Erfolge. `rechnung` hält bei Rechenaufgaben den Rechenweg als Ausdruck fest, den `tests/kataloge.mjs` nachrechnet.
 - Hinweis: Eigene Fragenkataloge in `daten/fragen/` werden mangels `fetch` über einen Import-Dialog (Ordner-Handle) gelesen, als JSON geparst und validiert, nie ausgeführt.
 - Kataloge sind unverschlüsselt und enthalten keine personenbezogenen Daten. Alles mit Personenbezug (Unternehmensfragen pro Bewerbung, Lernstand, STAR-Training) liegt im Tresor.
 
@@ -396,4 +401,4 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 ---
 
 ## 8. Offene Entscheidungen (in M0 zu klären)
-- Umfang der mitgelieferten Fragenkataloge (Vorschlag: je Kategorie ≥ 50 Fragen DE, ≥ 30 EN für v1.0).
+- Umfang der mitgelieferten Fragenkataloge: **entschieden:** je Kategorie ≥ 50 Fragen DE, ≥ 30 EN, geprüft durch `tests/kataloge.mjs`.

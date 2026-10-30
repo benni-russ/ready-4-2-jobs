@@ -132,7 +132,9 @@
         label: K.t("bewerbungCheck." + k),
         wert: !!b.checkliste[k],
         aktion:
-          k === "rechtschreibung"
+          k === "recherche"
+            ? html`<a class="rj-link" style="font-size:.875rem" href=${"#/vorbereitung/unternehmen/" + b.id}>${K.t("vorbereitung.zuFragen")}</a>`
+            : k === "rechtschreibung"
             ? html`<a class="rj-link" style="font-size:.875rem" href=${"#/bewerbungen/" + b.id + "/anschreiben"}>${K.t("bewerbungCheck.kiKorrektur")}</a>`
             : null,
       };
