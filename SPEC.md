@@ -194,9 +194,12 @@ Bewerbung {
   firma { name, adresse, website?, branche?, groesse? },
   ansprechpartner { anrede?, name?, position?, email?, telefon? },
   stelle { titel, referenz?, quelle (Portal), link?, anzeigeText (Kopie), anzeigeMd? },
-  keywords { extrahiert: string[], treffer: KompetenzId[], fehlend: string[], manuell: string[] },
-  dokumente { lebenslauf: Snapshot, anschreiben: Snapshot, anlagenPdf?: Snapshot,
-              mitFoto: boolean, mitUnterschrift: boolean, komprimierung: "original"|"mittel"|"klein" },
+  keywords { extrahiert: string[], treffer: KompetenzId[], fehlend: string[], manuell: string[], gewichte: Record<string, number> },
+  dokumente { lebenslauf: Snapshot, anschreiben: Snapshot, anlagenPdf?: Snapshot, gesamtPdf?: Snapshot,
+              mitFoto: boolean, mitUnterschrift: boolean, komprimierung: "original"|"mittel"|"klein",
+              anlagenAuswahl: AnlageId[], anlagenVorausgewaehlt: boolean, deckblatt: boolean, allesInEinem: boolean },
+  anschreiben { abschnitte: Record<string, string>, varianten: Record<string, string>,
+                rahmen { eintritt, gehalt, kuendigungsfrist } },
   emails: EmailEntwurf[],
   status: StatusEintrag[]         // Historie, letzter = aktuell
   termine: Termin[],
@@ -206,8 +209,8 @@ Bewerbung {
   erstellt, versendetAm?
 }
 
-Snapshot { erzeugtAm, dateiname, anlageId }   // PDF als verschlüsselte Anlage
-EmailEntwurf { id, an, betreff, text, anhaenge: AnlageId[], erstellt }
+Snapshot { erzeugtAm, dateiname, anlageId, groesse }   // PDF als verschlüsselte Anlage, steht nicht in `anlagen`
+EmailEntwurf { id, an, betreff, text, anhaenge: Dateiname[], anlageId, groesse, dateiname, erstellt }   // anlageId: die .eml als verschlüsselte Anlage
 StatusEintrag { status: Status, datum, notiz? }
 Status = "vorbereitung"|"versendet"|"rueckfrage_faellig"|"rueckfrage_gesendet"|
   "telefoninterview"|"gespraech_digital"|"gespraech_vor_ort"|"einstellungstest"|
@@ -300,7 +303,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 ### 6.7 Anlagen-PDF
 - Auswahl der Anlagen per Checkbox (Vorauswahl nach Ausrichtung/Kategorie), Reihenfolge per Drag & Drop.
 - Optional Deckblatt „Anlagen“ mit Inhaltsverzeichnis.
-- Komprimierung: **Original / Mittel / Klein** (Bilder neu rendern in 200/150 dpi, JPEG-Qualität), Größenanzeige live, Warnung über 5 MB.
+- Komprimierung: **Original / Mittel / Klein** (Bilder neu rendern in 200/150 dpi, JPEG-Qualität; in PDFs nur eingebettete Bilder, Text bleibt erhalten), Größenanzeige live, Warnung über 5 MB.
 - Option „Alles in einer PDF“ (Anschreiben + Lebenslauf + Anlagen) zusätzlich zu Einzeldateien.
 - Dateiname: `vorname-nachname-anlagen.pdf`.
 

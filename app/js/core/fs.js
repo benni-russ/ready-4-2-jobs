@@ -189,11 +189,11 @@
     },
 
     // Der Nutzer wählt das Ziel selbst, die Datei liegt dort unverschlüsselt.
-    speichernUnter: async function (name, bytes, beschreibung) {
+    speichernUnter: async function (name, bytes, beschreibung, typ) {
       try {
         var griff = await window.showSaveFilePicker({
           suggestedName: name,
-          types: [{ description: beschreibung, accept: { "application/pdf": [".pdf"] } }],
+          types: [{ description: beschreibung, accept: typ || { "application/pdf": [".pdf"] } }],
         });
         var strom = await griff.createWritable();
         await strom.write(bytes);

@@ -95,6 +95,11 @@
       await K.fs.griffLoeschen("ziel2:" + eintrag.id);
     },
 
+    // Klartext für den Moment: Beim Start und beim Sperren wird der Ordner geleert (SPEC §4.5).
+    exportSchreiben: async function (name, bytes) {
+      await K.fs.schreibenAtomar(await K.fs.ordner(datenOrdner, ["export"]), name, bytes);
+    },
+
     exportLeeren: async function () {
       await K.fs.leeren(await K.fs.ordner(datenOrdner, ["export"]));
     },

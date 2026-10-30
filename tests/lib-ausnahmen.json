@@ -1,0 +1,6 @@
+{
+  "pdfmake.min.js": {
+    "anzahl": 2,
+    "grund": "Zwei Mal der Polyfill new Function(\"return this\") für globalThis. Er läuft nur, wenn globalThis fehlt, also nie in Chromium."
+  }
+}
