@@ -121,10 +121,10 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 **Akzeptanz:** Falsch beantwortete Karte erscheint am Folgetag erneut; Katalog-Import mit fehlerhafter Datei bricht nicht ab.
 
 ### M8 · Checklisten, Wissen, Statistik (v0.4)
-- [ ] Checklisten-Übersicht (einmalig + pro Bewerbung).
-- [ ] Wissensbereich: Markdown-Rendering, Suche, Kategorien, kontextbezogene Links. Die Prüfliste im Vergleich verlinkt bereits auf `#/wissen/arbeitsvertrag-pruefen` und `#/wissen/kuendigungsfristen`; diese Kennungen müssen die Artikel tragen.
-- [ ] Mitgelieferte Wissensartikel DE/EN (SPEC §6.13).
-- [ ] Statistik-Dashboard mit SVG-Diagrammen.
+- [x] Checklisten-Übersicht (einmalig + pro Bewerbung).
+- [x] Wissensbereich: Markdown-Rendering, Suche, Kategorien, kontextbezogene Links. Die Prüfliste im Vergleich verlinkt bereits auf `#/wissen/arbeitsvertrag-pruefen` und `#/wissen/kuendigungsfristen`; diese Kennungen müssen die Artikel tragen.
+- [x] Mitgelieferte Wissensartikel DE/EN (SPEC §6.13).
+- [x] Statistik-Dashboard mit SVG-Diagrammen.
 
 **Akzeptanz:** Eigener Artikel in `daten/wissen/` erscheint nach Neustart; Statistik zeigt korrekte Quoten für Testdaten.
 

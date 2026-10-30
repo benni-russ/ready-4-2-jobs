@@ -7,7 +7,6 @@
   var S = (window.R42J_SEITEN = window.R42J_SEITEN || {});
 
   var SCHRITTE = 8;
-  var CHECKLISTE = ["postfach", "email", "telefon", "linkedin", "xing"];
 
   function Geruest(props) {
     var titel = hooks.useRef(null);
@@ -89,27 +88,9 @@
   }
 
   function SchrittCheckliste(props) {
-    K.useBeobachtbar(K.tresorStand);
-    var erledigt = K.tresor.daten().checklisten.einmal || {};
     return html`
       <p>${K.t("onboarding.checklisteText")}</p>
-      <ul class="rj-checklist">
-        ${CHECKLISTE.map(function (k) {
-          return html`<li key=${k}>
-            <${UI.Checkbox}
-              label=${K.t("checkliste." + k)}
-              erklaerung=${K.t("checkliste." + k + "Text")}
-              wert=${!!erledigt[k]}
-              beiAenderung=${function (w) {
-                K.tresor.aendern(function (d) {
-                  d.checklisten.einmal = Object.assign({}, d.checklisten.einmal);
-                  d.checklisten.einmal[k] = w;
-                });
-              }}
-            />
-          </li>`;
-        })}
-      </ul>
+      <${S.EinmalCheckliste} />
       <${Knoepfe} zurueck=${props.zurueck} weiter=${props.weiter} />
     `;
   }

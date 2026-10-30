@@ -131,6 +131,7 @@
           />
         </div>
         <${UI.Switch} label=${K.t("cv.foto")} wert=${mitFoto} beiAenderung=${aendern(fotoGewaehlt)} />
+        <${S.WissenLink} artikel="foto-ja-nein" />
         <${UI.Switch} label=${K.t("cv.interessen")} wert=${interessen[0]} beiAenderung=${aendern(interessen)} />
         <div class="rj-row">
           <${UI.Button} variante="primary" icon="file-text" laedt=${laedt[0]} disabled=${laedt[0]} onClick=${erstellen}>${K.t("cv.erstellen")}<//>

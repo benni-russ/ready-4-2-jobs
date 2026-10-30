@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 R42J („Ready 4 2 Jobs“) ist ein lokales, verschlüsseltes Bewerbungs-Tool für nicht-technische Nutzer. Es läuft ohne Installation vom USB-Stick in Chromium-Browsern unter Windows und macOS. Lizenz: GPL-3.0.
 
-M0 bis M6 stehen: Grundgerüst, Tresor, Profile, Onboarding, Stammdaten, Anlagen, Suche, Lebenslauf-PDF, Stelle, Anschreiben, Anlagen-PDF, Versand, Übersicht, Erinnerungen, Termine und der Angebotsvergleich. Die weiteren Fachmodule folgen ab M7. Das öffentliche Repo ist `benni-russ/ready-4-2-jobs`.
+M0 bis M8 stehen: Grundgerüst, Tresor, Profile, Onboarding, Stammdaten, Anlagen, Suche, Lebenslauf-PDF, Stelle, Anschreiben, Anlagen-PDF, Versand, Übersicht, Erinnerungen, Termine, Angebotsvergleich, Vorbereitung, Checklisten, Wissen und Statistik. Es folgt M9 mit Feinschliff und Release. Das öffentliche Repo ist `benni-russ/ready-4-2-jobs`.
 
 - `SPEC.md`: fachliche und technische Spezifikation, maßgeblich für Datenmodell, Formate und Modulverhalten.
 - `PLAN.md`: Meilensteine M0–M9 mit Akzeptanzkriterien. Der MVP (v0.1) umfasst M0–M5. Meilensteine der Reihe nach abarbeiten; jeder endet lauffähig und mit erfüllten Akzeptanzkriterien.

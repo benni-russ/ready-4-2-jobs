@@ -20,14 +20,6 @@
     />`;
   };
 
-  function Kachel(props) {
-    return html`<div class="rj-stat">
-      <span class="rj-stat__label">${props.titel}</span>
-      <span class="rj-stat__value">${props.wert}</span>
-      <span class="rj-stat__basis">${props.basis}</span>
-    </div>`;
-  }
-
   function Lernen() {
     var sprache = hooks.useState(K.store.get().sprache);
     var sitzung = hooks.useState(null);
@@ -114,9 +106,9 @@
         >
       </div>
       <div class="rj-grid-2">
-        <${Kachel} titel=${K.t("vorbereitung.heuteFaellig")} wert=${summe.faellig.length} basis=${K.t("vorbereitung.neuBasis", { anzahl: summe.neu })} />
-        <${Kachel} titel=${K.t("vorbereitung.gelernt")} wert=${summe.gelernt} basis=${K.t("vorbereitung.vonFragen", { gesamt: summe.gesamt })} />
-        <${Kachel} titel=${K.t("vorbereitung.sicher")} wert=${summe.meister} basis=${K.t("vorbereitung.sicherBasis")} />
+        <${UI.StatTile} titel=${K.t("vorbereitung.heuteFaellig")} wert=${summe.faellig.length} basis=${K.t("vorbereitung.neuBasis", { anzahl: summe.neu })} />
+        <${UI.StatTile} titel=${K.t("vorbereitung.gelernt")} wert=${summe.gelernt} basis=${K.t("vorbereitung.vonFragen", { gesamt: summe.gesamt })} />
+        <${UI.StatTile} titel=${K.t("vorbereitung.sicher")} wert=${summe.meister} basis=${K.t("vorbereitung.sicherBasis")} />
       </div>
       <${UI.DataTable} label=${K.t("vorbereitung.tabelle")} spalten=${spalten} zeilen=${zeilen} ohneSuche=${zeilen.length < 8} />
       <p class="rj-hint">${K.t("vorbereitung.leitner")}</p>

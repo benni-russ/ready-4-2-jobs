@@ -19,6 +19,7 @@
       eintraege: [
         { seite: "vergleich", icon: "scale" },
         { seite: "vorbereitung", icon: "graduation-cap" },
+        { seite: "checklisten", icon: "list-checks" },
         { seite: "wissen", icon: "book-open" },
         { seite: "statistik", icon: "chart-column" },
       ],

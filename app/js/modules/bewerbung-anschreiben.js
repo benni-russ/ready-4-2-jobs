@@ -283,6 +283,7 @@
       <div class="rj-stack">
         <section class="rj-card rj-stack">
           <p class="rj-muted">${K.t("anschreiben.platzhalterHinweis")}</p>
+          <${S.WissenLink} artikel="anschreiben-aufbau" />
           ${A.filter(function (a) {
             return a !== "rahmen";
           }).map(function (a) {
@@ -292,6 +293,7 @@
         <section class="rj-card rj-stack">
           <h2 class="h3">${K.t("anschreiben.rahmen")}</h2>
           <p class="rj-muted">${K.t("anschreiben.rahmenHinweis")}</p>
+          <${S.WissenLink} artikel="gehaltsverhandlung" />
           <${UI.Switch} label=${K.t("anschreiben.rahmenEintritt")} wert=${b.anschreiben.rahmen.eintritt} beiAenderung=${schalter(b, "eintritt")} />
           <${UI.Switch} label=${K.t("anschreiben.rahmenKuendigung")} wert=${b.anschreiben.rahmen.kuendigungsfrist} beiAenderung=${schalter(b, "kuendigungsfrist")} />
           <${UI.Switch} label=${K.t("anschreiben.rahmenGehalt")} wert=${b.anschreiben.rahmen.gehalt} beiAenderung=${schalter(b, "gehalt")} />
