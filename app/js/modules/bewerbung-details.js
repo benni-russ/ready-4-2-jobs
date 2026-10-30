@@ -173,6 +173,13 @@
           }}
         />
       </section>
+      <section class="rj-card rj-stack">
+        <h2 class="h3">${K.t("details.angebot")}</h2>
+        <p>${K.t(b.angebot ? "details.angebotDa" : "details.angebotText")}</p>
+        <div class="rj-row">
+          <${UI.Button} icon="scale" href=${"#/vergleich/angebot/" + b.id}>${K.t(b.angebot ? "angebot.bearbeiten" : "angebot.erfassen")}<//>
+        </div>
+      </section>
       <${Checkliste} bewerbung=${b} />
       <${Stelle} bewerbung=${b} />
       <${Dokumente} bewerbung=${b} />

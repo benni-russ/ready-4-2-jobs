@@ -259,6 +259,20 @@
           <${UI.Button} icon="shield-check" onClick=${K.zumNeuenSchluessel}>${K.t("schluessel.neuTitel")}<//>
         </div>
       </section>
+      <section class="rj-card rj-stack">
+        <h2 class="h3">${K.t("einstellungen.vergleich")}</h2>
+        <${UI.Select}
+          label=${K.t("einstellungen.feiertage")}
+          hinweis=${K.t("einstellungen.feiertageHinweis")}
+          wert=${String(K.vergleich.feiertagsWochen())}
+          optionen=${[0, 1, 2, 3, 4].map(function (w) {
+            return { wert: String(w), label: w === 1 ? K.t("einstellungen.feiertageWoche") : K.t("einstellungen.feiertageWochen", { anzahl: w }) };
+          })}
+          beiAenderung=${setzen(function (x, w) {
+            x.feiertagsWochen = Number(w);
+          })}
+        />
+      </section>
       <${BackupBereich} />
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("einstellungen.weiteres")}</h2>

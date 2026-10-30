@@ -73,6 +73,10 @@ jobs:
         shell: bash
         run: node tests/m5.mjs
 
+      - name: M6 Vergleich
+        shell: bash
+        run: node tests/m6.mjs
+
       - name: Formulare
         shell: bash
         run: node tests/formulare.mjs

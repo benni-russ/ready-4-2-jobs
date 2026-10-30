@@ -355,7 +355,7 @@ h1, h2, h3, p { margin: 0; }
 .rj-scorelist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .rj-scorelist li { display: grid; grid-template-columns: 32px minmax(120px, 200px) 1fr auto; gap: var(--space-3); align-items: center; }
 .rj-scorelist__rank { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--surface-sunken); font-weight: 700; }
-.rj-scorelist li:first-child .rj-scorelist__rank { background: var(--accent); color: var(--on-accent); }
+.rj-scorelist li.is-top .rj-scorelist__rank { background: var(--accent); color: var(--on-accent); }
 .rj-scorelist__bar { height: 14px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
 .rj-scorelist__bar span { display: block; height: 100%; border-radius: var(--radius-pill); background: var(--accent); }
 .rj-scorelist__val { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -553,3 +553,17 @@ h1, h2, h3, p { margin: 0; }
   .rj-seg { flex-wrap: wrap; max-width: 100%; }
   .rj-grid-2 { grid-template-columns: minmax(0, 1fr); }
 }
+.rj-inputunit { position: relative; display: block; }
+.rj-inputunit .rj-input { padding-right: calc(var(--space-3) + 5ch); font-variant-numeric: tabular-nums; }
+.rj-inputunit__text { position: absolute; top: 50%; right: var(--space-3); transform: translateY(-50%); color: var(--ink-muted); pointer-events: none; }
+.rj-nodata { color: var(--ink-muted); font-size: .875rem; }
+.rj-scorelist__note { grid-column: 2 / -1; color: var(--ink-muted); font-size: .875rem; }
+.rj-check input:disabled + span { color: var(--ink-muted); cursor: not-allowed; }
+@media (max-width: 600px) {
+  .rj-scorelist li { grid-template-columns: 32px minmax(0, 1fr) auto; }
+  .rj-scorelist__bar { grid-column: 2 / -1; grid-row: 2; }
+}
+.rj-table tbody th { border-bottom-width: 1px; color: var(--ink); white-space: normal; }
+.rj-table tbody tr:last-child th { border-bottom: 0; }
+.rj-row--between { flex-wrap: nowrap; justify-content: space-between; }
+.rj-row--between .rj-check { min-width: 0; }

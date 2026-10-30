@@ -31,6 +31,7 @@
         farbschema: z.farbschema,
         schriftgroesse: z.schriftgroesse,
         sperreMinuten: 10,
+        feiertagsWochen: 2,
         rueckfrageTage: 14,
         updatePruefung: false,
         backupZiel2: false,
