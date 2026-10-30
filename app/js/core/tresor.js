@@ -147,6 +147,32 @@
       return ungespeichert;
     },
 
+    // Metadaten stehen im Tresor, die Datei selbst liegt einzeln verschlüsselt daneben.
+    anlageSchreiben: async function (id, bytes) {
+      var verschluesselt = await kr.dateiVerschluesseln(dek, bytes);
+      await K.fs.schreibenAtomar(await K.profile.ordner(eintrag, ["anlagen"]), id + ".enc", verschluesselt);
+    },
+
+    anlageLesen: async function (id) {
+      var schluessel = dek;
+      var ordner = await K.profile.ordner(eintrag, ["anlagen"]);
+      var bytes;
+      try {
+        bytes = await K.fs.lesen(ordner, id + ".enc");
+      } catch (e) {
+        throw K.Fehler(e.schluessel === "fehler.nichtGefunden" ? "fehler.anlageFehlt" : e.schluessel);
+      }
+      try {
+        return await kr.dateiEntschluesseln(schluessel, bytes);
+      } catch (e) {
+        throw K.Fehler("fehler.anlageDefekt");
+      }
+    },
+
+    anlageLoeschen: async function (id) {
+      await K.fs.loeschen(await K.profile.ordner(eintrag, ["anlagen"]), id + ".enc");
+    },
+
     // Der Datenschlüssel wird genau hier erzeugt und danach nicht extrahierbar geladen.
     erstellen: async function (name, passwort, bloecke) {
       var e = { id: window.crypto.randomUUID(), name: name, datei: K.DATEI_TRESOR };

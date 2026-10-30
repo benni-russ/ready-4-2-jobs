@@ -48,14 +48,14 @@
 **Akzeptanz:** Tresor ist ohne Passwort nicht lesbar (Hex-Ansicht zeigt nur Ciphertext); Entsperren mit Wiederherstellungsschlüssel funktioniert; Passwortwechsel ohne Datenverlust; Backup auf zweitem Ort wiederherstellbar; Sperre nach eingestellter Zeit.
 
 ### M2 · Stammdaten, Anlagen, Suche
-- [ ] Formulare für alle Stammdaten-Bereiche (SPEC §6.2), zweisprachige Felder.
-- [ ] Ausrichtungen inkl. Tagging aller Einträge.
-- [ ] STAR-Erfolge mit verdichtetem CV-Stichpunkt.
-- [ ] Anlagen: Upload, Einzelverschlüsselung, Vorschau, Kategorien, Tags.
-- [ ] Globale Suche (`Strg/Cmd + K`).
-- [ ] KI-Workflow-Grundgerüst (Prompt kopieren → Antwort einfügen → validieren), Platzhalter-Ersetzung.
-- [ ] Lebenslauf-Import per KI (Onboarding-Schritt 7).
-- [ ] Onboarding-Schritte 7–8.
+- [x] Formulare für alle Stammdaten-Bereiche (SPEC §6.2), zweisprachige Felder.
+- [x] Ausrichtungen inkl. Tagging aller Einträge.
+- [x] STAR-Erfolge mit verdichtetem CV-Stichpunkt.
+- [x] Anlagen: Upload, Einzelverschlüsselung, Vorschau, Kategorien, Tags.
+- [x] Globale Suche (`Strg/Cmd + K`).
+- [x] KI-Workflow-Grundgerüst (Prompt kopieren → Antwort einfügen → validieren), Platzhalter-Ersetzung.
+- [x] Lebenslauf-Import per KI (Onboarding-Schritt 7).
+- [x] Onboarding-Schritte 7–8.
 
 **Akzeptanz:** Vollständiges Profil anlegbar; Suche findet Kompetenz über Synonym; Anlage nach Neustart wieder anzeigbar; KI-Import mit fehlerhaftem JSON zeigt verständliche Meldung.
 

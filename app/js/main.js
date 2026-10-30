@@ -8,17 +8,19 @@
   var PLATZHALTER = {
     uebersicht: "house",
     bewerbungen: "briefcase-business",
-    stammdaten: "user",
-    anlagen: "files",
     vergleich: "scale",
     vorbereitung: "graduation-cap",
     wissen: "book-open",
     statistik: "chart-column",
   };
 
-  function seitenInhalt(seite) {
+  var EIGENE = ["einstellungen", "stammdaten", "anlagen"];
+
+  function seitenInhalt(seite, teile) {
     if (seite === "einstellungen") return html`<${S.Einstellungen} />`;
     if (seite === "komponenten") return html`<${S.Komponenten} />`;
+    if (seite === "stammdaten") return html`<${S.Stammdaten} teile=${teile} />`;
+    if (seite === "anlagen") return html`<${S.Anlagen} teile=${teile} />`;
     if (PLATZHALTER[seite]) return html`<${S.Platzhalter} seite=${seite} icon=${PLATZHALTER[seite]} key=${seite} />`;
     return html`<${UI.EmptyState} icon="search-x" titel=${K.t("fehler.seiteTitel")} text=${K.t("fehler.seiteText")}>
       <${UI.Button} variante="primary" href="#/uebersicht">${K.t("fehler.seiteAktion")}<//>
@@ -28,9 +30,9 @@
   function App() {
     var z = K.useStore();
     var route = K.useRoute();
-    var bekannt = route.seite === "komponenten" || !!PLATZHALTER[route.seite] || route.seite === "einstellungen";
+    var bekannt = route.seite === "komponenten" || !!PLATZHALTER[route.seite] || EIGENE.indexOf(route.seite) > -1;
     document.title = (bekannt && route.seite !== "komponenten" ? K.t("nav." + route.seite) + " · " : "") + "R42J";
-    return html`<${UI.AppShell} seite=${route.seite} key=${z.sprache}>${seitenInhalt(route.seite)}<//>`;
+    return html`<${UI.AppShell} seite=${route.seite} key=${z.sprache}>${seitenInhalt(route.seite, route.teile)}<//>`;
   }
 
   function Ablauf() {

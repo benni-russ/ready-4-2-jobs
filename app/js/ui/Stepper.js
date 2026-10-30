@@ -4,7 +4,8 @@
   var html = UI.html;
 
   UI.Stepper = function (props) {
-    return html`<ol class="rj-stepper rj-noprint">
+    var kompakt = props.schritte.length > 6;
+    return html`<ol class=${"rj-stepper rj-noprint" + (kompakt ? " rj-stepper--kompakt" : "")}>
       ${props.schritte.map(function (text, i) {
         var nr = i + 1;
         return html`<li
@@ -12,7 +13,7 @@
           data-state=${nr < props.aktuell ? "done" : undefined}
           aria-current=${nr === props.aktuell ? "step" : undefined}
         >
-          ${text}
+          ${kompakt ? html`<span>${text}</span>` : text}
         </li>`;
       })}
     </ol>`;
