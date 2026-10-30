@@ -210,6 +210,17 @@
         }}
       >
         <p>${K.t("anlagen.loeschenText", { name: loeschen[0].titel })}</p>
+        ${K.anlagen.verwendung(loeschen[0].id).length > 0 &&
+        html`<${UI.Alert} art="warning">
+          ${K.t("anlagen.inVerwendung", {
+            firmen: K.anlagen
+              .verwendung(loeschen[0].id)
+              .map(function (b) {
+                return b.firma.name;
+              })
+              .join(", "),
+          })}
+        <//>`}
       <//>`}
     `;
   };

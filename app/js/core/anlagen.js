@@ -56,6 +56,13 @@
       await K.tresor.anlageLoeschen(id);
     },
 
+    // Fertige PDFs sind eigene Kopien und bleiben beim Löschen erhalten, nur die Auswahl ändert sich.
+    verwendung: function (id) {
+      return K.tresor.daten().bewerbungen.filter(function (b) {
+        return b.dokumente.anlagenAuswahl.indexOf(id) > -1;
+      });
+    },
+
     meta: function (a) {
       var teile = [a.mime === "application/pdf" ? "PDF" : a.mime === "image/png" ? "PNG" : "JPG", K.groesseText(a.groesse)];
       if (a.seiten) teile.push(K.t(a.seiten === 1 ? "anlagen.eineSeite" : "anlagen.seiten", { n: a.seiten }));

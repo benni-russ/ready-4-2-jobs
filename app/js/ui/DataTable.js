@@ -22,6 +22,11 @@
       .replace(/ß/g, "ss");
   }
 
+  UI.textTrifft = function (text, suche) {
+    var q = suche.trim();
+    return !q || norm(text).indexOf(norm(q)) > -1 || normAlt(text).indexOf(normAlt(q)) > -1;
+  };
+
   function sortWert(spalte, zeile) {
     var roh = spalte.sortwert ? spalte.sortwert(zeile) : spaltenText(spalte, zeile);
     if (typeof roh === "number") return roh;
@@ -49,6 +54,7 @@
   }
 
   // spalten: { schluessel, titel, typ?, num?, sortierbar?, nurScreenreader?, zelle?, text?, sortwert? }
+  // ohneSuche: Eine FilterBar über der Tabelle sucht bereits.
   UI.DataTable = function (props) {
     var sprache = K.sprache();
     var spalten = props.spalten;
@@ -61,16 +67,13 @@
     var suchfeld = hooks.useRef(null);
 
     var q = suche.trim();
-    var qa = norm(q);
-    var qb = normAlt(q);
     var treffer = props.zeilen.filter(function (z) {
-      if (!q) return true;
       var text = spalten
         .map(function (s) {
           return spaltenText(s, z);
         })
         .join(" ");
-      return norm(text).indexOf(qa) > -1 || normAlt(text).indexOf(qb) > -1;
+      return UI.textTrifft(text, q);
     });
 
     if (sortierung) {
@@ -120,7 +123,7 @@
     }
 
     return html`<div class="rj-datatable">
-      <div class="rj-datatable__bar">
+      ${!props.ohneSuche && html`<div class="rj-datatable__bar">
         <div class="rj-input-wrap">
           <${UI.Icon} name="search" />
           <input
@@ -138,7 +141,7 @@
         <span class="rj-datatable__count" aria-live="polite">
           ${K.t("tabelle.zaehler", { anzahl: treffer.length, gesamt: props.zeilen.length })}
         </span>
-      </div>
+      </div>`}
       <div class="rj-table-wrap">
         <table class="rj-table">
           <thead>

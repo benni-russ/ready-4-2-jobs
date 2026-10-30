@@ -84,13 +84,15 @@ Stand: Lesereihenfolge, DE/EN und Dateiname sind per Textextraktion geprüft. Of
 **Akzeptanz:** `.eml` öffnet sich in Outlook (Windows) und Apple Mail als Entwurf mit Anhängen; Anlagen-PDF „Klein“ bei 10 Scans < 5 MB und lesbar; Anschreiben passt auf 1 Seite.
 
 ### M5 · Übersicht, Status, Termine
-- [ ] Übersicht mit Filter/Sortierung/Suche, Status-Badges.
-- [ ] Status-Historie, Statuswechsel-Dialog.
-- [ ] Erinnerungen beim Start (Rückfrage fällig, Termine, Keine Antwort).
-- [ ] Rückfrage-E-Mail-Vorlage.
-- [ ] Detailansicht inkl. Anzeigen-Kopie, Notizen, Maps-Link.
-- [ ] Termine: `.ics`, Google-Link, Outlook-Link.
-- [ ] Checkliste pro Bewerbung, Warnung vor Versand.
+- [x] Übersicht mit Filter/Sortierung/Suche, Status-Badges.
+- [x] Status-Historie, Statuswechsel-Dialog.
+- [x] Erinnerungen beim Start (Rückfrage fällig, Termine, Keine Antwort).
+- [x] Rückfrage-E-Mail-Vorlage.
+- [x] Detailansicht inkl. Anzeigen-Kopie, Notizen, Maps-Link.
+- [x] Termine: `.ics`, Google-Link, Outlook-Link.
+- [x] Checkliste pro Bewerbung, Warnung vor Versand.
+
+Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automatisch geprüft. Offen ist der manuelle Import in Outlook und Apple Kalender sowie das Öffnen der Links beim Anbieter.
 
 **Akzeptanz:** Bewerbung mit `versendetAm` vor 15 Tagen erscheint als „Rückfrage fällig“; `.ics` lässt sich in Outlook/Apple Kalender importieren; Google-/Outlook-Link öffnet vorausgefüllten Termin.
 

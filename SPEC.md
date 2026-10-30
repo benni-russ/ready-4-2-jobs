@@ -206,6 +206,7 @@ Bewerbung {
   angebot?: Angebot,
   notizen: string,                // "Wichtige Angaben"
   checkliste: Record<string, boolean>,
+  spaeter?: { rueckfrage?, keineAntwort? },   // Erinnerung ausgeblendet bis zu diesem Zeitpunkt
   erstellt, versendetAm?
 }
 
@@ -216,7 +217,7 @@ Status = "vorbereitung"|"versendet"|"rueckfrage_faellig"|"rueckfrage_gesendet"|
   "telefoninterview"|"gespraech_digital"|"gespraech_vor_ort"|"einstellungstest"|
   "vertrag_erhalten"|"vertrag_unterzeichnet"|"angenommen"|"probezeit_bestanden"|
   "absage"|"zurueckgezogen"|"keine_antwort"
-Termin { id, art, start, ende, ort?, link?, notiz? }
+Termin { id, art: "telefon"|"digital"|"vor_ort"|"test"|"sonstiges", start, ende, ort?, link? (nur https), notiz? }   // start, ende als ISO in UTC
 
 Angebot { bruttoJahr, bonusJahr?, nettoMonat? (manuell), wochenstunden, urlaubstage,
   homeofficeTage (pro Woche), praesenzTage (pro Woche), pendelMinutenEinfach,
@@ -315,7 +316,8 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 ### 6.9 Übersicht & Status
 - Liste/Karten aller Bewerbungen, Filter (Status, Ausrichtung, Zeitraum), Sortierung, Suche.
 - Status-Badges mit Farbe + Icon + Text (nicht nur Farbe).
-- **Erinnerungen** beim Öffnen: „Rückfrage fällig“ nach X Tagen (Std. 14) ohne Antwort; anstehende Termine (nächste 7 Tage); optional „Keine Antwort“ vorschlagen nach 6 Wochen.
+- **Erinnerungen** beim Öffnen: „Rückfrage fällig“ nach X Tagen (Std. 14) ohne Antwort; anstehende Termine (nächste 7 Tage); optional „Keine Antwort“ vorschlagen nach 6 Wochen (seit dem letzten Statuseintrag; ersetzt dann die Rückfrage-Erinnerung). „Später erinnern“ blendet eine Erinnerung 7 Tage aus.
+- „Rückfrage fällig“ ist abgeleitet: Status `versendet` und `versendetAm` mindestens X Kalendertage her. Der Wert steht nie in der Historie und ist im Statuswechsel-Dialog nicht wählbar.
 - Rückfrage-Vorlage (E-Mail-Baustein) direkt erzeugbar.
 - Detailansicht: Stammdaten der Stelle, Anzeigentext-Kopie, Dokumente, E-Mails, Status-Historie, Termine, Notizen („Wichtige Angaben“), Checkliste.
 - **Maps:** Button „Route anzeigen“ → `https://www.google.com/maps/dir/?api=1&origin=<Profiladresse>&destination=<Firmenadresse>` (Hinweis: Adressen gehen an Google).
