@@ -355,8 +355,12 @@ for (const channel of kanaele()) {
   ok("ICS: Rahmen", ics.entfaltet[0] === "BEGIN:VCALENDAR" && ics.entfaltet.at(-1) === "END:VCALENDAR" && ics.felder.VERSION[0] === "2.0" && !!ics.felder.PRODID && ics.felder.BEGIN.join() === "VCALENDAR,VEVENT", ics.felder.BEGIN);
   ok("ICS: UID einmalig und nicht leer", ics.felder.UID.length === 1 && /^[0-9a-f-]{36}@r42j\.invalid$/.test(ics.felder.UID[0]), ics.felder.UID);
   ok("ICS: DTSTAMP in UTC", /^\d{8}T\d{6}Z$/.test(ics.felder.DTSTAMP[0]), ics.felder.DTSTAMP);
-  const erwartet = (u) => new Date(`${morgenIso}T${u}`).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-  ok("ICS: Beginn und Ende in UTC", ics.felder.DTSTART[0] === erwartet("14:30") && ics.felder.DTEND[0] === erwartet("15:15"), [ics.felder.DTSTART, ics.felder.DTEND]);
+  // Die Seite läuft in Europe/Berlin, der Testrunner in einer beliebigen Zone.
+  const utcZeit = (uhr) => p.evaluate((wert) => new Date(wert).toISOString(), `${morgenIso}T${uhr}`);
+  const startUtc = await utcZeit("14:30");
+  const endeUtc = await utcZeit("15:15");
+  const kompakt = (iso) => iso.replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
+  ok("ICS: Beginn und Ende in UTC", ics.felder.DTSTART[0] === kompakt(startUtc) && ics.felder.DTEND[0] === kompakt(endeUtc), [ics.felder.DTSTART, ics.felder.DTEND]);
   ok("ICS: Maskierung Ort", ics.felder.LOCATION[0] === "Saal 3\\; Haus A\\, Eingang \\\\ Süd", ics.felder.LOCATION);
   ok("ICS: keine unmaskierten Trenner", !/(^|[^\\])[;,]/.test(ics.felder.SUMMARY[0].replace(/\\\\/g, "")) && !/(^|[^\\])[;,]/.test(ics.felder.DESCRIPTION[0].replace(/\\\\/g, "")), ics.felder.DESCRIPTION);
   const beschreibung = textEntmaskieren(ics.felder.DESCRIPTION[0]);
@@ -367,11 +371,11 @@ for (const channel of kanaele()) {
   const g = new URL(hrefs.find((a) => a.name.includes("Google")).href);
   const o = new URL(hrefs.find((a) => a.name.includes("Outlook")).href);
   ok("Google: Adresse", g.origin + g.pathname === "https://calendar.google.com/calendar/render" && g.searchParams.get("action") === "TEMPLATE", g.href);
-  ok("Google: Zeitraum", g.searchParams.get("dates") === erwartet("14:30") + "/" + erwartet("15:15"), g.searchParams.get("dates"));
+  ok("Google: Zeitraum", g.searchParams.get("dates") === kompakt(startUtc) + "/" + kompakt(endeUtc), g.searchParams.get("dates"));
   ok("Google: Text kodiert", g.searchParams.get("text") === "Gespräch vor Ort: Müller & Söhne" && g.searchParams.get("location") === "Saal 3; Haus A, Eingang \\ Süd" && g.searchParams.get("details").includes("a=1&b=2") && g.searchParams.get("details").includes("😀"), g.search);
   ok("Google: & und # bleiben maskiert", !g.search.includes("Müller & Söhne") && !g.search.includes(" ") && g.search.split("&").length === 5, g.search);
   ok("Outlook: Adresse", o.origin + o.pathname === "https://outlook.live.com/calendar/0/deeplink/compose" && o.searchParams.get("rru") === "addevent" && o.searchParams.get("path") === "/calendar/action/compose", o.href);
-  ok("Outlook: Zeiten", o.searchParams.get("startdt") === new Date(`${morgenIso}T14:30`).toISOString() && o.searchParams.get("enddt") === new Date(`${morgenIso}T15:15`).toISOString(), o.search);
+  ok("Outlook: Zeiten", o.searchParams.get("startdt") === startUtc && o.searchParams.get("enddt") === endeUtc, o.search);
   ok("Outlook: Felder kodiert", o.searchParams.get("subject") === "Gespräch vor Ort: Müller & Söhne" && o.searchParams.get("location").startsWith("Saal 3;") && !o.search.includes("+"), o.search);
   ok("Kalender-Links: öffnen ohne Referrer", hrefs.every((a) => a.rel === "noopener noreferrer" && a.target === "_blank" && a.href.startsWith("https://")), hrefs);
   ok("Hinweis: Daten gehen an den Anbieter", await p.getByText("gehen Firma, Stelle, Ort und Notiz an den Anbieter").isVisible());
