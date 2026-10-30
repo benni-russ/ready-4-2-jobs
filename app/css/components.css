@@ -390,7 +390,19 @@ h1, h2, h3, p { margin: 0; }
 .rj-recovery { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
 .rj-recovery code { display: grid; place-items: center; min-height: 48px; border: 2px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface-raised); font: 700 1.125rem/1 var(--font-sans); letter-spacing: .12em; font-variant-numeric: tabular-nums; }
 @media print {
+  /* Papier ist immer hell, auch wenn die App gerade dunkel läuft. */
+  [data-theme="dark"] {
+    color-scheme: light;
+    --surface: #f5f7fa;
+    --surface-raised: #ffffff;
+    --surface-sunken: #eaeef3;
+    --line: #d5dbe3;
+    --line-strong: #76808e;
+    --ink: #17202b;
+    --ink-muted: #4a5563;
+  }
   body { background: #fff; color: #000; }
+  .rj-card { box-shadow: none; }
   .rj-noprint { display: none !important; }
   .rj-recovery code { border-color: #000; background: #fff; color: #000; }
 }
