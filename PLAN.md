@@ -111,12 +111,12 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 **Akzeptanz:** Rechenbeispiele in `docs/tests/vergleich.md` stimmen; Gewichtsänderung ändert Rangfolge sofort.
 
 ### M7 · Vorbereitung (v0.3)
-- [ ] Fragenformat + Loader (mitgeliefert + `daten/fragen/*.json` per Ordner-Handle + JSON-Import).
-- [ ] Karteikarten mit Leitner-System.
-- [ ] Multiple Choice inkl. Erklärung.
-- [ ] STAR-Training mit Timer.
-- [ ] Unternehmensfragen per KI-Prompt.
-- [ ] Fragenkataloge erstellen: Allgemeinwissen, Mathe & Dreisatz, Logik & Zahlenreihen, Deutsch, Englisch, Interviewfragen (Ziel SPEC §8).
+- [x] Fragenformat + Loader (mitgeliefert + `daten/fragen/*.json` per Ordner-Handle + JSON-Import).
+- [x] Karteikarten mit Leitner-System.
+- [x] Multiple Choice inkl. Erklärung.
+- [x] STAR-Training mit Timer.
+- [x] Unternehmensfragen per KI-Prompt.
+- [x] Fragenkataloge erstellen: Allgemeinwissen, Mathe & Dreisatz, Logik & Zahlenreihen, Deutsch, Englisch, Interviewfragen (Ziel SPEC §8).
 
 **Akzeptanz:** Falsch beantwortete Karte erscheint am Folgetag erneut; Katalog-Import mit fehlerhafter Datei bricht nicht ab.
 

@@ -394,7 +394,7 @@ h1, h2, h3, p { margin: 0; }
 .rj-option[data-result="wrong"] { border-color: var(--danger); background: var(--danger-soft); }
 .rj-option[data-result="wrong"] .rj-option__verdict { color: var(--danger); }
 
-.rj-timer { display: flex; align-items: center; gap: var(--space-4); }
+.rj-timer { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
 .rj-timer__time { font: 700 2.5rem/1 var(--font-sans); font-variant-numeric: tabular-nums; }
 
 /* ---------- Sicherheit & Profil ---------- */

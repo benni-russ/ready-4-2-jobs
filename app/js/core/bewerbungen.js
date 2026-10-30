@@ -258,11 +258,15 @@
             return e.anlageId;
           }),
         );
+      var karten = K.fragen.unternehmensfragen(b).map(function (f) {
+        return f.id;
+      });
       K.tresor.aendern(function (d) {
         d.bewerbungen = d.bewerbungen.filter(function (x) {
           return x.id !== id;
         });
       });
+      K.lernen.vergessen(karten);
       await K.tresor.speichernJetzt();
       for (var i = 0; i < dateien.length; i++) await K.tresor.anlageLoeschen(dateien[i]);
     },

@@ -353,7 +353,7 @@ for (const channel of kanaele()) {
   await karte.getByRole("button", { name: "Als .ics speichern" }).click();
   await p.waitForFunction(() => window.__gespeichert && window.__gespeichert.bytes);
   const gesp = await p.evaluate(() => window.__gespeichert);
-  ok("ICS: Dateiname und Typ", gesp.name === `termin-mueller-soehne-${morgen.toISOString().slice(0, 10)}.ics` && !!gesp.typen[0].accept["text/calendar"], gesp.name);
+  ok("ICS: Dateiname und Typ", gesp.name === `termin-mueller-soehne-${morgenIso}.ics` && !!gesp.typen[0].accept["text/calendar"], gesp.name);
   const ics = icsParsen(gesp.bytes);
   ok("ICS: nur CRLF, CRLF am Ende", ics.nurCrlf && ics.mitEnde);
   ok("ICS: Zeilen höchstens 75 Oktette", ics.maxOktette <= 75, ics.maxOktette);

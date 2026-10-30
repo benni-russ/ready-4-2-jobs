@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: 24
       - run: node tests/statisch.mjs
+      - run: node tests/kataloge.mjs
 
   browser:
     name: Browser (${{ matrix.name }})
@@ -76,6 +77,10 @@ jobs:
       - name: M6 Vergleich
         shell: bash
         run: node tests/m6.mjs
+
+      - name: M7 Vorbereitung
+        shell: bash
+        run: node tests/m7.mjs
 
       - name: Formulare
         shell: bash

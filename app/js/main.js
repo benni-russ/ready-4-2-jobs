@@ -6,12 +6,11 @@
   var html = UI.html;
 
   var PLATZHALTER = {
-    vorbereitung: "graduation-cap",
     wissen: "book-open",
     statistik: "chart-column",
   };
 
-  var EIGENE = ["einstellungen", "stammdaten", "anlagen", "lebenslauf", "bewerbungen", "uebersicht", "vergleich"];
+  var EIGENE = ["einstellungen", "stammdaten", "anlagen", "lebenslauf", "bewerbungen", "uebersicht", "vergleich", "vorbereitung"];
 
   function seitenInhalt(seite, teile) {
     if (seite === "einstellungen") return html`<${S.Einstellungen} />`;
@@ -22,6 +21,7 @@
     if (seite === "bewerbungen") return html`<${S.Bewerbungen} teile=${teile} />`;
     if (seite === "uebersicht") return html`<${S.Uebersicht} />`;
     if (seite === "vergleich") return html`<${S.Vergleich} teile=${teile} />`;
+    if (seite === "vorbereitung") return html`<${S.Vorbereitung} teile=${teile} />`;
     if (PLATZHALTER[seite]) return html`<${S.Platzhalter} seite=${seite} icon=${PLATZHALTER[seite]} key=${seite} />`;
     return html`<${UI.EmptyState} icon="search-x" titel=${K.t("fehler.seiteTitel")} text=${K.t("fehler.seiteText")}>
       <${UI.Button} variante="primary" href="#/uebersicht">${K.t("fehler.seiteAktion")}<//>

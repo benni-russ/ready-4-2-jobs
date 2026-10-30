@@ -24,6 +24,7 @@
       bewerbungen: [],
       gewichtung: { kriterien: [] },
       lernstand: [],
+      starTraining: [],
       checklisten: {},
       einstellungen: {
         sprache: z.sprache,
