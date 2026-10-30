@@ -162,6 +162,7 @@
           <div style="flex:1;min-width:200px">
             <${UI.TextField}
               label=${K.t("stelle.keywordNeu")}
+              placeholder=${K.t("stelle.keywordPlatzhalter")}
               wert=${neu[0]}
               beiAenderung=${neu[1]}
               onKeyDown=${function (e) {
@@ -180,6 +181,7 @@
         <h2 class="h3">${K.t("stelle.anzeige")}</h2>
         <${UI.Textarea}
           label=${K.t("bewerbung.anzeige")}
+          placeholder=${K.t("bewerbung.anzeigePlatzhalter")}
           rows="10"
           ...${feld(b, "stelle", "anzeigeText")}
           onBlur=${function () {
@@ -187,10 +189,10 @@
           }}
         />
         <div class="rj-grid-2">
-          <${UI.TextField} label=${K.t("bewerbung.stelle")} pflicht=${true} ...${feld(b, "stelle", "titel")} />
-          <${UI.TextField} label=${K.t("stelle.referenz")} ...${feld(b, "stelle", "referenz")} />
-          <${UI.TextField} label=${K.t("stelle.quelle")} hinweis=${K.t("stelle.quelleHinweis")} ...${feld(b, "stelle", "quelle")} />
-          <${UI.TextField} label=${K.t("stelle.link")} ...${feld(b, "stelle", "link")} />
+          <${UI.TextField} label=${K.t("bewerbung.stelle")} placeholder=${K.t("bewerbung.stellePlatzhalter")} pflicht=${true} ...${feld(b, "stelle", "titel")} />
+          <${UI.TextField} label=${K.t("stelle.referenz")} placeholder=${K.t("stelle.referenzPlatzhalter")} ...${feld(b, "stelle", "referenz")} />
+          <${UI.TextField} label=${K.t("stelle.quelle")} placeholder=${K.t("stelle.quellePlatzhalter")} hinweis=${K.t("stelle.quelleHinweis")} ...${feld(b, "stelle", "quelle")} />
+          <${UI.TextField} label=${K.t("stelle.link")} placeholder=${K.t("stelle.linkPlatzhalter")} ...${feld(b, "stelle", "link")} />
         </div>
         <${UI.Select}
           label=${K.t("bewerbung.ausrichtung")}
@@ -231,11 +233,11 @@
 
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("stelle.firma")}</h2>
-        <${UI.TextField} label=${K.t("bewerbung.firma")} pflicht=${true} ...${feld(b, "firma", "name")} />
-        <${UI.Textarea} label=${K.t("stelle.adresse")} hinweis=${K.t("stelle.adresseHinweis")} rows="3" ...${feld(b, "firma", "adresse")} />
+        <${UI.TextField} label=${K.t("bewerbung.firma")} placeholder=${K.t("bewerbung.firmaPlatzhalter")} pflicht=${true} ...${feld(b, "firma", "name")} />
+        <${UI.Textarea} label=${K.t("stelle.adresse")} placeholder=${K.t("stelle.adressePlatzhalter")} hinweis=${K.t("stelle.adresseHinweis")} rows="3" ...${feld(b, "firma", "adresse")} />
         <div class="rj-grid-2">
-          <${UI.TextField} label=${K.t("stelle.website")} ...${feld(b, "firma", "website")} />
-          <${UI.TextField} label=${K.t("stelle.branche")} ...${feld(b, "firma", "branche")} />
+          <${UI.TextField} label=${K.t("stelle.website")} placeholder=${K.t("stelle.websitePlatzhalter")} ...${feld(b, "firma", "website")} />
+          <${UI.TextField} label=${K.t("stelle.branche")} placeholder=${K.t("stelle.branchePlatzhalter")} ...${feld(b, "firma", "branche")} />
         </div>
       </section>
 
@@ -251,10 +253,10 @@
             ]}
             ...${feld(b, "ansprechpartner", "anrede")}
           />
-          <${UI.TextField} label=${K.t("stelle.ansprechName")} ...${feld(b, "ansprechpartner", "name")} />
-          <${UI.TextField} label=${K.t("stelle.ansprechPosition")} ...${feld(b, "ansprechpartner", "position")} />
-          <${UI.TextField} label=${K.t("stelle.ansprechEmail")} ...${feld(b, "ansprechpartner", "email")} />
-          <${UI.TextField} label=${K.t("stelle.ansprechTelefon")} ...${feld(b, "ansprechpartner", "telefon")} />
+          <${UI.TextField} label=${K.t("stelle.ansprechName")} placeholder=${K.t("stelle.ansprechNamePlatzhalter")} ...${feld(b, "ansprechpartner", "name")} />
+          <${UI.TextField} label=${K.t("stelle.ansprechPosition")} placeholder=${K.t("stelle.ansprechPositionPlatzhalter")} ...${feld(b, "ansprechpartner", "position")} />
+          <${UI.TextField} label=${K.t("stelle.ansprechEmail")} placeholder=${K.t("stelle.ansprechEmailPlatzhalter")} ...${feld(b, "ansprechpartner", "email")} />
+          <${UI.TextField} label=${K.t("stelle.ansprechTelefon")} placeholder=${K.t("stelle.ansprechTelefonPlatzhalter")} ...${feld(b, "ansprechpartner", "telefon")} />
         </div>
       </section>
 

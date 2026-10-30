@@ -21,6 +21,13 @@ export const URLAPP = pathToFileURL(join(HIER, "..", "app", "index.html")).href;
 export const SP = process.env.R42J_AUSGABE || mkdtempSync(join(tmpdir(), "r42j-test-"));
 mkdirSync(SP, { recursive: true });
 
+// Wählt in einem Dropdown per Klick, wert ist der gespeicherte Wert oder { label }.
+export async function waehle(p, feld, wert) {
+  await feld.click();
+  const o = wert.label ? p.getByRole("option", { name: wert.label, exact: true }) : p.locator(`[role=option][data-wert="${wert}"]`);
+  await o.click();
+}
+
 export function kanaele() {
   return process.argv[2] ? [process.argv[2]] : (process.env.R42J_KANAELE || "msedge,chrome").split(",");
 }

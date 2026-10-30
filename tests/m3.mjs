@@ -1,5 +1,5 @@
 import { writeFileSync, readFileSync } from "node:fs";
-import { chromium, URLAPP, SP, kanaele, pdfInfo } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, pdfInfo, waehle } from "./hilfen.mjs";
 
 let fehlerZahl = 0;
 function ok(name, wahr, info) {
@@ -204,7 +204,7 @@ for (const channel of kanaele()) {
   await p.getByRole("radio", { name: "English" }).click().catch(async () => p.getByRole("button", { name: "English" }).click());
   ok("Foto Standard aus bei EN", !(await p.getByRole("switch", { name: "Foto einfügen" }).isChecked()));
   ok("Optionswechsel verwirft Ergebnis", (await p.getByRole("heading", { name: "Dein Lebenslauf" }).count()) === 0);
-  await p.getByLabel("Akzentfarbe").selectOption("gruen").catch(() => {});
+  await waehle(p, p.getByLabel("Akzentfarbe"), "gruen");
   ok("Akzent gemerkt", (await p.evaluate(() => window.R42J_CORE.tresor.daten().einstellungen.cvAkzent)) === "gruen");
 
   // Fehler ohne Stationen.

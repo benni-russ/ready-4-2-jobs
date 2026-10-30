@@ -24,12 +24,15 @@
       hinweis=${props.hinweis || K.t("monat.hinweis")}
       fehler=${ungueltig[0] ? K.t("monat.ungueltig") : props.fehler}
       wert=${text[0]}
-      beiAenderung=${function (w) {
+      beiAenderung=${props.beiAenderung}
+      onInput=${function (e) {
+        var w = K.maskeAnwenden(e.target, e.inputType, text[0], K.maskeMonat);
         text[1](w);
         var neu = K.monatLesen(w);
         if (neu) props.beiAenderung(neu);
       }}
       onBlur=${verlassen}
+      placeholder=${K.t("monat.platzhalter")}
       inputmode="numeric"
       autocomplete="off"
       disabled=${props.disabled}

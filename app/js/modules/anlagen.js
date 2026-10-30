@@ -32,6 +32,7 @@
     >
       <${UI.TextField}
         label=${K.t("anlagen.titel")}
+        placeholder=${K.t("anlagen.titelPlatzhalter")}
         wert=${e.titel || ""}
         beiAenderung=${function (w) {
           setze("titel", w);

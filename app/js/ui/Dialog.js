@@ -5,7 +5,7 @@
   var K = window.R42J_CORE;
   var hooks = window.preactHooks;
 
-  var FOKUSSIERBAR = "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])";
+  var FOKUSSIERBAR = "a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled])";
 
   UI.Dialog = function (props) {
     var kasten = hooks.useRef(null);
@@ -14,7 +14,7 @@
     // Fokus wandert hinein und beim Schließen zurück. Tab bleibt im Dialog.
     hooks.useEffect(function () {
       var vorher = document.activeElement;
-      var imInhalt = kasten.current.querySelector(".rj-dialog__body input, .rj-dialog__body select, .rj-dialog__body textarea");
+      var imInhalt = kasten.current.querySelector(".rj-dialog__body input, .rj-dialog__body textarea, .rj-dialog__body [role=combobox]");
       (imInhalt || kasten.current.querySelector(".rj-dialog__foot button")).focus();
       return function () {
         // Nach einem Suchtreffer gibt es kein Ausgangselement mehr, dann in den Inhalt.

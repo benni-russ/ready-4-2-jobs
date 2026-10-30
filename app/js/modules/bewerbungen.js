@@ -147,11 +147,11 @@
       </div>
       <section class="rj-card rj-stack">
         ${meldung[0] && html`<${UI.Alert} art="danger">${meldung[0]}<//>`}
-        <${UI.Textarea} label=${K.t("bewerbung.anzeige")} hinweis=${K.t("bewerbung.anzeigeHinweis")} wert=${w[0].anzeigeText} beiAenderung=${setzen("anzeigeText")} rows="10" />
+        <${UI.Textarea} label=${K.t("bewerbung.anzeige")} placeholder=${K.t("bewerbung.anzeigePlatzhalter")} hinweis=${K.t("bewerbung.anzeigeHinweis")} wert=${w[0].anzeigeText} beiAenderung=${setzen("anzeigeText")} rows="10" />
         <${UI.FileDrop} hinweis=${K.t("bewerbung.markdownHinweis")} accept=".md,.markdown,.txt,text/markdown,text/plain" beiDateien=${datei} />
         <div class="rj-grid-2">
-          <${UI.TextField} label=${K.t("bewerbung.firma")} pflicht=${true} fehler=${fehler[0].firma} wert=${w[0].firma} beiAenderung=${setzen("firma")} />
-          <${UI.TextField} label=${K.t("bewerbung.stelle")} pflicht=${true} fehler=${fehler[0].titel} wert=${w[0].titel} beiAenderung=${setzen("titel")} />
+          <${UI.TextField} label=${K.t("bewerbung.firma")} placeholder=${K.t("bewerbung.firmaPlatzhalter")} pflicht=${true} fehler=${fehler[0].firma} wert=${w[0].firma} beiAenderung=${setzen("firma")} />
+          <${UI.TextField} label=${K.t("bewerbung.stelle")} placeholder=${K.t("bewerbung.stellePlatzhalter")} pflicht=${true} fehler=${fehler[0].titel} wert=${w[0].titel} beiAenderung=${setzen("titel")} />
         </div>
         ${d.ausrichtungen.length
           ? html`<${UI.Select}

@@ -36,6 +36,7 @@
       id: id,
       lang: sprache,
       value: wert[sprache] || "",
+      placeholder: props.platzhalter ? K.tIn(sprache, props.platzhalter) : undefined,
       onInput: eingabe,
       "aria-invalid": props.fehler ? "true" : undefined,
       "aria-describedby": props.fehler || fehlt || props.hinweis ? id + "-info" : undefined,

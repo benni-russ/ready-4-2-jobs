@@ -91,7 +91,7 @@
           neu[1](null);
         }}
       >
-        <${UI.TextField} label=${K.t("profile.name")} hinweis=${K.t("profile.nameHinweis")} wert=${neu[0]} pflicht=${true} beiAenderung=${neu[1]} />
+        <${UI.TextField} label=${K.t("profile.name")} placeholder=${K.t("profile.namePlatzhalter")} hinweis=${K.t("profile.nameHinweis")} wert=${neu[0]} pflicht=${true} beiAenderung=${neu[1]} />
       <//>`}
       ${ersetzen[0] &&
       html`<${UI.Dialog}

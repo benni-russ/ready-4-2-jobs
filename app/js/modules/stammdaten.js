@@ -30,6 +30,7 @@
       text: function (feld, label, extra) {
         return html`<${UI.TextField}
           label=${K.t(label)}
+          placeholder=${K.t(label + "Platzhalter")}
           wert=${e[feld] || ""}
           fehler=${fehler[feld]}
           beiAenderung=${function (w) {
@@ -41,6 +42,7 @@
       i18n: function (feld, label, extra) {
         return html`<${UI.BilingualField}
           label=${K.t(label)}
+          platzhalter=${label + "Platzhalter"}
           wert=${e[feld]}
           fehler=${fehler[feld]}
           beiAenderung=${function (w) {

@@ -272,7 +272,7 @@
 
     return html`
       <p>${K.t("import.text")}</p>
-      <${UI.Textarea} label=${K.t("import.lebenslauf")} hinweis=${K.t("import.lebenslaufHinweis")} wert=${text[0]} beiAenderung=${text[1]} rows="6" />
+      <${UI.Textarea} label=${K.t("import.lebenslauf")} placeholder=${K.t("import.lebenslaufPlatzhalter")} hinweis=${K.t("import.lebenslaufHinweis")} wert=${text[0]} beiAenderung=${text[1]} rows="6" />
       <${UI.PromptPanel}
         prompt=${prompt}
         platzhalter=${aktiv}

@@ -286,7 +286,7 @@
             inputmode="numeric"
             autocomplete="off"
             onInput=${function (e) {
-              setText(e.target.value);
+              setText(K.maskeAnwenden(e.target, e.inputType, text, K.maskeDatum));
             }}
             onBlur=${pruefen}
             onKeyDown=${function (e) {

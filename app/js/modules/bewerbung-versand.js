@@ -112,9 +112,9 @@
 
     return html`<${UI.Dialog} titel=${K.t(rueckfrage ? "rueckfrage.titel" : "email.titel")} breit=${true} bestaetigen=${K.t("email.erstellen")} laedt=${laedt[0]} beiBestaetigen=${erstellen} beiSchliessen=${props.beiSchliessen}>
       ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
-      <${UI.TextField} label=${K.t("email.an")} wert=${w[0].an} beiAenderung=${setzen("an")} hinweis=${K.t("email.anHinweis")} />
-      <${UI.TextField} label=${K.t("email.betreff")} wert=${w[0].betreff} beiAenderung=${setzen("betreff")} />
-      <${UI.Textarea} label=${K.t("email.text")} rows="8" spellcheck="true" lang=${b.sprache} wert=${w[0].text} beiAenderung=${setzen("text")} />
+      <${UI.TextField} label=${K.t("email.an")} placeholder=${K.t("email.anPlatzhalter")} wert=${w[0].an} beiAenderung=${setzen("an")} hinweis=${K.t("email.anHinweis")} />
+      <${UI.TextField} label=${K.t("email.betreff")} placeholder=${K.t("email.betreffPlatzhalter")} wert=${w[0].betreff} beiAenderung=${setzen("betreff")} />
+      <${UI.Textarea} label=${K.t("email.text")} placeholder=${K.t("email.textPlatzhalter")} rows="8" spellcheck="true" lang=${b.sprache} wert=${w[0].text} beiAenderung=${setzen("text")} />
       <div class="rj-stack" style="gap:0">
         ${vorhanden.length > 0 && html`<span class="rj-label">${K.t("email.anhaenge")}</span>`}
         ${vorhanden.map(function (a) {

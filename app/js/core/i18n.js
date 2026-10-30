@@ -7,6 +7,10 @@
   };
 
   // Fehlt ein Schlüssel, erscheint er sichtbar in der Oberfläche statt eines leeren Texts.
+  K.tIn = function (sprache, schluessel) {
+    return window.R42J_I18N[sprache][schluessel];
+  };
+
   K.t = function (schluessel, werte) {
     var text = window.R42J_I18N[K.sprache()][schluessel];
     if (text === undefined) text = schluessel;

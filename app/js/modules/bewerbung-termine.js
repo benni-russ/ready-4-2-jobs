@@ -92,9 +92,9 @@
         <${UI.TextField} label=${K.t("termin.von")} type="time" fehler=${fehler[0].zeit} wert=${w[0].von} beiAenderung=${setzen("von")} />
         <${UI.TextField} label=${K.t("termin.bis")} type="time" wert=${w[0].bis} beiAenderung=${setzen("bis")} />
       </div>
-      <${UI.TextField} label=${K.t("termin.ort")} hinweis=${K.t("termin.ortHinweis")} wert=${w[0].ort} beiAenderung=${setzen("ort")} />
-      <${UI.TextField} label=${K.t("termin.link")} fehler=${fehler[0].link} wert=${w[0].link} beiAenderung=${setzen("link")} />
-      <${UI.Textarea} label=${K.t("termin.notiz")} rows="3" wert=${w[0].notiz} beiAenderung=${setzen("notiz")} />
+      <${UI.TextField} label=${K.t("termin.ort")} placeholder=${K.t("termin.ortPlatzhalter")} hinweis=${K.t("termin.ortHinweis")} wert=${w[0].ort} beiAenderung=${setzen("ort")} />
+      <${UI.TextField} label=${K.t("termin.link")} placeholder=${K.t("termin.linkPlatzhalter")} fehler=${fehler[0].link} wert=${w[0].link} beiAenderung=${setzen("link")} />
+      <${UI.Textarea} label=${K.t("termin.notiz")} placeholder=${K.t("termin.notizPlatzhalter")} rows="3" wert=${w[0].notiz} beiAenderung=${setzen("notiz")} />
     <//>`;
   }
 

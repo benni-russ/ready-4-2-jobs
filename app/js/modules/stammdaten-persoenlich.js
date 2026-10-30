@@ -46,6 +46,7 @@
     function text(feld, extra) {
       return html`<${UI.TextField}
         label=${K.t("profil." + feld)}
+        placeholder=${K.t("profil." + feld + "Platzhalter")}
         wert=${p[feld] || ""}
         beiAenderung=${function (w) {
           setzen(feld, w);
@@ -57,6 +58,7 @@
     function adresse(feld, extra) {
       return html`<${UI.TextField}
         label=${K.t("profil." + feld)}
+        placeholder=${K.t("profil." + feld + "Platzhalter")}
         wert=${a[feld] || ""}
         beiAenderung=${function (w) {
           adresseSetzen(feld, w);
@@ -90,6 +92,7 @@
     function text(feld, extra) {
       return html`<${UI.TextField}
         label=${K.t("profil." + feld)}
+        placeholder=${K.t("profil." + feld + "Platzhalter")}
         wert=${p[feld] || ""}
         beiAenderung=${function (w) {
           setzen(feld, w);

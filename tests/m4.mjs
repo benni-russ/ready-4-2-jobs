@@ -1,6 +1,6 @@
 // M4: Bewerbung von der Stelle bis zum Versand. Testdaten frei erfunden.
 import { writeFileSync } from "node:fs";
-import { chromium, URLAPP, SP, kanaele, pdfInfo } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, pdfInfo, waehle } from "./hilfen.mjs";
 
 let fehlerZahl = 0;
 function ok(name, wahr, info) {
@@ -169,7 +169,7 @@ for (const channel of kanaele()) {
 
   // KI-Antwort über den Tresor-Workflow: Keyword kommt dazu.
   await p.getByLabel("Name", { exact: true }).fill("Dr. Beispiel");
-  await p.getByLabel("Anrede", { exact: true }).selectOption("frau");
+  await waehle(p, p.getByLabel("Anrede", { exact: true }), "frau");
   await p.getByLabel("Adresse", { exact: true }).fill("Beispiel Müller AG\nHauptstraße 5\n54321 Musterdorf");
   await p.getByText("Anzeige mit einer KI auswerten").click();
   await p.getByRole("textbox", { name: /Antwort/ }).first().fill('{"keywords":["Workday"],"anforderungen":["Erfahrung"],"branche":"Handel"}');
