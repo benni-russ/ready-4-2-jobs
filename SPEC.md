@@ -127,6 +127,8 @@ Beim ersten Start werden fehlende Ordner angelegt und `wissen-default/` nach `da
 - Backup = verschlüsselte Kopie von Tresor + Anlagen als eine Datei `r42j-backup-<id>-<datum>.r42jb` (`<id>` = erste 8 Zeichen der Profil-ID, weil der zweite Ort ein Cloud-Ordner sein kann und dort kein Name stehen soll). Container: 4 Byte Länge des JSON-Index (Little Endian), Index, verschlüsselte Dateien hintereinander.
 - Wiederherstellen aus Backup über Startbildschirm.
 
+- Sicherungen und Wiederherstellungen laufen nacheinander, auch wenn Entsperren, Sperren und „Jetzt sichern“ zusammenfallen.
+
 ### 4.5 Export-Ordner
 - `.eml` und erzeugte PDFs landen beim Öffnen/Herunterladen unverschlüsselt in `daten/export/`.
 - Wird beim App-Start und beim Sperren geleert. Hinweis im UI.
@@ -256,7 +258,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Bereiche: Persönliches, Ausrichtungen, Stationen, Erfolge (STAR), Kompetenzen, Zertifikate, Sprachen, Interessen, Anlagen.
 - Oberfläche: sechs Reiter (Persönliches, Ausrichtungen, Stationen, Erfolge, Kompetenzen, „Zertifikate & mehr“ für Zertifikate, Sprachen und Interessen); Anlagen haben eine eigene Seite. Stationen speichern `von`/`bis` als Monat `JJJJ-MM`.
 - Jeder Eintrag mit Ausrichtungs-Tags (Mehrfachauswahl, „alle“ als Abkürzung; gespeichert werden die einzelnen IDs).
-- Zweisprachige Felder: DE/EN-Umschalter am Feld; fehlende Übersetzung wird markiert.
+- Zweisprachige Felder: DE/EN-Umschalter am Feld; fehlende Übersetzung wird markiert. Fehlt eine Fassung, bietet das Feld „In DeepL öffnen“: ein vom Nutzer geklickter HTTPS-Link (`https://www.deepl.com/translator#<von>/<nach>/<Text>`), Text kodiert im Fragment, `rel="noopener noreferrer"`, mit sichtbarem Hinweis auf die Weitergabe an DeepL. Über 1.500 Zeichen entfällt der Link zugunsten eines Hinweises. Kein API-Schlüssel, keine Netzanfrage der App, keine CSP-Änderung.
 - Anlagen: Drag & Drop (PDF, JPG, PNG), Vorschau, Kategorie, Tags. Bilder werden beim Einfügen in die Bewerbungsmappe (M5) in PDF gewandelt.
 - **Suche** (global, `Strg/Cmd + K`): MiniSearch über Kompetenzen (inkl. Synonyme), Stationen, Erfolge, Zertifikate, Anlagen-Titel/Tags, Bewerbungen (Firma, Stelle). Index nur im Speicher.
 
@@ -265,11 +267,15 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Antworten in festem JSON-Format (im Prompt definiert, in ```json-Block). Parser toleriert Text drumherum, validiert Schema, zeigt Fehler verständlich.
 - Workflows:
   - Lebenslauf-Import (Text → Stammdaten-JSON)
+  - KI-Interview (Ausrichtungen, Erfolge, Kompetenzen, Interessen oder alles nacheinander): Die KI fragt im externen Chat einzeln nach und gibt am Ende festes JSON aus. Variante „Eigenen Text strukturieren“ für eingefügten Text. Vorhandene Bezeichnungen sind optional im Prompt und maskiert.
+  - Fehlende Übersetzungen ergänzen (offene i18n-Felder → `{ uebersetzungen: [{ id, text }] }`); vorhandene Fassungen werden nie überschrieben.
   - Stellenanalyse (Anzeige → Keywords, Anforderungen, Unternehmensinfos)
   - Anschreiben (Profil-Auszug + Anzeige → Abschnitte)
   - Rechtschreib-/Stilkorrektur (Text → korrigierter Text + Änderungsliste)
   - Unternehmensfragen (Firma + Anzeige → Fragen im Lernformat)
-- Platzhalter-Ersetzung gemäß 4.6.
+- Platzhalter-Ersetzung gemäß 4.6. Unbekannte Platzhalter in einer Antwort führen zu einer Fehlermeldung. Der Hinweis, keine Namen Dritter zu nennen und dass die Maskierung nicht alles erkennt, steht sichtbar am Ablauf.
+- Interview und Übersetzungen nehmen die Antwort auch als `.txt`, `.md` oder `.json` bis 2 MB an. PDF-Dateien liest die App nicht aus.
+- Vor dem Übernehmen wählt der Nutzer in der Vorschau einzelne Einträge aus. Dubletten (Vergleich ohne Groß-/Kleinschreibung und Umlaut-Schreibweise, bei Kompetenzen inkl. Synonyme) werden nicht angelegt. Stationen werden über `S1`, `S2` … oder den Namen aufgelöst, Kompetenzen und Ausrichtungen über den Namen. Unbekannte Kompetenzen eines gewählten Eintrags entstehen mit, nicht zuordenbare Verweise entfallen mit Hinweis.
 
 ### 6.4 Stelle erfassen
 - Eingabe: Anzeigentext einfügen **oder** Markdown-Datei importieren (z. B. Obsidian Web Clipper; Frontmatter `title`, `source`, `company` auslesen).

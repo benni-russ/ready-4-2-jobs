@@ -122,7 +122,12 @@ for (const channel of kanaele()) {
   // Sechs Bewerbungen mit unterschiedlichem Alter, relativ zu heute.
   await p.evaluate((TAG) => {
     const K = window.R42J_CORE;
-    const vor = (t) => new Date(Date.now() - t * TAG).toISOString();
+    // Kalendertage statt 24-Stunden-Schritte, sonst verrutscht das Datum über die Zeitumstellung.
+    const vor = (t) => {
+      const d = new Date();
+      d.setDate(d.getDate() - t);
+      return d.toISOString();
+    };
     const ausrichtung = K.tresor.daten().ausrichtungen[0].id;
     K.tresor.aendern((d) => {
       d.profil.adresse = { strasse: "Musterweg 1", plz: "12345", ort: "Musterstadt", land: "Deutschland" };

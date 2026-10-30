@@ -114,15 +114,17 @@
       var ende = kandidat.lastIndexOf("}");
       if (start === -1) throw K.Fehler("ki.fehlerKeinJson");
       if (ende <= start) throw K.Fehler("ki.fehlerJsonKaputt");
-      kandidat = kandidat
-        .slice(start, ende + 1)
-        .replace(/[“”„]/g, '"')
-        .replace(/,(\s*[}\]])/g, "$1");
-      try {
-        return JSON.parse(kandidat);
-      } catch (e) {
-        throw K.Fehler("ki.fehlerJsonKaputt");
+      kandidat = kandidat.slice(start, ende + 1);
+      // Erst unverändert lesen: Deutsche Anführungszeichen sind im Text gültig und dürfen bleiben.
+      var fassungen = [kandidat, kandidat.replace(/,(\s*[}\]])/g, "$1"), kandidat.replace(/[“”„]/g, '"').replace(/,(\s*[}\]])/g, "$1")];
+      for (var i = 0; i < fassungen.length; i++) {
+        try {
+          return JSON.parse(fassungen[i]);
+        } catch (e) {
+          // Die nächste Fassung ist nachsichtiger.
+        }
       }
+      throw K.Fehler("ki.fehlerJsonKaputt");
     },
 
     // schema: { feld: { pflicht?, typ: "text"|"liste"|"objekt", erlaubt?, muster?, felder?, eintrag? } }.

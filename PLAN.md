@@ -55,6 +55,7 @@
 - [x] Globale Suche (`Strg/Cmd + K`).
 - [x] KI-Workflow-Grundgerüst (Prompt kopieren → Antwort einfügen → validieren), Platzhalter-Ersetzung.
 - [x] Lebenslauf-Import per KI (Onboarding-Schritt 7).
+- [x] KI-Interview, „Eigenen Text strukturieren“, Prompt „Fehlende Übersetzungen ergänzen“ und DeepL-Link an zweisprachigen Feldern.
 - [x] Onboarding-Schritte 7–8.
 
 **Akzeptanz:** Vollständiges Profil anlegbar; Suche findet Kompetenz über Synonym; Anlage nach Neustart wieder anzeigbar; KI-Import mit fehlerhaftem JSON zeigt verständliche Meldung.

@@ -34,6 +34,15 @@
       });
   }
 
+  // Entsperren, Sperren und „Jetzt sichern“ können zusammenfallen. Gleichzeitige Läufe
+  // schreiben dieselbe *.tmp und rotieren dieselben Dateien, deshalb immer einer nach dem anderen.
+  var warteschlange = Promise.resolve();
+  function einreihen(aufgabe) {
+    var lauf = warteschlange.then(aufgabe);
+    warteschlange = lauf.catch(function () {});
+    return lauf;
+  }
+
   // Behält je Tag die neueste Sicherung, damit eine Sitzungsfolge nicht die ganze
   // Historie verdrängt. Die neueste Schutzkopie zählt nicht mit, außer es bleibt nur eine.
   async function rotieren(ordner, eintrag, behalten) {
@@ -110,8 +119,13 @@
     var dateien = [{ pfad: K.DATEI_TRESOR, bytes: await K.fs.lesen(ordner, K.DATEI_TRESOR) }];
     var anlagen = await K.fs.dateien(await K.profile.ordner(eintrag, ["anlagen"]));
     for (var i = 0; i < anlagen.length; i++) {
-      var d = await anlagen[i].getFile();
-      dateien.push({ pfad: "anlagen/" + anlagen[i].name, bytes: new Uint8Array(await d.arrayBuffer()) });
+      // Eine gerade gelöschte Anlage gehört nicht mehr in die Sicherung.
+      try {
+        var d = await anlagen[i].getFile();
+        dateien.push({ pfad: "anlagen/" + anlagen[i].name, bytes: new Uint8Array(await d.arrayBuffer()) });
+      } catch (e) {
+        if (!e || e.name !== "NotFoundError") throw e;
+      }
     }
     return dateien;
   }
@@ -134,19 +148,46 @@
     }
   }
 
+  async function erstellen(eintrag, anfragen, behalten, schutz) {
+    var grenze = behalten || ROTATION;
+    var bytes = packen(eintrag.id, await sammeln(eintrag));
+    var name = dateiname(eintrag, schutz);
+    var ordner = await K.profile.ordner(eintrag, ["backups"]);
+    await K.fs.schreibenAtomar(ordner, name, bytes);
+    await rotieren(ordner, eintrag, grenze);
+    return { name: name, ziel2: await zweiterOrt(eintrag, name, bytes, anfragen, grenze) };
+  }
+
+  async function wiederherstellen(bytes, nameFallback) {
+    var inhalt = entpacken(bytes);
+    var vorhanden = (await K.profile.liste()).filter(function (e) {
+      return e.id === inhalt.profilId;
+    })[0];
+    var eintrag = vorhanden || { id: inhalt.profilId, name: nameFallback, datei: K.DATEI_TRESOR };
+    if (vorhanden) await erstellen(vorhanden, false, ROTATION, true);
+
+    var ordner = await K.profile.ordner(eintrag);
+    var anlagen = await K.profile.ordner(eintrag, ["anlagen"]);
+    await K.fs.leeren(anlagen);
+    await K.profile.ordner(eintrag, ["backups"]);
+    for (var i = 0; i < inhalt.dateien.length; i++) {
+      var d = inhalt.dateien[i];
+      if (d.pfad === K.DATEI_TRESOR) await K.fs.schreibenAtomar(ordner, d.pfad, d.bytes);
+      else await K.fs.schreibenAtomar(anlagen, d.pfad.slice("anlagen/".length), d.bytes);
+    }
+    await K.profile.hinzufuegen(eintrag);
+    return eintrag;
+  }
+
   K.backup = {
     ENDUNG: ENDUNG,
     pruefen: entpacken,
 
     // Ohne Datenschlüssel möglich: Es werden nur verschlüsselte Dateien kopiert.
-    erstellen: async function (eintrag, anfragen, behalten, schutz) {
-      var grenze = behalten || ROTATION;
-      var bytes = packen(eintrag.id, await sammeln(eintrag));
-      var name = dateiname(eintrag, schutz);
-      var ordner = await K.profile.ordner(eintrag, ["backups"]);
-      await K.fs.schreibenAtomar(ordner, name, bytes);
-      await rotieren(ordner, eintrag, grenze);
-      return { name: name, ziel2: await zweiterOrt(eintrag, name, bytes, anfragen, grenze) };
+    erstellen: function (eintrag, anfragen, behalten, schutz) {
+      return einreihen(function () {
+        return erstellen(eintrag, anfragen, behalten, schutz);
+      });
     },
 
     // Stand vor einem Eingriff: Spätere Sicherungen desselben Tages ersetzen ihn nicht.
@@ -193,25 +234,10 @@
 
     // Gehört das Backup zu einem vorhandenen Profil, ersetzt es dessen Stand.
     // Vorher wird dieser Stand selbst gesichert, damit nichts verloren geht.
-    wiederherstellen: async function (bytes, nameFallback) {
-      var inhalt = entpacken(bytes);
-      var vorhanden = (await K.profile.liste()).filter(function (e) {
-        return e.id === inhalt.profilId;
-      })[0];
-      var eintrag = vorhanden || { id: inhalt.profilId, name: nameFallback, datei: K.DATEI_TRESOR };
-      if (vorhanden) await K.backup.schutzkopie(vorhanden);
-
-      var ordner = await K.profile.ordner(eintrag);
-      var anlagen = await K.profile.ordner(eintrag, ["anlagen"]);
-      await K.fs.leeren(anlagen);
-      await K.profile.ordner(eintrag, ["backups"]);
-      for (var i = 0; i < inhalt.dateien.length; i++) {
-        var d = inhalt.dateien[i];
-        if (d.pfad === K.DATEI_TRESOR) await K.fs.schreibenAtomar(ordner, d.pfad, d.bytes);
-        else await K.fs.schreibenAtomar(anlagen, d.pfad.slice("anlagen/".length), d.bytes);
-      }
-      await K.profile.hinzufuegen(eintrag);
-      return eintrag;
+    wiederherstellen: function (bytes, nameFallback) {
+      return einreihen(function () {
+        return wiederherstellen(bytes, nameFallback);
+      });
     },
   };
 })();

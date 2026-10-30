@@ -32,6 +32,11 @@
       knoepfe[SPRACHEN.indexOf(andere)].focus();
     }
 
+    // Die Aktion erscheint nur, wenn es etwas zu übersetzen gibt.
+    var quelle = luecke ? ((wert.de || "").trim() ? "de" : "en") : null;
+    var ziel = quelle === "de" ? "en" : "de";
+    var deepl = quelle && K.kiInterview.deepl(wert[quelle], quelle, ziel);
+
     var feld = {
       id: id,
       lang: sprache,
@@ -68,6 +73,21 @@
       ${props.fehler && html`<span class="rj-error" id=${id + "-info"}><${UI.Icon} name="circle-alert" />${props.fehler}</span>`}
       ${!props.fehler && fehlt && html`<span class="rj-hint" id=${id + "-info"} style="color:var(--warning);font-weight:700">${K.t("feld.fassungFehlt." + fehlt)}</span>`}
       ${!props.fehler && !fehlt && props.hinweis && html`<span class="rj-hint" id=${id + "-info"}>${props.hinweis}</span>`}
+      ${deepl &&
+      html`<div class="rj-row">
+        <${UI.Button}
+          variante="ghost"
+          icon="external-link"
+          href=${deepl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label=${K.t("feld.deeplLabel", { von: quelle.toUpperCase(), nach: ziel.toUpperCase() })}
+        >
+          ${K.t("feld.deepl")}
+        <//>
+      </div>
+      <span class="rj-hint">${K.t("feld.deeplHinweis")}</span>`}
+      ${quelle && !deepl && html`<span class="rj-hint">${K.t("feld.deeplZuLang", { max: K.kiInterview.DEEPL_MAX })}</span>`}
     </div>`;
   };
 })();

@@ -22,6 +22,17 @@
       }
     }
 
+    async function dateiLesen(dateien) {
+      try {
+        antwort[1](await K.kiInterview.dateiLesen(dateien[0]));
+        fehler[1]([]);
+      } catch (e) {
+        var text = K.fehlerText(e);
+        fehler[1]([text]);
+        document.getElementById("rj-live").textContent = text;
+      }
+    }
+
     return html`<div class="rj-prompt">
       <div class="rj-prompt__step">
         <span class="rj-prompt__num">1</span>
@@ -44,6 +55,7 @@
         <span class="rj-prompt__num">3</span>
         <div>
           <${UI.Textarea} label=${K.t("ki.schritt3")} placeholder=${K.t("ki.antwortPlatzhalter")} wert=${antwort[0]} beiAenderung=${antwort[1]} rows="8" spellcheck="false" />
+          ${props.datei && html`<${UI.FileDrop} accept=".txt,.md,.json" hinweis=${K.t("ki.dateiHinweis")} beiDateien=${dateiLesen} />`}
           ${fehler[0].length > 0 &&
           html`<${UI.Alert} art="danger">
             ${fehler[0].length === 1
