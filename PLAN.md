@@ -41,7 +41,7 @@
 - [x] Profilliste `profile.json`, Profil anlegen/öffnen/löschen.
 - [x] Onboarding-Assistent Schritte 1–6 inkl. Druckblatt Wiederherstellungsschlüssel.
 - [x] Auto-Sperre (Inaktivität, Tab schließen), Sperrbildschirm.
-- [x] Backups: lokal mit Rotation 5, zweiter Ort, Wiederherstellen.
+- [x] Backups: lokal mit Rotation (eine je Tag, höchstens 3), zweiter Ort, Wiederherstellen.
 - [x] Export-Ordner leeren beim Start/Sperren.
 - [x] Migrations-Grundgerüst (`schema`).
 

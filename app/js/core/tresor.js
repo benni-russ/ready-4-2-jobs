@@ -82,7 +82,7 @@
     if (tresor.schema > K.SCHEMA) throw K.Fehler("fehler.neueresSchema");
     var migrieren = K.migrationNoetig(tresor);
     if (migrieren) {
-      await K.backup.erstellen(e, false);
+      await K.backup.schutzkopie(e);
       tresor = K.migrieren(tresor);
     }
     dek = schluessel;

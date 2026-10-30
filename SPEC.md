@@ -121,9 +121,9 @@ Beim ersten Start werden fehlende Ordner angelegt und `wissen-default/` nach `da
 
 ### 4.4 Backups
 - Automatisch nach jeder Sitzung mit Änderungen + manuell per Button.
-- Ziel 1: `daten/<profil>/backups/`, Rotation: letzte **5** Stände.
+- Ziel 1: `daten/<profil>/backups/`, Rotation: neueste Sicherung je Tag, insgesamt **3**. Vor dem Wiederherstellen und vor Migrationen entsteht zusätzlich eine Schutzkopie (`-schutz.r42jb`), die neueste davon bleibt erhalten.
 - Sicherungen behalten Passwort und Schlüssel ihres Stands. Beim Wechsel von Passwort oder Schlüssel sagt die App das und bietet an, alle alten Sicherungen durch eine neue zu ersetzen (Standard: aus).
-- Ziel 2 (empfohlen, im Onboarding abgefragt): frei wählbarer Ordner (Festplatte, Cloud-Sync-Ordner), ebenfalls Rotation 5. Handle in IndexedDB.
+- Ziel 2 (empfohlen, im Onboarding abgefragt): frei wählbarer Ordner (Festplatte, Cloud-Sync-Ordner), gleiche Rotation. Handle in IndexedDB.
 - Backup = verschlüsselte Kopie von Tresor + Anlagen als eine Datei `r42j-backup-<id>-<datum>.r42jb` (`<id>` = erste 8 Zeichen der Profil-ID, weil der zweite Ort ein Cloud-Ordner sein kann und dort kein Name stehen soll). Container: 4 Byte Länge des JSON-Index (Little Endian), Index, verschlüsselte Dateien hintereinander.
 - Wiederherstellen aus Backup über Startbildschirm.
 

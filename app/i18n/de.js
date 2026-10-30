@@ -210,7 +210,7 @@ window.R42J_I18N.de = {
   "einstellungen.exportLeeren": "Export-Ordner leeren",
   "einstellungen.exportGeleert": "Export-Ordner geleert",
   "backup.titel": "Sicherungen",
-  "backup.text": "R42J sichert automatisch nach jeder Sitzung mit Änderungen und behält die letzten 5.",
+  "backup.text": "R42J sichert automatisch nach jeder Sitzung mit Änderungen. Es behält die neueste Sicherung pro Tag, insgesamt höchstens 3.",
   "backup.jetzt": "Jetzt sichern",
   "backup.erstellt": "Sicherung erstellt",
   "backup.liste": "Vorhandene Sicherungen",

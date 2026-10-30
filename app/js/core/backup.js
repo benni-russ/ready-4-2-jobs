@@ -2,20 +2,21 @@
   "use strict";
   var K = window.R42J_CORE;
 
-  var ROTATION = 5;
+  var ROTATION = 3;
   var ENDUNG = ".r42jb";
   var PRAEFIX = "r42j-backup-";
+  var SCHUTZ = "-schutz" + ENDUNG;
 
   function zwei(n) {
     return (n < 10 ? "0" : "") + n;
   }
 
-  function dateiname(eintrag) {
+  function dateiname(eintrag, schutz) {
     var d = new Date();
     var stempel =
       d.getFullYear() + "-" + zwei(d.getMonth() + 1) + "-" + zwei(d.getDate()) +
       "-" + zwei(d.getHours()) + zwei(d.getMinutes()) + zwei(d.getSeconds());
-    return PRAEFIX + eintrag.id.slice(0, 8) + "-" + stempel + ENDUNG;
+    return PRAEFIX + eintrag.id.slice(0, 8) + "-" + stempel + (schutz ? SCHUTZ : ENDUNG);
   }
 
   function vomProfil(eintrag, name) {
@@ -33,9 +34,26 @@
       });
   }
 
+  // Behält je Tag die neueste Sicherung, damit eine Sitzungsfolge nicht die ganze
+  // Historie verdrängt. Die neueste Schutzkopie zählt nicht mit, außer es bleibt nur eine.
   async function rotieren(ordner, eintrag, behalten) {
     var liste = await backupDateien(ordner, eintrag);
-    for (var i = behalten; i < liste.length; i++) await K.fs.loeschen(ordner, liste[i].name);
+    var tage = {};
+    var anzahl = 0;
+    var schutzDa = behalten === 1;
+    for (var i = 0; i < liste.length; i++) {
+      var name = liste[i].name;
+      var tag = name.match(/\d{4}-\d{2}-\d{2}(?=-\d{6})/)[0];
+      var schutz = name.slice(-SCHUTZ.length) === SCHUTZ;
+      if (schutz ? schutzDa : tage[tag] || anzahl >= behalten) {
+        await K.fs.loeschen(ordner, name);
+      } else if (schutz) {
+        schutzDa = true;
+      } else {
+        tage[tag] = true;
+        anzahl++;
+      }
+    }
   }
 
   // Aufbau: 4 Byte Index-Länge, JSON-Index, Dateien hintereinander (SPEC §4.4).
@@ -121,14 +139,19 @@
     pruefen: entpacken,
 
     // Ohne Datenschlüssel möglich: Es werden nur verschlüsselte Dateien kopiert.
-    erstellen: async function (eintrag, anfragen, behalten) {
+    erstellen: async function (eintrag, anfragen, behalten, schutz) {
       var grenze = behalten || ROTATION;
       var bytes = packen(eintrag.id, await sammeln(eintrag));
-      var name = dateiname(eintrag);
+      var name = dateiname(eintrag, schutz);
       var ordner = await K.profile.ordner(eintrag, ["backups"]);
       await K.fs.schreibenAtomar(ordner, name, bytes);
       await rotieren(ordner, eintrag, grenze);
       return { name: name, ziel2: await zweiterOrt(eintrag, name, bytes, anfragen, grenze) };
+    },
+
+    // Stand vor einem Eingriff: Spätere Sicherungen desselben Tages ersetzen ihn nicht.
+    schutzkopie: function (eintrag) {
+      return K.backup.erstellen(eintrag, false, ROTATION, true);
     },
 
     // Alte Sicherungen öffnen sich weiter mit dem alten Passwort und Schlüssel.
@@ -176,7 +199,7 @@
         return e.id === inhalt.profilId;
       })[0];
       var eintrag = vorhanden || { id: inhalt.profilId, name: nameFallback, datei: K.DATEI_TRESOR };
-      if (vorhanden) await K.backup.erstellen(vorhanden, false);
+      if (vorhanden) await K.backup.schutzkopie(vorhanden);
 
       var ordner = await K.profile.ordner(eintrag);
       var anlagen = await K.profile.ordner(eintrag, ["anlagen"]);

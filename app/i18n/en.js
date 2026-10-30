@@ -210,7 +210,7 @@ window.R42J_I18N.en = {
   "einstellungen.exportLeeren": "Empty export folder",
   "einstellungen.exportGeleert": "Export folder emptied",
   "backup.titel": "Backups",
-  "backup.text": "R42J backs up automatically after every session with changes and keeps the last 5.",
+  "backup.text": "R42J backs up automatically after every session with changes. It keeps the newest backup per day, 3 at most.",
   "backup.jetzt": "Back up now",
   "backup.erstellt": "Backup created",
   "backup.liste": "Existing backups",
