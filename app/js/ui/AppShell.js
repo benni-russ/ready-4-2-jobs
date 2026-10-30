@@ -45,7 +45,7 @@
     var eingeklappt = z.seitenleisteEingeklappt;
     var seite = props.seite;
     var inhalt = hooks.useRef(null);
-    var ersterStart = hooks.useRef(true);
+    var profilName = K.tresor.eintrag().name;
     var dunkel = document.documentElement.getAttribute("data-theme") === "dark";
 
     function umschalten() {
@@ -65,13 +65,9 @@
       };
     }, []);
 
-    // Beim Seitenwechsel landet der Fokus im Inhalt, damit Tastatur und Screenreader folgen.
+    // Beim Entsperren und Seitenwechsel landet der Fokus im Inhalt, damit Tastatur und Screenreader folgen.
     hooks.useEffect(
       function () {
-        if (ersterStart.current) {
-          ersterStart.current = false;
-          return;
-        }
         inhalt.current.focus({ preventScroll: true });
         window.scrollTo(0, 0);
       },
@@ -113,6 +109,17 @@
             </ul>
           `;
         })}
+        <div class="rj-sidebar__foot">
+          <span class="rj-avatar">${K.initialen(profilName)}</span>
+          <span class="rj-nav__text" style="flex:1;font-weight:700">${profilName}</span>
+          <${UI.IconButton}
+            icon="lock"
+            label=${K.t("shell.sperren")}
+            onClick=${function () {
+              K.jetztSperren("manuell");
+            }}
+          />
+        </div>
       </nav>
       <div class="rj-main">
         <div class="rj-topbar">

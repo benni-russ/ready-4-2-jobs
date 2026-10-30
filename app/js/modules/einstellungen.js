@@ -14,12 +14,9 @@
     </div>`;
   }
 
-  S.Einstellungen = function () {
-    var z = K.store.get();
+  S.DarstellungFelder = function () {
+    var z = K.useStore();
     return html`
-      <div class="rj-pagehead"><h1 class="h1">${K.t("nav.einstellungen")}</h1></div>
-      <section class="rj-card rj-stack">
-        <h2 class="h3">${K.t("einstellungen.darstellung")}</h2>
         <${Zeile} label=${K.t("einstellungen.sprache")}>
           <${UI.SegmentedControl}
             label=${K.t("einstellungen.sprache")}
@@ -71,7 +68,17 @@
             }}
           />
         <//>
+    `;
+  };
+
+  S.Einstellungen = function () {
+    return html`
+      <div class="rj-pagehead"><h1 class="h1">${K.t("nav.einstellungen")}</h1></div>
+      <section class="rj-card rj-stack">
+        <h2 class="h3">${K.t("einstellungen.darstellung")}</h2>
+        <${S.DarstellungFelder} />
       </section>
+      <${S.TresorEinstellungen} />
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("einstellungen.komponenten")}</h2>
         <p class="rj-muted">${K.t("einstellungen.komponentenText")}</p>
