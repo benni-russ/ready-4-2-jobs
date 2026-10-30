@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src https://api.github.com; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src https://api.github.com; frame-src blob:; object-src 'none'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>R42J</title>
 <link rel="icon" type="image/svg+xml" href="img/r42j-symbol-klein.svg" media="(prefers-color-scheme: light)">
@@ -20,6 +20,8 @@
 <script src="lib/preact.umd.js"></script>
 <script src="lib/hooks.umd.js"></script>
 <script src="lib/htm.umd.js"></script>
+<script src="lib/minisearch.umd.js"></script>
+<script src="lib/pdf-lib.min.js"></script>
 <script src="js/ui/r42j-bundle.js"></script>
 <script src="i18n/de.js"></script>
 <script src="i18n/en.js"></script>
@@ -35,6 +37,10 @@
 <script src="js/core/profile.js"></script>
 <script src="js/core/backup.js"></script>
 <script src="js/core/tresor.js"></script>
+<script src="js/core/stammdaten.js"></script>
+<script src="js/core/anlagen.js"></script>
+<script src="js/core/suche.js"></script>
+<script src="js/core/ki.js"></script>
 <script src="js/core/sperre.js"></script>
 <script src="js/core/ablauf.js"></script>
 
@@ -63,6 +69,17 @@
 <script src="js/ui/Stepper.js"></script>
 <script src="js/ui/PasswordField.js"></script>
 <script src="js/ui/SchluesselBlatt.js"></script>
+<script src="js/ui/Tabs.js"></script>
+<script src="js/ui/BilingualField.js"></script>
+<script src="js/ui/TagInput.js"></script>
+<script src="js/ui/MonatsFeld.js"></script>
+<script src="js/ui/AusrichtungenWahl.js"></script>
+<script src="js/ui/FileDrop.js"></script>
+<script src="js/ui/FileItem.js"></script>
+<script src="js/ui/FilePreview.js"></script>
+<script src="js/ui/CopyButton.js"></script>
+<script src="js/ui/PromptPanel.js"></script>
+<script src="js/ui/CommandPalette.js"></script>
 <script src="js/ui/AppShell.js"></script>
 
 <script src="js/modules/hinweis.js"></script>
@@ -72,6 +89,11 @@
 <script src="js/modules/sperre.js"></script>
 <script src="js/modules/einstellungen-tresor.js"></script>
 <script src="js/modules/einstellungen.js"></script>
+<script src="js/modules/ki-import.js"></script>
+<script src="js/modules/stammdaten-liste.js"></script>
+<script src="js/modules/stammdaten-persoenlich.js"></script>
+<script src="js/modules/stammdaten.js"></script>
+<script src="js/modules/anlagen.js"></script>
 <script src="js/modules/onboarding.js"></script>
 <script src="js/modules/komponenten.js"></script>
 <script src="js/main.js"></script>

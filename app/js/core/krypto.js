@@ -160,6 +160,18 @@
       return new Uint8Array(await subtle.decrypt(aes(iv), dek, inhalt));
     },
 
+    // Anlagen liegen als IV + Ciphertext in einer Datei.
+    dateiVerschluesseln: async function (dek, bytes) {
+      var iv = zufall(IV_BYTES);
+      var inhalt = await subtle.encrypt(aes(iv), dek, bytes);
+      return verbinden(iv, new Uint8Array(inhalt));
+    },
+
+    dateiEntschluesseln: async function (dek, alles) {
+      var t = teilen(alles);
+      return new Uint8Array(await subtle.decrypt(aes(t.iv), dek, t.inhalt));
+    },
+
     // Liefert den i18n-Schlüssel des Problems oder null.
     passwortFehler: function (neu, wiederholung) {
       if (neu.length < 12) return "passwort.zuKurz";

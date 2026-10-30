@@ -17,7 +17,9 @@
       var imInhalt = kasten.current.querySelector(".rj-dialog__body input, .rj-dialog__body select, .rj-dialog__body textarea");
       (imInhalt || kasten.current.querySelector(".rj-dialog__foot button")).focus();
       return function () {
-        if (vorher && vorher.isConnected) vorher.focus();
+        // Nach einem Suchtreffer gibt es kein Ausgangselement mehr, dann in den Inhalt.
+        var ziel = vorher && vorher.isConnected && vorher !== document.body ? vorher : document.querySelector("main");
+        if (ziel) ziel.focus();
       };
     }, []);
 
@@ -41,15 +43,16 @@
 
     return html`<div class="rj-overlay">
       <form
-        class="rj-dialog"
+        class=${"rj-dialog" + (props.breit ? " rj-dialog--wide" : "")}
         role="dialog"
+        noValidate=${props.eigenePruefung}
         aria-modal="true"
         aria-labelledby=${titelId}
         ref=${kasten}
         onKeyDown=${taste}
         onSubmit=${function (e) {
           e.preventDefault();
-          props.beiBestaetigen();
+          if (props.beiBestaetigen) props.beiBestaetigen();
         }}
       >
         <div class="rj-dialog__head">
@@ -58,10 +61,12 @@
         </div>
         <div class="rj-dialog__body rj-stack">${props.children}</div>
         <div class="rj-dialog__foot">
-          <${UI.Button} onClick=${props.beiSchliessen}>${K.t("aktion.abbrechen")}<//>
-          <${UI.Button} type="submit" variante=${props.gefahr ? "danger" : "primary"} laedt=${props.laedt} disabled=${props.laedt}>
-            ${props.bestaetigen}
-          <//>
+          ${props.bestaetigen
+            ? html`<${UI.Button} onClick=${props.beiSchliessen}>${K.t("aktion.abbrechen")}<//>
+                <${UI.Button} type="submit" variante=${props.gefahr ? "danger" : "primary"} laedt=${props.laedt} disabled=${props.laedt}>
+                  ${props.bestaetigen}
+                <//>`
+            : html`<${UI.Button} onClick=${props.beiSchliessen}>${K.t("aktion.schliessen")}<//>`}
         </div>
       </form>
     </div>`;

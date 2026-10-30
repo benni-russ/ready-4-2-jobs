@@ -45,6 +45,7 @@
     var eingeklappt = z.seitenleisteEingeklappt;
     var seite = props.seite;
     var inhalt = hooks.useRef(null);
+    var sucheOffen = hooks.useState(false);
     var profilName = K.tresor.eintrag().name;
     var dunkel = document.documentElement.getAttribute("data-theme") === "dark";
 
@@ -57,6 +58,10 @@
         if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === "b" || e.key === "B")) {
           e.preventDefault();
           umschalten();
+        }
+        if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === "k" || e.key === "K")) {
+          e.preventDefault();
+          sucheOffen[1](true);
         }
       }
       document.addEventListener("keydown", taste);
@@ -124,6 +129,14 @@
       <div class="rj-main">
         <div class="rj-topbar">
           <span style="flex:1"></span>
+          <${UI.IconButton}
+            icon="search"
+            label=${K.t("suche.oeffnen")}
+            title=${K.t("suche.oeffnen") + " (" + K.t("suche.taste") + ")"}
+            onClick=${function () {
+              sucheOffen[1](true);
+            }}
+          />
           <${UI.IconButton} icon=${dunkel ? "moon" : "sun"} label=${labelTheme} onClick=${themeWechseln} />
           <${UI.IconButton}
             icon="settings"
@@ -136,6 +149,17 @@
         </div>
         <main class="rj-content" tabindex="-1" ref=${inhalt}>${props.children}</main>
       </div>
+      ${sucheOffen[0] &&
+      html`<${UI.CommandPalette}
+        beiSuche=${K.suche.suchen}
+        beiWahl=${function (t) {
+          sucheOffen[1](false);
+          K.navigieren(t.ziel);
+        }}
+        beiSchliessen=${function () {
+          sucheOffen[1](false);
+        }}
+      />`}
     </div>`;
   };
 })();

@@ -6,7 +6,7 @@
   var hooks = window.preactHooks;
   var S = (window.R42J_SEITEN = window.R42J_SEITEN || {});
 
-  var SCHRITTE = 6;
+  var SCHRITTE = 8;
   var CHECKLISTE = ["postfach", "email", "telefon", "linkedin", "xing"];
 
   function Geruest(props) {
@@ -20,7 +20,7 @@
     return html`<main class="rj-content" style="margin:0 auto;width:min(720px,100%)">
       <${UI.Stepper}
         aktuell=${props.schritt}
-        schritte=${[1, 2, 3, 4, 5, 6].map(function (n) {
+        schritte=${[1, 2, 3, 4, 5, 6, 7, 8].map(function (n) {
           return K.t("onboarding.schritt" + n);
         })}
       />
@@ -110,7 +110,68 @@
           </li>`;
         })}
       </ul>
-      <${Knoepfe} zurueck=${props.zurueck} weiter=${props.weiter} weiterText=${K.t("onboarding.fertig")} />
+      <${Knoepfe} zurueck=${props.zurueck} weiter=${props.weiter} />
+    `;
+  }
+
+  // Manuell oder per KI; die übrigen Bereiche lassen sich später unter Stammdaten ergänzen.
+  function SchrittStammdaten(props) {
+    var weg = hooks.useState("manuell");
+    return html`
+      <p>${K.t("onboarding.stammdatenText")}</p>
+      <${UI.SegmentedControl}
+        label=${K.t("onboarding.stammdatenWeg")}
+        wert=${weg[0]}
+        beiAenderung=${weg[1]}
+        optionen=${[
+          { wert: "manuell", label: K.t("onboarding.manuell"), icon: "pencil" },
+          { wert: "ki", label: K.t("onboarding.import"), icon: "sparkles" },
+        ]}
+      />
+      ${weg[0] === "manuell"
+        ? html`<${S.PersoenlichFelder} />`
+        : html`<${S.LebenslaufImport}
+            beiFertig=${props.weiter}
+            beiSelbst=${function () {
+              weg[1]("manuell");
+            }}
+          />`}
+      <${Knoepfe} zurueck=${props.zurueck} ueberspringen=${props.weiter} weiter=${props.weiter} />
+    `;
+  }
+
+  function SchrittAusrichtung(props) {
+    var name = hooks.useState("");
+    var kurzprofil = hooks.useState({});
+    var zuordnen = hooks.useState(true);
+    var fehler = hooks.useState(null);
+    var vorhanden = K.stammdaten.hatEintraege();
+
+    function weiter() {
+      if (!name[0].trim()) return fehler[1](K.t("feld.fehlt"));
+      var a = { id: K.uuid(), name: name[0].trim(), kurzprofil: kurzprofil[0], kernkompetenzen: [] };
+      K.stammdaten.speichern("ausrichtungen", a);
+      if (vorhanden && zuordnen[0]) K.stammdaten.allenZuordnen(a.id);
+      props.weiter();
+    }
+
+    return html`
+      <p>${K.t("ausrichtung.erklaerung")}</p>
+      <${UI.TextField} label=${K.t("ausrichtung.name")} hinweis=${K.t("ausrichtung.nameHinweis")} pflicht=${true} fehler=${fehler[0]} wert=${name[0]} beiAenderung=${name[1]} />
+      <${UI.BilingualField}
+        label=${K.t("ausrichtung.kurzprofil")}
+        hinweis=${K.t("ausrichtung.kurzprofilHinweis")}
+        mehrzeilig=${true}
+        wert=${kurzprofil[0]}
+        beiAenderung=${kurzprofil[1]}
+      />
+      ${vorhanden && html`<${UI.Checkbox} label=${K.t("onboarding.allenZuordnen")} wert=${zuordnen[0]} beiAenderung=${zuordnen[1]} />`}
+      <${Knoepfe}
+        zurueck=${props.zurueck}
+        ueberspringen=${props.ueberspringen}
+        weiter=${weiter}
+        weiterText=${K.t("onboarding.fertig")}
+      />
     `;
   }
 
@@ -198,8 +259,12 @@
       inhalt = html`<${SchrittBackup} weiter=${nach(5)} />`;
     } else if (n === 5) {
       inhalt = html`<${SchrittUpdate} zurueck=${nach(4)} weiter=${nach(6)} />`;
-    } else {
+    } else if (n === 6) {
       inhalt = html`<${SchrittCheckliste} zurueck=${nach(5)} weiter=${nach(7)} />`;
+    } else if (n === 7) {
+      inhalt = html`<${SchrittStammdaten} zurueck=${nach(6)} weiter=${nach(8)} />`;
+    } else {
+      inhalt = html`<${SchrittAusrichtung} zurueck=${nach(7)} ueberspringen=${nach(9)} weiter=${nach(9)} />`;
     }
     return html`<${Geruest} schritt=${n}>${inhalt}<//>`;
   };

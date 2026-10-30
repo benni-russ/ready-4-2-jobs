@@ -49,7 +49,7 @@
 ```
 default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';
 img-src 'self' data: blob:; font-src 'self';
-connect-src https://api.github.com; frame-src 'none'; object-src 'none';
+connect-src https://api.github.com; frame-src blob:; object-src 'none';
 form-action 'none'; base-uri 'none'
 ```
 Externe Links nur `https://`, mit `rel="noopener noreferrer"`. Kein `eval`/`new Function` im eigenen Code oder in Bibliotheken.
@@ -249,9 +249,10 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 
 ### 6.2 Stammdaten
 - Bereiche: Persönliches, Ausrichtungen, Stationen, Erfolge (STAR), Kompetenzen, Zertifikate, Sprachen, Interessen, Anlagen.
-- Jeder Eintrag mit Ausrichtungs-Tags (Mehrfachauswahl, „alle“ als Abkürzung).
+- Oberfläche: sechs Reiter (Persönliches, Ausrichtungen, Stationen, Erfolge, Kompetenzen, „Zertifikate & mehr“ für Zertifikate, Sprachen und Interessen); Anlagen haben eine eigene Seite. Stationen speichern `von`/`bis` als Monat `JJJJ-MM`.
+- Jeder Eintrag mit Ausrichtungs-Tags (Mehrfachauswahl, „alle“ als Abkürzung; gespeichert werden die einzelnen IDs).
 - Zweisprachige Felder: DE/EN-Umschalter am Feld; fehlende Übersetzung wird markiert.
-- Anlagen: Drag & Drop (PDF, JPG, PNG), Vorschau, Kategorie, Tags. Bilder werden beim Einfügen in PDF gewandelt.
+- Anlagen: Drag & Drop (PDF, JPG, PNG), Vorschau, Kategorie, Tags. Bilder werden beim Einfügen in die Bewerbungsmappe (M5) in PDF gewandelt.
 - **Suche** (global, `Strg/Cmd + K`): MiniSearch über Kompetenzen (inkl. Synonyme), Stationen, Erfolge, Zertifikate, Anlagen-Titel/Tags, Bewerbungen (Firma, Stelle). Index nur im Speicher.
 
 ### 6.3 KI-Prompts (generisch)
