@@ -97,7 +97,7 @@ Beim ersten Start werden fehlende Ordner angelegt und `wissen-default/` nach `da
   - Zufälliger **Datenschlüssel (DEK)**, 256 bit, pro Profil.
   - DEK wird zweimal verpackt (AES-KW oder AES-GCM):
     1. mit **Passwort-Schlüssel** – PBKDF2-SHA-256, 600.000 Iterationen, 16-byte Salt
-    2. mit **Wiederherstellungs-Schlüssel** – 256 bit Zufall, angezeigt als 8 × 6 Zeichen (Base32, ohne verwechselbare Zeichen)
+    2. mit **Wiederherstellungs-Schlüssel** – 240 bit Zufall, angezeigt als 8 × 6 Zeichen (Base32 mit `A–Z` ohne `I`/`O` und `2–9`); der AES-Schlüssel (256 bit) ist der SHA-256-Wert dieser 240 bit
   - Passwortwechsel = nur DEK neu verpacken, keine Neuverschlüsselung der Daten.
 - **Tresorformat** `tresor.r42j`:
   ```json
@@ -121,9 +121,10 @@ Beim ersten Start werden fehlende Ordner angelegt und `wissen-default/` nach `da
 
 ### 4.4 Backups
 - Automatisch nach jeder Sitzung mit Änderungen + manuell per Button.
-- Ziel 1: `daten/<profil>/backups/`, Rotation: letzte **5** Stände.
-- Ziel 2 (empfohlen, im Onboarding abgefragt): frei wählbarer Ordner (Festplatte, Cloud-Sync-Ordner). Handle in IndexedDB.
-- Backup = verschlüsselte Kopie von Tresor + Anlagen als eine Datei `r42j-backup-<profil>-<datum>.r42jb` (Container: JSON-Index + verschlüsselte Blobs).
+- Ziel 1: `daten/<profil>/backups/`, Rotation: neueste Sicherung je Tag, insgesamt **3**. Vor dem Wiederherstellen und vor Migrationen entsteht zusätzlich eine Schutzkopie (`-schutz.r42jb`), die neueste davon bleibt erhalten.
+- Sicherungen behalten Passwort und Schlüssel ihres Stands. Beim Wechsel von Passwort oder Schlüssel sagt die App das und bietet an, alle alten Sicherungen durch eine neue zu ersetzen (Standard: aus).
+- Ziel 2 (empfohlen, im Onboarding abgefragt): frei wählbarer Ordner (Festplatte, Cloud-Sync-Ordner), gleiche Rotation. Handle in IndexedDB.
+- Backup = verschlüsselte Kopie von Tresor + Anlagen als eine Datei `r42j-backup-<id>-<datum>.r42jb` (`<id>` = erste 8 Zeichen der Profil-ID, weil der zweite Ort ein Cloud-Ordner sein kann und dort kein Name stehen soll). Container: 4 Byte Länge des JSON-Index (Little Endian), Index, verschlüsselte Dateien hintereinander.
 - Wiederherstellen aus Backup über Startbildschirm.
 
 ### 4.5 Export-Ordner
@@ -224,7 +225,7 @@ Lernstand { kartenId, box: 1-5, faellig, richtig, falsch }
 Einstellungen { sprache, theme: "system"|"hell"|"dunkel", farbschema: string,
   schriftgroesse: "normal"|"gross"|"sehr-gross", sperreMinuten, rueckfrageTage (Std. 14),
   updatePruefung: boolean, backupZiel2?: boolean, kiPlatzhalter: boolean,
-  seitenleisteEingeklappt: boolean }
+  seitenleisteEingeklappt: boolean, anzeigename: string, onboardingSchritt?: number }
 ```
 
 Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migrations.js`, vor dem Laden ausführen, vorher Backup.

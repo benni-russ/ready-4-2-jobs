@@ -35,6 +35,40 @@
   );
   var hoerer = [];
 
+  // Beobachtbarer Zustand ohne Speicherung.
+  K.beobachtbar = function (start) {
+    var wert = start;
+    var liste = [];
+    return {
+      get: function () {
+        return wert;
+      },
+      set: function (teil) {
+        wert = Object.assign({}, wert, teil);
+        liste.slice().forEach(function (f) {
+          f(wert);
+        });
+      },
+      subscribe: function (f) {
+        liste.push(f);
+        return function () {
+          liste = liste.filter(function (x) {
+            return x !== f;
+          });
+        };
+      },
+    };
+  };
+
+  K.useBeobachtbar = function (quelle) {
+    var paar = hooks.useState(quelle.get());
+    hooks.useEffect(function () {
+      paar[1](quelle.get());
+      return quelle.subscribe(paar[1]);
+    }, []);
+    return paar[0];
+  };
+
   K.store = {
     get: function () {
       return zustand;

@@ -12,6 +12,10 @@ html[data-font="sehr-gross"] { font-size: 130%; }
 
 body { margin: 0; font-family: var(--font-sans); font-size: 1rem; line-height: 1.5rem; background: var(--surface); color: var(--ink); -webkit-font-smoothing: antialiased; }
 h1, h2, h3, p { margin: 0; }
+.display { font-size: 2rem; line-height: 2.5rem; font-weight: 700; letter-spacing: -.01em; }
+.h1 { font-size: 1.625rem; line-height: 2.125rem; font-weight: 700; }
+.h2 { font-size: 1.3125rem; line-height: 1.75rem; font-weight: 700; }
+.h3 { font-size: 1.125rem; line-height: 1.625rem; font-weight: 700; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 ::selection { background: var(--accent-soft); color: var(--ink); }
 .rj-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -386,7 +390,19 @@ h1, h2, h3, p { margin: 0; }
 .rj-recovery { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
 .rj-recovery code { display: grid; place-items: center; min-height: 48px; border: 2px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface-raised); font: 700 1.125rem/1 var(--font-sans); letter-spacing: .12em; font-variant-numeric: tabular-nums; }
 @media print {
+  /* Papier ist immer hell, auch wenn die App gerade dunkel läuft. */
+  [data-theme="dark"] {
+    color-scheme: light;
+    --surface: #f5f7fa;
+    --surface-raised: #ffffff;
+    --surface-sunken: #eaeef3;
+    --line: #d5dbe3;
+    --line-strong: #76808e;
+    --ink: #17202b;
+    --ink-muted: #4a5563;
+  }
   body { background: #fff; color: #000; }
+  .rj-card { box-shadow: none; }
   .rj-noprint { display: none !important; }
   .rj-recovery code { border-color: #000; background: #fff; color: #000; }
 }
@@ -471,3 +487,14 @@ h1, h2, h3, p { margin: 0; }
 .rj-datatable__empty td > * { margin: 0 auto var(--space-3); }
 .rj-datatable__empty .rj-icon { display: block; width: 28px; height: 28px; }
 .rj-sidebar > * { flex-shrink: 0; }
+
+/* Schmale Fenster und starker Zoom: kein Querscrollen (WCAG 1.4.10). */
+@media (max-width: 600px) {
+  .rj-topbar { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .rj-content { padding: var(--space-4); }
+  .rj-empty { padding-left: 0; padding-right: 0; }
+  .rj-card { padding: var(--space-4); }
+  .rj-btn { white-space: normal; max-width: 100%; }
+  .rj-seg { flex-wrap: wrap; max-width: 100%; }
+  .rj-grid-2 { grid-template-columns: minmax(0, 1fr); }
+}

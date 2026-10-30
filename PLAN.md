@@ -36,14 +36,14 @@
 **Akzeptanz:** Doppelklick auf Startdatei öffnet App in Edge/Chrome ohne Konsolenfehler und ohne CSP-Verstöße; DatePicker, Tabelle und Seitenleiste verhalten sich wie im Design-System; Firefox zeigt Hinweisseite; Theme/Sprache/Schriftgröße umschaltbar.
 
 ### M1 · Tresor, Profile, Onboarding
-- [ ] Ordnerwahl (`showDirectoryPicker`), Handle in IndexedDB, Berechtigungs-Erneuerung.
-- [ ] Krypto-Modul: DEK, PBKDF2-Verpackung, Wiederherstellungsschlüssel, AES-GCM, atomares Schreiben (SPEC §4.1).
-- [ ] Profilliste `profile.json`, Profil anlegen/öffnen/löschen.
-- [ ] Onboarding-Assistent Schritte 1–6 inkl. Druckblatt Wiederherstellungsschlüssel.
-- [ ] Auto-Sperre (Inaktivität, Tab schließen), Sperrbildschirm.
-- [ ] Backups: lokal mit Rotation 5, zweiter Ort, Wiederherstellen.
-- [ ] Export-Ordner leeren beim Start/Sperren.
-- [ ] Migrations-Grundgerüst (`schema`).
+- [x] Ordnerwahl (`showDirectoryPicker`), Handle in IndexedDB, Berechtigungs-Erneuerung.
+- [x] Krypto-Modul: DEK, PBKDF2-Verpackung, Wiederherstellungsschlüssel, AES-GCM, atomares Schreiben (SPEC §4.1).
+- [x] Profilliste `profile.json`, Profil anlegen/öffnen/löschen.
+- [x] Onboarding-Assistent Schritte 1–6 inkl. Druckblatt Wiederherstellungsschlüssel.
+- [x] Auto-Sperre (Inaktivität, Tab schließen), Sperrbildschirm.
+- [x] Backups: lokal mit Rotation (eine je Tag, höchstens 3), zweiter Ort, Wiederherstellen.
+- [x] Export-Ordner leeren beim Start/Sperren.
+- [x] Migrations-Grundgerüst (`schema`).
 
 **Akzeptanz:** Tresor ist ohne Passwort nicht lesbar (Hex-Ansicht zeigt nur Ciphertext); Entsperren mit Wiederherstellungsschlüssel funktioniert; Passwortwechsel ohne Datenverlust; Backup auf zweitem Ort wiederherstellbar; Sperre nach eingestellter Zeit.
 
