@@ -200,6 +200,8 @@ for (const channel of kanaele()) {
   await p.waitForFunction(() => window.R42J_CORE.ablauf.get().phase === "profile");
   await einloggen(p);
   await hin(p, "#/wissen");
+  await p.waitForTimeout(8000);
+  console.log("DIAG", await p.evaluate(() => JSON.stringify({ hash: location.hash, phase: window.R42J_CORE.ablauf.get().phase, dialoge: document.querySelectorAll("dialog[open],[role=dialog],[role=alertdialog]").length, text: document.body.innerText.slice(0, 900) })));
   await p.getByRole("heading", { name: "Wissen", exact: true }).waitFor();
   await p.getByRole("link", { name: "Mein Testartikel" }).waitFor();
   ok("Eigener Artikel in der Liste", true);
