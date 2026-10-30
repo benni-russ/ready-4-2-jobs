@@ -224,7 +224,7 @@ Termin { id, art: "telefon"|"digital"|"vor_ort"|"test"|"sonstiges", start, ende,
 Angebot { bruttoJahr, bonusJahr?, nettoMonat? (manuell), wochenstunden, urlaubstage,
   homeofficeTage (pro Woche), praesenzTage (pro Woche), pendelMinutenEinfach,
   pendelKostenMonat?, befristet?, probezeitMonate?, zusatzleistungen: string[],
-  achtenAuf: string[], bewertungen: Record<KriteriumId, 0-10> }
+  achtenAuf: string[], bewertungen: Record<KriteriumId, 0-10>, pruefliste: Record<string, boolean> }
 
 Gewichtung { kriterien: { id, name, gewicht: 0-5, typ: "auto"|"manuell" }[] }
 Lernstand { kartenId, box: 1-5, faellig, richtig, falsch }
@@ -336,6 +336,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
   - Pendelstunden/Woche = 2 × Pendelminuten × Präsenztage / 60
   - **Effektiver Stundenlohn (brutto)** = (Brutto + Bonus − Pendelkosten/Jahr) ÷ (Arbeitswochen × (Wochenstunden + Pendelstunden))
 - **Gewichtete Punktwertung:** Kriterien mit Gewicht 0–5 (Standard: Gehalt, effektiver Stundenlohn, Fahrtweg, Homeoffice, Urlaub, Boni, Sicherheit/Befristung, Bauchgefühl). Auto-Kriterien werden min-max auf 0–10 normiert, manuelle per Schieberegler. Ergebnis: Rangfolge + Balken.
+- Angaben im Angebot dürfen fehlen. Bonus und Pendelkosten zählen dann als 0; fehlt ein Wert für die Rechnung oder bleibt keine Arbeitszeit übrig, heißt der Stundenlohn „Nicht berechenbar“. Ein Auto-Kriterium ohne Wert entfällt für dieses Angebot, die Rangliste nennt das. Sind alle Werte eines Auto-Kriteriums gleich, bekommen alle 5 Punkte. Sicherheit/Befristung und Bauchgefühl sind manuell, unbewertet zählen sie als 5. Der Fahrtweg wertet die Pendelstunden pro Woche. Kriterien mit Gewicht 0 entfallen; eigene Kriterien sind manuell.
 - „Worauf achten“: Stichpunktliste pro Angebot + mitgelieferte Prüfliste (Probezeit, Kündigungsfrist, Überstundenregelung, Befristung, Wettbewerbsverbot, Rückzahlungsklauseln …) mit Link in den Wissensbereich.
 
 ### 6.11 Vorbereitung
@@ -369,7 +370,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Einfache SVG-Diagramme ohne externe Bibliothek; jede Zahl mit Basis („12 von 80“).
 
 ### 6.15 Einstellungen
-- Sprache, Theme, Farbschema (Voreinstellungen), Schriftgröße, Seitenleiste eingeklappt (auch per Strg/Cmd + B), Sperrzeit, Rückfrage-Frist, Feiertagspauschale, Backup (Ziel 2, jetzt sichern, wiederherstellen), Passwort ändern, Wiederherstellungsschlüssel neu, Update-Prüfung, Profil exportieren/löschen, Export-Ordner leeren.
+- Sprache, Theme, Farbschema (Voreinstellungen), Schriftgröße, Seitenleiste eingeklappt (auch per Strg/Cmd + B), Sperrzeit, Rückfrage-Frist, Feiertagspauschale (`feiertagsWochen`, Std. 2), Backup (Ziel 2, jetzt sichern, wiederherstellen), Passwort ändern, Wiederherstellungsschlüssel neu, Update-Prüfung, Profil exportieren/löschen, Export-Ordner leeren.
 
 ### 6.16 Updates
 - Opt-in: beim Start max. 1×/Tag `GET https://api.github.com/repos/benni-russ/ready-4-2-jobs/releases/latest` → Vergleich mit `app/version.js` → Hinweis mit Link zum Release.

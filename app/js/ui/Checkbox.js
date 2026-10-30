@@ -8,6 +8,7 @@
       <input
         type="checkbox"
         checked=${props.wert}
+        disabled=${props.disabled}
         onChange=${function (e) {
           props.beiAenderung(e.target.checked);
         }}

@@ -104,9 +104,9 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 ## Ausbau
 
 ### M6 · Vergleich (v0.2)
-- [ ] Angebotsfelder, Berechnungen (SPEC §6.10).
-- [ ] Gewichtete Punktwertung mit einstellbaren Kriterien.
-- [ ] „Worauf achten“-Liste + Prüfliste mit Wissens-Links.
+- [x] Angebotsfelder, Berechnungen (SPEC §6.10).
+- [x] Gewichtete Punktwertung mit einstellbaren Kriterien.
+- [x] „Worauf achten“-Liste + Prüfliste mit Wissens-Links.
 
 **Akzeptanz:** Rechenbeispiele in `docs/tests/vergleich.md` stimmen; Gewichtsänderung ändert Rangfolge sofort.
 
@@ -122,7 +122,7 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 
 ### M8 · Checklisten, Wissen, Statistik (v0.4)
 - [ ] Checklisten-Übersicht (einmalig + pro Bewerbung).
-- [ ] Wissensbereich: Markdown-Rendering, Suche, Kategorien, kontextbezogene Links.
+- [ ] Wissensbereich: Markdown-Rendering, Suche, Kategorien, kontextbezogene Links. Die Prüfliste im Vergleich verlinkt bereits auf `#/wissen/arbeitsvertrag-pruefen` und `#/wissen/kuendigungsfristen`; diese Kennungen müssen die Artikel tragen.
 - [ ] Mitgelieferte Wissensartikel DE/EN (SPEC §6.13).
 - [ ] Statistik-Dashboard mit SVG-Diagrammen.
 

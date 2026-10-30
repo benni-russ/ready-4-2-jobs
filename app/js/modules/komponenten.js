@@ -25,6 +25,7 @@
     var datumPaar = hooks.useState("2026-12-01");
     var terminPaar = hooks.useState("");
     var suchePaar = hooks.useState("");
+    var gewichtPaar = hooks.useState(3);
 
     var spalten = [
       { schluessel: "versendet", titel: K.t("demo.spalteVersendet"), typ: "date" },
@@ -129,6 +130,52 @@
           platzhalter=${K.t("demo.suche")}
           wert=${suchePaar[0]}
           beiAenderung=${suchePaar[1]}
+        />
+      </section>
+      <section class="rj-card rj-stack">
+        <h2 class="h3">${K.t("nav.vergleich")}</h2>
+        <${UI.ZahlFeld}
+          label=${K.t("angebot.feld.bruttoJahr")}
+          einheit="€"
+          placeholder=${K.t("angebot.platzhalter.bruttoJahr")}
+          wert=${gewichtPaar[0] * 10000}
+          beiAenderung=${function () {}}
+        />
+        <${UI.Slider}
+          label=${K.t("vergleich.kriterium.gehalt")}
+          min="0"
+          max="5"
+          wert=${gewichtPaar[0]}
+          skalaMin=${K.t("vergleich.unwichtig")}
+          skalaMax=${K.t("vergleich.sehrWichtig")}
+          beiAenderung=${gewichtPaar[1]}
+        />
+        <${UI.ScoreList}
+          eintraege=${[
+            { schluessel: "a", platz: 1, name: "Musterfirma GmbH", punkte: 8.4, text: K.t("vergleich.punkteText", { punkte: "8,4" }) },
+            { schluessel: "b", platz: 2, name: "Beispiel AG", punkte: 5.2, text: K.t("vergleich.punkteText", { punkte: "5,2" }) },
+          ]}
+        />
+        <${UI.ComparisonTable}
+          label=${K.t("vergleich.tabelle")}
+          kopf=${K.t("vergleich.kriteriumSpalte")}
+          spalten=${[
+            { schluessel: "a", titel: "Musterfirma GmbH" },
+            { schluessel: "b", titel: "Beispiel AG" },
+          ]}
+          zeilen=${[
+            {
+              schluessel: "z",
+              titel: K.t("vergleich.zeile.bruttoJahr"),
+              erklaerung: K.t("angebot.hinweis.bruttoJahr"),
+              zellen: [{ text: "46.000 €" }, { text: "49.500 €", beste: true }],
+            },
+            {
+              schluessel: "y",
+              titel: K.t("vergleich.zeile.bonusJahr"),
+              zellen: [{ text: K.t("vergleich.nichtAngegeben"), fehlt: true }, { text: "1.000 €" }],
+            },
+          ]}
         />
       </section>
       <section class="rj-stack">
