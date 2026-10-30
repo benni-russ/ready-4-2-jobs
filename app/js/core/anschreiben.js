@@ -175,6 +175,21 @@
     };
   }
 
+  function emailAus(b, betreff, text) {
+    var t = K.BRIEF_TEXTE[satzVon(b.sprache, b.anrede)];
+    var p = K.tresor.daten().profil;
+    var referenz = b.stelle.referenz ? " (" + t.referenz + " " + b.stelle.referenz + ")" : "";
+    function fuellen(s) {
+      return s
+        .replace("{datum}", datumOderText(b.versendetAm ? b.versendetAm.slice(0, 10) : "", b.sprache))
+        .replace("{stelle}", b.stelle.titel)
+        .replace("{referenz}", referenz)
+        .replace("{anrede}", anredeText(b))
+        .replace("{name}", [p.vorname, p.nachname].filter(Boolean).join(" "));
+    }
+    return { an: (b.ansprechpartner && b.ansprechpartner.email) || "", betreff: fuellen(t[betreff]), text: fuellen(t[text]) };
+  }
+
   K.anschreiben = {
     ABSCHNITTE: ABSCHNITTE,
     MAX_SEITEN: MAX_SEITEN,
@@ -243,17 +258,11 @@
     },
 
     emailVorschlag: function (b) {
-      var t = K.BRIEF_TEXTE[satzVon(b.sprache, b.anrede)];
-      var p = K.tresor.daten().profil;
-      var referenz = b.stelle.referenz ? " (" + t.referenz + " " + b.stelle.referenz + ")" : "";
-      function fuellen(s) {
-        return s
-          .replace("{stelle}", b.stelle.titel)
-          .replace("{referenz}", referenz)
-          .replace("{anrede}", anredeText(b))
-          .replace("{name}", [p.vorname, p.nachname].filter(Boolean).join(" "));
-      }
-      return { an: (b.ansprechpartner && b.ansprechpartner.email) || "", betreff: fuellen(t.emailBetreff), text: fuellen(t.emailText) };
+      return emailAus(b, "emailBetreff", "emailText");
+    },
+
+    rueckfrageVorschlag: function (b) {
+      return emailAus(b, "rueckfrageBetreff", "rueckfrageText");
     },
 
     erstellen: async function (b) {

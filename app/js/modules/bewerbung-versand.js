@@ -43,13 +43,15 @@
     });
   }
 
-  function EmailDialog(props) {
+  S.EmailDialog = function (props) {
     var b = props.bewerbung;
+    var rueckfrage = !!props.rueckfrage;
     var vorschlag = hooks.useMemo(function () {
-      return K.anschreiben.emailVorschlag(b);
+      return rueckfrage ? K.anschreiben.rueckfrageVorschlag(b) : K.anschreiben.emailVorschlag(b);
     }, []);
     var w = hooks.useState(vorschlag);
-    var auswahl = hooks.useState(vorauswahl(b));
+    var auswahl = hooks.useState(rueckfrage ? [] : vorauswahl(b));
+    var markieren = hooks.useState(true);
     var laedt = hooks.useState(false);
     var fehler = hooks.useState(null);
     var vorhanden = K.bewerbungen.SNAPSHOTS.filter(function (a) {
@@ -94,25 +96,27 @@
             anhaenge: anhaenge.map(function (a) {
               return a.name;
             }),
-            dateiname: K.dateiname([p.vorname, p.nachname, "bewerbung", b.firma.name], "eml"),
+            dateiname: K.dateiname([p.vorname, p.nachname, rueckfrage ? "rueckfrage" : "bewerbung", b.firma.name], "eml"),
           },
           bytes,
         );
+        if (rueckfrage && markieren[0]) K.bewerbungen.statusSetzen(b.id, "rueckfrage_gesendet", new Date().toISOString());
         K.meldung(K.t("email.erstellt"));
         props.beiSchliessen();
+        if (props.beiErstellt) props.beiErstellt();
       } catch (e) {
         fehler[1](K.fehlerText(e));
         laedt[1](false);
       }
     }
 
-    return html`<${UI.Dialog} titel=${K.t("email.titel")} breit=${true} bestaetigen=${K.t("email.erstellen")} laedt=${laedt[0]} beiBestaetigen=${erstellen} beiSchliessen=${props.beiSchliessen}>
+    return html`<${UI.Dialog} titel=${K.t(rueckfrage ? "rueckfrage.titel" : "email.titel")} breit=${true} bestaetigen=${K.t("email.erstellen")} laedt=${laedt[0]} beiBestaetigen=${erstellen} beiSchliessen=${props.beiSchliessen}>
       ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
       <${UI.TextField} label=${K.t("email.an")} wert=${w[0].an} beiAenderung=${setzen("an")} hinweis=${K.t("email.anHinweis")} />
       <${UI.TextField} label=${K.t("email.betreff")} wert=${w[0].betreff} beiAenderung=${setzen("betreff")} />
       <${UI.Textarea} label=${K.t("email.text")} rows="8" spellcheck="true" lang=${b.sprache} wert=${w[0].text} beiAenderung=${setzen("text")} />
       <div class="rj-stack" style="gap:0">
-        <span class="rj-label">${K.t("email.anhaenge")}</span>
+        ${vorhanden.length > 0 && html`<span class="rj-label">${K.t("email.anhaenge")}</span>`}
         ${vorhanden.map(function (a) {
           var s = b.dokumente[a];
           return html`<${UI.Checkbox}
@@ -129,11 +133,12 @@
           />`;
         })}
       </div>
-      <${UI.SizeMeter} bytes=${summe} grenze=${K.anlagenPdf.MAX_BYTES} />
+      ${vorhanden.length > 0 && html`<${UI.SizeMeter} bytes=${summe} grenze=${K.anlagenPdf.MAX_BYTES} />`}
+      ${rueckfrage && html`<${UI.Checkbox} label=${K.t("rueckfrage.markieren")} erklaerung=${K.t("rueckfrage.markierenText")} wert=${markieren[0]} beiAenderung=${markieren[1]} />`}
     <//>`;
-  }
+  };
 
-  function Entwuerfe(props) {
+  S.Entwuerfe = function (props) {
     var b = props.bewerbung;
     var geoeffnet = hooks.useState(null);
 
@@ -198,7 +203,7 @@
         <//>`;
       })}
     `;
-  }
+  };
 
   function adresseText(a) {
     if (!a) return "";
@@ -240,6 +245,17 @@
     return felder;
   }
 
+  // Warnt nur: Wer versenden will, entscheidet selbst.
+  function ChecklistenWarnung(props) {
+    var b = props.bewerbung;
+    var c = K.bewerbungen.checkliste(b);
+    if (c.offen === 0) return null;
+    return html`<${UI.Alert} art="warning" titel=${K.t("checkliste.warnungTitel", { offen: c.offen, gesamt: c.gesamt })}>
+      ${K.t("checkliste.warnungText")}
+      ${" "}<a class="rj-link" href=${"#/bewerbungen/" + b.id + "/details"}>${K.t("checkliste.warnungLink")}</a>
+    <//>`;
+  }
+
   function VersendetDialog(props) {
     var heute = new Date();
     var datum = hooks.useState(new Date(heute.getTime() - heute.getTimezoneOffset() * 60000).toISOString().slice(0, 10));
@@ -254,6 +270,7 @@
 
     return html`<${UI.Dialog} titel=${K.t("versand.dialogTitel")} bestaetigen=${K.t("versand.bestaetigen")} beiBestaetigen=${bestaetigen} beiSchliessen=${props.beiSchliessen}>
       <p>${K.t("versand.dialogText")}</p>
+      <${ChecklistenWarnung} bewerbung=${props.bewerbung} />
       ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
       <${UI.DatePicker} label=${K.t("versand.datum")} wert=${datum[0]} beiAenderung=${datum[1]} />
     <//>`;
@@ -269,6 +286,7 @@
     });
 
     return html`
+      ${!b.versendetAm && html`<${ChecklistenWarnung} bewerbung=${b} />`}
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("versand.dokumente")}</h2>
         ${dokumente.length === 0 && html`<${UI.Alert} art="info">${K.t("versand.keineDokumente")}<//>`}
@@ -303,7 +321,7 @@
               ${K.t("email.erstellen")}
             <//>
           </div>
-          <${Entwuerfe} bewerbung=${b} />`}
+          <${S.Entwuerfe} bewerbung=${b} />`}
         ${ansicht[0] === "portal" &&
         html`<p class="rj-muted">${K.t("versand.portalText")}</p>
           <${UI.CopyFieldList} felder=${portalFelder(b)} />`}
@@ -325,7 +343,7 @@
               </div>`}
       </section>
       ${email[0] &&
-      html`<${EmailDialog}
+      html`<${S.EmailDialog}
         bewerbung=${b}
         beiSchliessen=${function () {
           email[1](false);

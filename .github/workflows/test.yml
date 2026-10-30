@@ -62,3 +62,7 @@ jobs:
       - name: M4 Stelle bis Versand
         shell: bash
         run: node tests/m4.mjs
+
+      - name: M5 Übersicht und Termine
+        shell: bash
+        run: node tests/m5.mjs

@@ -6,7 +6,7 @@
   var hooks = window.preactHooks;
   var S = (window.R42J_SEITEN = window.R42J_SEITEN || {});
 
-  var REITER = ["stelle", "lebenslauf", "anschreiben", "anlagen", "versand"];
+  var REITER = ["stelle", "lebenslauf", "anschreiben", "anlagen", "versand", "details"];
 
   S.sprachOptionen = function () {
     return [
@@ -50,10 +50,10 @@
         schluessel: "status",
         titel: K.t("bewerbung.status"),
         text: function (b) {
-          return UI.statusText(K.bewerbungen.aktuellerStatus(b));
+          return UI.statusText(K.bewerbungen.anzeigeStatus(b));
         },
         zelle: function (b) {
-          return html`<${UI.StatusBadge} status=${K.bewerbungen.aktuellerStatus(b)} />`;
+          return html`<${UI.StatusBadge} status=${K.bewerbungen.anzeigeStatus(b)} />`;
         },
       },
       {
@@ -235,6 +235,7 @@
     var reiter = REITER.indexOf(props.reiter) > -1 ? props.reiter : "stelle";
     var loeschen = hooks.useState(false);
     var laedt = hooks.useState(false);
+    var statusDialog = hooks.useState(false);
 
     hooks.useEffect(
       function () {
@@ -268,7 +269,15 @@
           <p class="rj-muted" style="margin:0">${b.stelle.titel}</p>
         </div>
         <div class="rj-row">
-          <${UI.StatusBadge} status=${K.bewerbungen.aktuellerStatus(b)} />
+          <${UI.StatusBadge} status=${K.bewerbungen.anzeigeStatus(b)} />
+          <${UI.Button}
+            icon="pencil"
+            onClick=${function () {
+              statusDialog[1](true);
+            }}
+          >
+            ${K.t("status.aendern")}
+          <//>
           <${UI.IconButton}
             icon="trash-2"
             gefahr=${true}
@@ -295,7 +304,15 @@
         ${reiter === "anschreiben" && html`<${S.BewerbungAnschreiben} bewerbung=${b} key=${b.id} />`}
         ${reiter === "anlagen" && html`<${S.BewerbungAnlagen} bewerbung=${b} key=${b.id} />`}
         ${reiter === "versand" && html`<${S.BewerbungVersand} bewerbung=${b} key=${b.id} />`}
+        ${reiter === "details" && html`<${S.BewerbungDetails} bewerbung=${b} key=${b.id} />`}
       <//>
+      ${statusDialog[0] &&
+      html`<${S.StatusDialog}
+        bewerbung=${b}
+        beiSchliessen=${function () {
+          statusDialog[1](false);
+        }}
+      />`}
       ${loeschen[0] &&
       html`<${UI.Dialog}
         titel=${K.t("bewerbung.loeschen")}

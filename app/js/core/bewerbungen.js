@@ -51,6 +51,8 @@
       .trim();
   }
 
+  K.CHECKLISTE = ["recherche", "ansprechpartner", "keywords", "rechtschreibung", "anlagen", "dateinamen", "dateigroesse", "betreff"];
+
   K.bewerbungen = {
     SNAPSHOTS: SNAPSHOTS,
 
@@ -211,6 +213,36 @@
 
     aktuellerStatus: function (b) {
       return b.status[b.status.length - 1].status;
+    },
+
+    // „Rückfrage fällig“ ist abgeleitet und steht nie in der Historie: Die zeigt nur, was wirklich geschah.
+    anzeigeStatus: function (b, jetzt) {
+      var status = K.bewerbungen.aktuellerStatus(b);
+      if (status !== "versendet" || !b.versendetAm) return status;
+      return K.tageSeit(b.versendetAm, jetzt) >= K.tresor.daten().einstellungen.rueckfrageTage ? "rueckfrage_faellig" : status;
+    },
+
+    statusSetzen: function (id, status, datum, notiz) {
+      K.bewerbungen.aendern(id, function (b) {
+        var eintrag = { status: status, datum: datum };
+        if (notiz) eintrag.notiz = notiz;
+        b.status.push(eintrag);
+        if (status === "versendet" && !b.versendetAm) b.versendetAm = datum;
+      });
+    },
+
+    checkliste: function (b) {
+      var erledigt = K.CHECKLISTE.filter(function (k) {
+        return b.checkliste[k];
+      }).length;
+      return { erledigt: erledigt, gesamt: K.CHECKLISTE.length, offen: K.CHECKLISTE.length - erledigt };
+    },
+
+    checklistePunkt: function (id, punkt, wert) {
+      K.bewerbungen.aendern(id, function (b) {
+        b.checkliste = Object.assign({}, b.checkliste);
+        b.checkliste[punkt] = wert;
+      });
     },
 
     loeschen: async function (id) {
