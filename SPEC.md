@@ -33,7 +33,7 @@
 | Thema | Entscheidung |
 |---|---|
 | Laufzeit | Chromium-Browser (Edge, Chrome, Brave, Vivaldi, Opera) über `file://` |
-| Startdateien | `Start (Windows).cmd` → öffnet `app/index.html` in Edge · `Start (Mac).command` → öffnet in Chrome · Fallback: `Start.html` per Rechtsklick |
+| Startdateien | `Start (Windows).cmd` → öffnet `app/index.html` im Standardbrowser, wenn das Chrome oder Edge ist, sonst in Edge oder Chrome · `Start (Mac).command` → öffnet in Chrome · Fallback: `Start.html` per Rechtsklick |
 | Build | **Kein Build-Schritt.** Klassische `<script src>`-Einbindung, keine ES-Module (`import` scheitert auf `file://`), kein `fetch()` auf lokale Dateien |
 | Framework | **Preact + Preact Hooks + htm** als UMD-Dateien (`window.preact`, `window.preactHooks`, `window.htm`), Templates per `htm` statt JSX – kein Build, CSP-konform ohne `unsafe-eval` |
 | Dateizugriff | File System Access API: Nutzer wählt einmal pro Rechner den R42J-Ordner (`showDirectoryPicker`). Handle in IndexedDB, Berechtigung pro Sitzung per Klick erneuern. Laufwerksbuchstabe-Wechsel → Ordner neu wählen |
