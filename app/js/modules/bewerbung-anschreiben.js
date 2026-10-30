@@ -176,6 +176,7 @@
     return html`<div class="rj-stack" style="gap:var(--space-2)">
       <${UI.Textarea}
         label=${K.t("anschreiben.abschnitt." + a)}
+        placeholder=${K.t("anschreiben.platzhalter." + a)}
         rows="5"
         spellcheck="true"
         lang=${b.sprache}

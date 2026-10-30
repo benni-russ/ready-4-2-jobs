@@ -43,7 +43,7 @@
       ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
       <${UI.Select} label=${K.t("status.neu")} wert=${status[0]} optionen=${optionen} beiAenderung=${status[1]} />
       <${UI.DatePicker} label=${K.t("status.datum")} wert=${datum[0]} beiAenderung=${datum[1]} />
-      <${UI.Textarea} label=${K.t("status.notiz")} hinweis=${K.t("status.notizHinweis")} rows="3" wert=${notiz[0]} beiAenderung=${notiz[1]} />
+      <${UI.Textarea} label=${K.t("status.notiz")} hinweis=${K.t("status.notizHinweis")} placeholder=${K.t("status.notizPlatzhalter")} rows="3" wert=${notiz[0]} beiAenderung=${notiz[1]} />
     <//>`;
   };
 
@@ -133,7 +133,7 @@
         wert: !!b.checkliste[k],
         aktion:
           k === "rechtschreibung"
-            ? html`<a class="rj-link" style="font-size:.875rem;white-space:nowrap" href=${"#/bewerbungen/" + b.id + "/anschreiben"}>${K.t("bewerbungCheck.kiKorrektur")}</a>`
+            ? html`<a class="rj-link" style="font-size:.875rem" href=${"#/bewerbungen/" + b.id + "/anschreiben"}>${K.t("bewerbungCheck.kiKorrektur")}</a>`
             : null,
       };
     });
@@ -162,6 +162,7 @@
       <section class="rj-card rj-stack">
         <${UI.Textarea}
           label=${K.t("details.notizen")}
+          placeholder=${K.t("details.notizenPlatzhalter")}
           hinweis=${K.t("details.notizenHinweis")}
           rows="5"
           wert=${b.notizen}

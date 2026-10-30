@@ -83,7 +83,7 @@
 
     return html`<${UI.Bildschirm} icon="key-round" titel=${K.t("sperre.schluesselTitel")} text=${K.t("sperre.schluesselText")} beiAbsenden=${entsperren}>
       ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
-      <${UI.TextField} label=${K.t("schluessel.titel")} wert=${code[0]} beiAenderung=${code[1]} pflicht=${true} autocomplete="off" spellcheck="false" />
+      <${UI.TextField} label=${K.t("schluessel.titel")} placeholder=${K.t("schluessel.titelPlatzhalter")} wert=${code[0]} beiAenderung=${code[1]} pflicht=${true} autocomplete="off" spellcheck="false" />
       <${UI.PasswordField} neu=${true} label=${K.t("passwort.neu")} hinweis=${K.t("passwort.hinweis")} wert=${neu[0]} beiAenderung=${neu[1]} />
       <${UI.PasswordField} neu=${true} label=${K.t("passwort.wiederholen")} wert=${wieder[0]} beiAenderung=${wieder[1]} />
       <${UI.Button} type="submit" variante="primary" lg block icon="lock-open" laedt=${laedt[0]} disabled=${laedt[0]}>

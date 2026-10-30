@@ -66,3 +66,7 @@ jobs:
       - name: M5 Übersicht und Termine
         shell: bash
         run: node tests/m5.mjs
+
+      - name: Formulare
+        shell: bash
+        run: node tests/formulare.mjs

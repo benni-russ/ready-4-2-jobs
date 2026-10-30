@@ -20,7 +20,7 @@
       kind=${function (f) {
         return html`<div class="rj-input-wrap">
           <input
-            class="rj-input"
+            class="rj-input rj-input--knopf"
             type=${sichtbar[0] ? "text" : "password"}
             autocomplete=${props.neu ? "new-password" : "current-password"}
             spellcheck="false"

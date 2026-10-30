@@ -18,6 +18,7 @@
     var textPaar = hooks.useState("");
     var mehrPaar = hooks.useState("");
     var wahlPaar = hooks.useState("a");
+    var landPaar = hooks.useState("");
     var hakenPaar = hooks.useState(true);
     var radioPaar = hooks.useState("sie");
     var schalterPaar = hooks.useState(false);
@@ -75,6 +76,7 @@
           <${UI.TextField}
             label=${K.t("demo.email")}
             type="email"
+            placeholder=${K.t("profil.emailPlatzhalter")}
             pflicht=${true}
             wert=${textPaar[0]}
             beiAenderung=${textPaar[1]}
@@ -97,7 +99,15 @@
             ]}
           />
         </div>
-        <${UI.Textarea} label=${K.t("demo.motivation")} wert=${mehrPaar[0]} beiAenderung=${mehrPaar[1]} spellcheck="true" />
+        <${UI.Select}
+          label=${K.t("demo.bundesland")}
+          wert=${landPaar[0]}
+          beiAenderung=${landPaar[1]}
+          optionen=${K.t("demo.bundeslaender").map(function (l) {
+            return { wert: l, label: l };
+          })}
+        />
+        <${UI.Textarea} label=${K.t("demo.motivation")} placeholder=${K.t("anschreiben.platzhalter.motivation")} wert=${mehrPaar[0]} beiAenderung=${mehrPaar[1]} spellcheck="true" />
         <${UI.Checkbox}
           label=${K.t("demo.haken")}
           erklaerung=${K.t("demo.hakenText")}

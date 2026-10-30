@@ -157,9 +157,10 @@
 
     return html`
       <p>${K.t("ausrichtung.erklaerung")}</p>
-      <${UI.TextField} label=${K.t("ausrichtung.name")} hinweis=${K.t("ausrichtung.nameHinweis")} pflicht=${true} fehler=${fehler[0]} wert=${name[0]} beiAenderung=${name[1]} />
+      <${UI.TextField} label=${K.t("ausrichtung.name")} placeholder=${K.t("ausrichtung.namePlatzhalter")} hinweis=${K.t("ausrichtung.nameHinweis")} pflicht=${true} fehler=${fehler[0]} wert=${name[0]} beiAenderung=${name[1]} />
       <${UI.BilingualField}
         label=${K.t("ausrichtung.kurzprofil")}
+        platzhalter="ausrichtung.kurzprofilPlatzhalter"
         hinweis=${K.t("ausrichtung.kurzprofilHinweis")}
         mehrzeilig=${true}
         wert=${kurzprofil[0]}
@@ -246,6 +247,7 @@
           ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
           <${UI.TextField}
             label=${K.t("schluessel.bestaetigen")}
+            placeholder=${K.t("schluessel.bestaetigenPlatzhalter")}
             hinweis=${K.t("schluessel.bestaetigenHinweis")}
             wert=${bestaetigung[0]}
             beiAenderung=${bestaetigung[1]}
@@ -301,6 +303,7 @@
           ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
           <${UI.TextField}
             label=${K.t("schluessel.bestaetigen")}
+            placeholder=${K.t("schluessel.bestaetigenPlatzhalter")}
             hinweis=${K.t("schluessel.bestaetigenHinweis")}
             wert=${bestaetigung[0]}
             beiAenderung=${bestaetigung[1]}

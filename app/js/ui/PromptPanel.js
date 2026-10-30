@@ -43,7 +43,7 @@
       <div class="rj-prompt__step">
         <span class="rj-prompt__num">3</span>
         <div>
-          <${UI.Textarea} label=${K.t("ki.schritt3")} wert=${antwort[0]} beiAenderung=${antwort[1]} rows="8" spellcheck="false" />
+          <${UI.Textarea} label=${K.t("ki.schritt3")} placeholder=${K.t("ki.antwortPlatzhalter")} wert=${antwort[0]} beiAenderung=${antwort[1]} rows="8" spellcheck="false" />
           ${fehler[0].length > 0 &&
           html`<${UI.Alert} art="danger">
             ${fehler[0].length === 1

@@ -1,5 +1,5 @@
 // M5: Übersicht, Status, Erinnerungen, Termine, Checkliste. Testdaten frei erfunden.
-import { chromium, URLAPP, SP, kanaele } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, waehle } from "./hilfen.mjs";
 
 let fehlerZahl = 0;
 function ok(name, wahr, info) {
@@ -216,25 +216,25 @@ for (const channel of kanaele()) {
   await p.waitForTimeout(50);
   ok("Suche ist umlaut-tolerant (mueller)", (await karten()).join() === "Müller & Söhne", await karten());
   await knopf(p, "Filter zurücksetzen").click();
-  await p.getByLabel("Status", { exact: true }).selectOption("rueckfrage_faellig");
+  await waehle(p, p.getByLabel("Status", { exact: true }), "rueckfrage_faellig");
   await p.waitForTimeout(50);
   ok("Filter Status", (await karten()).sort().join() === "Altbau KG,Grenzfall GmbH,Müller & Söhne", await karten());
   await knopf(p, "Filter zurücksetzen").click();
-  await p.getByLabel("Ausrichtung", { exact: true }).selectOption({ label: "Vertrieb" });
+  await waehle(p, p.getByLabel("Ausrichtung", { exact: true }), { label: "Vertrieb" });
   await p.waitForTimeout(50);
   ok("Filter Ausrichtung", (await karten()).sort().join() === "Grenzfall GmbH,Zuletzt SE", await karten());
   await knopf(p, "Filter zurücksetzen").click();
-  await p.getByLabel("Zeitraum", { exact: true }).selectOption("30");
+  await waehle(p, p.getByLabel("Zeitraum", { exact: true }), "30");
   await p.waitForTimeout(50);
   ok("Filter Zeitraum", !(await karten()).includes("Altbau KG") && (await karten()).length === 5, await karten());
   await knopf(p, "Filter zurücksetzen").click();
-  await p.getByLabel("Sortierung", { exact: true }).selectOption("firma");
+  await waehle(p, p.getByLabel("Sortierung", { exact: true }), "firma");
   await p.waitForTimeout(50);
   ok("Sortierung Firma", (await karten())[0] === "Altbau KG", await karten());
-  await p.getByLabel("Sortierung", { exact: true }).selectOption("alt");
+  await waehle(p, p.getByLabel("Sortierung", { exact: true }), "alt");
   await p.waitForTimeout(50);
   ok("Sortierung Älteste", (await karten())[0] === "Altbau KG", await karten());
-  await p.getByLabel("Sortierung", { exact: true }).selectOption("neu");
+  await waehle(p, p.getByLabel("Sortierung", { exact: true }), "neu");
   await p.waitForTimeout(50);
   ok("Sortierung Neueste", (await karten())[0] === "Beispiel AG", await karten());
   await p.getByRole("button", { name: "Liste", exact: true }).click();
@@ -298,12 +298,14 @@ for (const channel of kanaele()) {
   // Statuswechsel
   await p.getByRole("button", { name: "Status ändern" }).click();
   await p.getByRole("dialog").waitFor();
-  const optionen = await p.getByRole("dialog").getByLabel("Neuer Status").locator("option").allInnerTexts();
+  await p.getByRole("dialog").getByLabel("Neuer Status").click();
+  const optionen = (await p.locator("[role=option]").allInnerTexts()).map((x) => x.trim());
+  await p.keyboard.press("Escape");
   ok("Dialog bietet „Rückfrage fällig“ nicht an", !optionen.includes("Rückfrage fällig") && optionen.length === 14, optionen);
   await p.getByRole("dialog").getByRole("button", { name: "Status speichern" }).click();
   await p.getByText("hat diesen Status schon").waitFor();
   ok("Gleicher Status wird abgelehnt", true);
-  await p.getByRole("dialog").getByLabel("Neuer Status").selectOption("telefoninterview");
+  await waehle(p, p.getByRole("dialog").getByLabel("Neuer Status"), "telefoninterview");
   await p.getByRole("dialog").getByLabel("Notiz", { exact: true }).fill("Mit Frau Beispiel gesprochen");
   await p.getByRole("dialog").getByRole("button", { name: "Status speichern" }).click();
   await p.getByRole("dialog").waitFor({ state: "detached" });

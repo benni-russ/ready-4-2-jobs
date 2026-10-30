@@ -7,7 +7,7 @@
     return html`<div class="rj-input-wrap">
       <${UI.Icon} name="search" />
       <input
-        class="rj-input"
+        class=${"rj-input" + (props.kbd ? " rj-input--kbd" : "")}
         type="search"
         placeholder=${props.platzhalter}
         aria-label=${props.label}
