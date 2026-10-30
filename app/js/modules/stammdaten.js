@@ -521,6 +521,17 @@
         />
       `;
     }
+    if (bereich === "interview" || bereich === "uebersetzen") {
+      var Seite = bereich === "interview" ? S.KiInterview : S.UebersetzungenErgaenzen;
+      return html`
+        <div class="rj-pagehead"><h1 class="h1">${K.t(bereich + ".titel")}</h1></div>
+        <${Seite}
+          beiFertig=${function () {
+            K.navigieren("stammdaten");
+          }}
+        />
+      `;
+    }
     if (BEREICHE.indexOf(bereich) === -1) bereich = "persoenlich";
 
     function liste(def, pfad) {
@@ -528,12 +539,15 @@
     }
 
     var kompetenz = Object.assign({}, KOMPETENZ, { spalten: kompetenzSpalten() });
+    var offen = K.kiInterview.offen().length;
 
     return html`
       <div class="rj-pagehead">
         <h1 class="h1">${K.t("nav.stammdaten")}</h1>
         <div class="rj-row">
+          <${UI.Button} icon="sparkles" href="#/stammdaten/interview">${K.t("interview.knopf")}<//>
           <${UI.Button} icon="sparkles" href="#/stammdaten/import">${K.t("import.knopf")}<//>
+          ${offen > 0 && html`<${UI.Button} icon="globe" href="#/stammdaten/uebersetzen">${K.t("uebersetzen.knopf", { anzahl: offen })}<//>`}
           <${UI.Button} icon="file-text" href="#/lebenslauf">${K.t("nav.lebenslauf")}<//>
         </div>
       </div>

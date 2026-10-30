@@ -50,6 +50,12 @@ jobs:
           npm install --no-save --prefix "$RUNNER_TEMP/pw" playwright-core@1.64.1
           echo "R42J_PLAYWRIGHT=$RUNNER_TEMP/pw" >> "$GITHUB_ENV"
           echo "R42J_AUSGABE=$RUNNER_TEMP/ausgabe" >> "$GITHUB_ENV"
+      - name: Parallele Sicherungen
+        shell: bash
+        run: node tests/backup-parallel.mjs
+      - name: KI-Interview und Übersetzen
+        shell: bash
+        run: node tests/ki-interview.mjs
       - name: M1 Tresor und Profile
         shell: bash
         run: node tests/m1.mjs
