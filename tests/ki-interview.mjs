@@ -75,10 +75,11 @@ for (const channel of kanaele()) {
       d.stationen.push({ id: "st1", typ: "beruf", titel: { de: "Sachbearbeitung" }, organisation: "Beispielwerk", ort: "", von: "2020-01", ausrichtungen: [], anlagen: [] });
       d.kompetenzen.push({ id: "ko1", name: { de: "Excel" }, synonyme: [], kategorie: "it", ausrichtungen: [] });
     });
+    // Vor dem ersten Rendern setzen: Der hashchange-Listener hängt erst nach dem Zeichnen.
+    location.hash = "#/stammdaten/interview";
     K.nachEntsperren();
   });
   await p.waitForSelector(".rj-shell");
-  await p.evaluate(() => window.R42J_CORE.navigieren("stammdaten/interview"));
 
   await p.getByRole("heading", { name: "KI-Interview" }).waitFor();
   const prompt = () => p.getByLabel("Prompt", { exact: true }).inputValue();
