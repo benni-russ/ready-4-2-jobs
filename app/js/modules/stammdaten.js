@@ -530,7 +530,10 @@
     return html`
       <div class="rj-pagehead">
         <h1 class="h1">${K.t("nav.stammdaten")}</h1>
-        <${UI.Button} icon="sparkles" href="#/stammdaten/import">${K.t("import.knopf")}<//>
+        <div class="rj-row">
+          <${UI.Button} icon="sparkles" href="#/stammdaten/import">${K.t("import.knopf")}<//>
+          <${UI.Button} icon="file-text" href="#/lebenslauf">${K.t("nav.lebenslauf")}<//>
+        </div>
       </div>
       <${UI.Tabs}
         label=${K.t("nav.stammdaten")}

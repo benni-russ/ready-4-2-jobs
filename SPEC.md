@@ -225,7 +225,8 @@ Lernstand { kartenId, box: 1-5, faellig, richtig, falsch }
 Einstellungen { sprache, theme: "system"|"hell"|"dunkel", farbschema: string,
   schriftgroesse: "normal"|"gross"|"sehr-gross", sperreMinuten, rueckfrageTage (Std. 14),
   updatePruefung: boolean, backupZiel2?: boolean, kiPlatzhalter: boolean,
-  seitenleisteEingeklappt: boolean, anzeigename: string, onboardingSchritt?: number }
+  seitenleisteEingeklappt: boolean, anzeigename: string, onboardingSchritt?: number,
+  cvAkzent?: string }  // Standard: farbschema
 ```
 
 Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migrations.js`, vor dem Laden ausführen, vorher Backup.
@@ -277,12 +278,13 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Nutzer kann Keywords ergänzen/entfernen; Lücken mit einem Klick als Kompetenz anlegen.
 
 ### 6.5 Lebenslauf (PDF)
-- **Eine** geprüfte Vorlage, einspaltig, A4, 1–2 Seiten, Akzentfarbe & Schrift aus Einstellungen (nur WCAG-taugliche Voreinstellungen).
+- **Eine** geprüfte Vorlage, einspaltig, A4, 1–2 Seiten, Akzentfarbe aus den fünf Farbschemata (nur WCAG-taugliche Voreinstellungen, je Profil gemerkt in `cvAkzent`). Schrift ist fest IBM Plex Sans (Lateinisch-Teilmenge, eingebettet); fehlende Zeichen meldet die App vor dem Speichern.
 - Reihenfolge: Kopf (Name, Kontakt, Links, opt. Foto rechts oben) → Kurzprofil → Kernkompetenzen (Keyword-Zeile) → Berufserfahrung → Ausbildung → Zertifikate → Sprachen & IT → Interessen (optional).
 - Auswahl: nur Einträge der Ausrichtung; Erfolge und Kompetenzen nach Keyword-Treffern der Stelle priorisiert (max. 3–5 Stichpunkte pro Station).
 - Stichpunkte = `cvStichpunkt` (Aktion + Ergebnis, möglichst mit Zahl).
 - **ATS-Regeln:** echter Text (keine Bilder für Text), Standard-Überschriften (DE: Berufserfahrung, Ausbildung …; EN: Work Experience, Education …), keine Tabellen/Textboxen/Spalten für Inhalt, Datumsformat einheitlich (`MM/JJJJ`), Kontaktdaten im Body (nicht in Kopf-/Fußzeile), Schrift eingebettet, PDF-Metadaten (Titel, Autor) gesetzt, Lesereihenfolge = visuelle Reihenfolge.
-- Foto: Standard an bei DE, aus bei EN; pro Bewerbung umschaltbar.
+- Foto: Standard an bei DE, aus bei EN; pro Bewerbung umschaltbar. Im Kopf steht es als einzige Nebenspalte neben dem Text; Inhalt bleibt einspaltig.
+- Speichern: Der Nutzer wählt das Ziel über den Dateidialog, die Datei liegt dort unverschlüsselt. Der Snapshot im Tresor folgt mit der Bewerbung (M4).
 - Dateiname: `vorname-nachname-lebenslauf.pdf` (Kleinbuchstaben, Umlaute → ae/oe/ue/ss, Leerzeichen → `-`).
 - Seitenumbruch: keine Station über Seitengrenze trennen; bei > 2 Seiten Warnung + Vorschlag (ältere Stationen kürzen).
 

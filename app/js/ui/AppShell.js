@@ -25,6 +25,8 @@
     },
   ];
   var THEMES = ["system", "hell", "dunkel"];
+  // Gleiche Grenze wie der Schmal-Block in components.css.
+  var SCHMAL = window.matchMedia("(max-width: 600px)");
 
   function NavEintrag(props) {
     var text = K.t("nav." + props.seite);
@@ -42,7 +44,10 @@
 
   UI.AppShell = function (props) {
     var z = K.store.get();
-    var eingeklappt = z.seitenleisteEingeklappt;
+    var schmal = hooks.useState(SCHMAL.matches);
+    var ueberlagert = hooks.useState(false);
+    // Im schmalen Fenster liegt die offene Leiste über dem Inhalt. Die gespeicherte Wahl gilt dort nicht.
+    var eingeklappt = schmal[0] ? !ueberlagert[0] : z.seitenleisteEingeklappt;
     var seite = props.seite;
     var inhalt = hooks.useRef(null);
     var sucheOffen = hooks.useState(false);
@@ -50,11 +55,27 @@
     var dunkel = document.documentElement.getAttribute("data-theme") === "dark";
 
     function umschalten() {
-      K.store.set({ seitenleisteEingeklappt: !K.store.get().seitenleisteEingeklappt });
+      if (SCHMAL.matches) {
+        ueberlagert[1](function (offen) {
+          return !offen;
+        });
+      } else K.store.set({ seitenleisteEingeklappt: !K.store.get().seitenleisteEingeklappt });
     }
 
     hooks.useEffect(function () {
+      function wechsel(e) {
+        schmal[1](e.matches);
+        ueberlagert[1](false);
+      }
+      SCHMAL.addEventListener("change", wechsel);
+      return function () {
+        SCHMAL.removeEventListener("change", wechsel);
+      };
+    }, []);
+
+    hooks.useEffect(function () {
       function taste(e) {
+        if (e.key === "Escape") ueberlagert[1](false);
         if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === "b" || e.key === "B")) {
           e.preventDefault();
           umschalten();
@@ -73,6 +94,7 @@
     // Beim Entsperren und Seitenwechsel landet der Fokus im Inhalt, damit Tastatur und Screenreader folgen.
     hooks.useEffect(
       function () {
+        ueberlagert[1](false);
         inhalt.current.focus({ preventScroll: true });
         window.scrollTo(0, 0);
       },

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 R42J („Ready 4 2 Jobs“) ist ein lokales, verschlüsseltes Bewerbungs-Tool für nicht-technische Nutzer. Es läuft ohne Installation vom USB-Stick in Chromium-Browsern unter Windows und macOS. Lizenz: GPL-3.0.
 
-M0 bis M2 stehen: Grundgerüst, Tresor, Profile, Onboarding, Stammdaten, Anlagen und Suche. Die weiteren Fachmodule folgen ab M3. Das öffentliche Repo ist `benni-russ/ready-4-2-jobs`.
+M0 bis M3 stehen: Grundgerüst, Tresor, Profile, Onboarding, Stammdaten, Anlagen, Suche und Lebenslauf-PDF. Die weiteren Fachmodule folgen ab M3. Das öffentliche Repo ist `benni-russ/ready-4-2-jobs`.
 
 - `SPEC.md`: fachliche und technische Spezifikation, maßgeblich für Datenmodell, Formate und Modulverhalten.
 - `PLAN.md`: Meilensteine M0–M9 mit Akzeptanzkriterien. Der MVP (v0.1) umfasst M0–M5. Meilensteine der Reihe nach abarbeiten; jeder endet lauffähig und mit erfüllten Akzeptanzkriterien.
@@ -15,7 +15,7 @@ Der Stand der Checkboxen in `PLAN.md` zeigt, wo die Arbeit steht. Vor der Arbeit
 
 ## Befehle
 
-Es gibt bewusst keinen Build, kein npm und keine Paketverwaltung. Die App startet per Doppelklick auf `app/index.html` (später über `Start (Windows).cmd`, `Start (Mac).command` oder `Start.html`). `node tools/tokens-css.mjs` erzeugt `app/css/tokens.css` aus `tools/tokens.json` neu; das ist nur für Entwickler nötig, die App selbst braucht kein Node. Ein Test- oder Lint-Werkzeug ist nicht festgelegt. Geprüft wird über die Akzeptanzkriterien aus `PLAN.md`, nach jedem Meilenstein manuell in Edge unter Windows und in Chrome unter macOS vom USB-Stick. Vor jedem Release ist zusätzlich ein Testlauf im Browser Pflicht: den fertigen Stand starten und die Kernabläufe durchspielen. Ohne bestandenen Testlauf gibt es kein Release.
+Es gibt bewusst keinen Build, kein npm und keine Paketverwaltung. Die App startet per Doppelklick auf `app/index.html` (später über `Start (Windows).cmd`, `Start (Mac).command` oder `Start.html`). `node tools/tokens-css.mjs` erzeugt `app/css/tokens.css` aus `tools/tokens.json` neu, `node tools/pdf-schrift.mjs` packt die Schriften aus `tools/schrift/` nach `app/fonts/pdf-schrift.js`; das ist nur für Entwickler nötig, die App selbst braucht kein Node. Ein Test- oder Lint-Werkzeug ist nicht festgelegt. Geprüft wird über die Akzeptanzkriterien aus `PLAN.md`, nach jedem Meilenstein manuell in Edge unter Windows und in Chrome unter macOS vom USB-Stick. Vor jedem Release ist zusätzlich ein Testlauf im Browser Pflicht: den fertigen Stand starten und die Kernabläufe durchspielen. Ohne bestandenen Testlauf gibt es kein Release.
 
 ## Git und GitHub
 
