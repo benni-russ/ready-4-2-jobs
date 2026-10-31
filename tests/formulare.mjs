@@ -376,6 +376,8 @@ async function lageTesten(p) {
         await dlg(p).waitFor();
         await p.waitForTimeout(100);
       }
+      // Die Seitenleiste animiert nach dem Größenwechsel, gemessen wird erst danach.
+      await p.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running"));
       const f = await p.evaluate(pruefeLage);
       ok(`Lage ${stand} ${hash}`, f.length === 0, f);
       const felder = await p.evaluate(() =>
