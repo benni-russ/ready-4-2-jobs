@@ -405,6 +405,78 @@ async function lageTesten(p) {
   await p.evaluate(() => { window.R42J.setFontSize("normal"); window.R42J.setTheme("hell"); });
 }
 
+// Funde aus dem abschließenden Browserlauf: Fokus beim Verschwinden, früher Klick, lange Firmennamen.
+async function abschlussTesten(p, logs) {
+  const vorher = logs.length;
+  await p.evaluate(() => { location.hash = "#/komponenten"; });
+  await p.locator(".rj-date input").first().focus();
+  await p.evaluate(() => { location.hash = "#/uebersicht"; });
+  await p.locator(".rj-date input").first().waitFor({ state: "detached" });
+  const id = await p.evaluate(() => window.R42J_CORE.tresor.daten().bewerbungen[0].id);
+  await p.evaluate((id) => { location.hash = "#/bewerbungen/" + id + "/details"; }, id);
+  await knopf(p, "Status ändern").click();
+  await dlg(p).locator(".rj-date input").focus();
+  await p.evaluate(() => { location.hash = "#/uebersicht"; });
+  await dlg(p).waitFor({ state: "detached" });
+  ok("Datumsfeld verschwindet mit Fokus ohne Fehler", logs.length === vorher, logs.slice(vorher));
+  logs.length = vorher;
+
+  // Diese Anlage gehört nicht zur Vorauswahl, die Vorauswahl darf den Klick nicht überschreiben.
+  const anlage = await p.evaluate(() => {
+    const K = window.R42J_CORE;
+    K.tresor.aendern((d) => { d.anlagen[0].kategorie = "sonstiges"; });
+    return K.tresor.daten().anlagen[0].id;
+  });
+  for (let i = 0; i < 5; i++) {
+    await p.evaluate(() => { location.hash = "#/bewerbungen/neu"; });
+    await p.getByLabel(/^Firma/).fill("Donaudampfschifffahrtsgesellschaft Beispielhausen");
+    await p.getByRole("textbox", { name: /^Stelle Pflichtfeld/ }).fill("Sachbearbeitung");
+    await p.getByRole("button", { name: "Bewerbung anlegen" }).click();
+    await p.getByRole("tab", { name: "Stelle" }).waitFor();
+    const neu = await p.evaluate(() => /bewerbungen\/([^/]+)/.exec(location.hash)[1]);
+    // Klickt synchron, sobald das Feld im DOM steht: früher, als ein Mensch es könnte.
+    await p.evaluate((id) => new Promise((fertig) => {
+      const beob = new MutationObserver(() => {
+        const f = document.querySelector("main input[type=checkbox]");
+        if (!f) return;
+        beob.disconnect();
+        f.click();
+        fertig();
+      });
+      beob.observe(document.body, { childList: true, subtree: true });
+      location.hash = "#/bewerbungen/" + id + "/anlagen";
+    }), neu);
+    await p.waitForTimeout(200);
+    const auswahl = await p.evaluate((id) => window.R42J_CORE.tresor.daten().bewerbungen.filter((b) => b.id === id)[0].dokumente.anlagenAuswahl, neu);
+    ok(`Früher Klick bleibt erhalten (${i + 1})`, auswahl.includes(anlage), auswahl);
+  }
+
+  for (const [schrift, thema] of [["normal", "dunkel"], ["sehr-gross", "hell"]]) {
+    await p.setViewportSize({ width: 375, height: 800 });
+    await p.evaluate(([schrift, thema]) => { window.R42J.setFontSize(schrift); window.R42J.setTheme(thema); location.hash = "#/uebersicht"; }, [schrift, thema]);
+    await p.locator(".rj-appcard").first().waitFor();
+    await p.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect.getTiming().iterations === Infinity));
+    const f = await p.evaluate(() => [...document.querySelectorAll(".rj-appcard")].flatMap((c) => {
+      const status = c.children[1].getBoundingClientRect();
+      const karte = c.getBoundingClientRect();
+      const fehler = [];
+      for (const e of c.querySelectorAll(".rj-appcard__title, .rj-appcard__role")) {
+        const bereich = document.createRange();
+        bereich.selectNodeContents(e);
+        for (const r of bereich.getClientRects()) {
+          if (r.right > karte.right + 1) fehler.push("ragt aus der Karte: " + e.textContent);
+          if (Math.min(r.right, status.right) - Math.max(r.left, status.left) > 1 && Math.min(r.bottom, status.bottom) - Math.max(r.top, status.top) > 1) fehler.push("unter dem Status: " + e.textContent);
+        }
+      }
+      return fehler;
+    }));
+    ok(`Bewerbungskarte 375 px ${schrift} ${thema}`, f.length === 0, f);
+    await p.screenshot({ path: `${SP}/formulare-karte-375-${thema}.png` });
+  }
+  await p.setViewportSize({ width: 1280, height: 900 });
+  await p.evaluate(() => { window.R42J.setFontSize("normal"); window.R42J.setTheme("hell"); });
+}
+
 function kontrast(felder) {
   const kanal = (c) => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; };
   const lum = (t) => { const [r, g, b] = t.match(/[\d.]+/g).map(Number); return 0.2126 * kanal(r) + 0.7152 * kanal(g) + 0.0722 * kanal(b); };
@@ -429,6 +501,7 @@ for (const channel of kanaele()) {
     await monatTesten(p);
     await dropdownTesten(p);
     await lageTesten(p);
+    await abschlussTesten(p, logs);
   } catch (e) {
     await p.screenshot({ path: `${SP}/formulare-abbruch.png` }).catch(() => {});
     console.log(logs.join(" | "));

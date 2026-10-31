@@ -509,7 +509,7 @@ window.R42J_I18N.de = {
   "nav.lebenslauf": "Lebenslauf",
   "fehler.pdfLaden": "Die PDF-Bausteine ließen sich nicht laden. Starte R42J neu und versuche es noch einmal.",
   "fehler.cvName": "Trag zuerst Vor- und Nachnamen unter Stammdaten ein.",
-  "fehler.cvLeer": "Für diese Auswahl gibt es noch keine Stationen. Lege eine Station an oder wähle „Alle Einträge“.",
+  "fehler.cvLeer": "Für diese Auswahl gibt es noch keine Stationen. Ordne unter Stammdaten eine Station dieser Ausrichtung zu oder lege eine neue an.",
   "cv.text": "R42J baut deinen Lebenslauf aus den Stammdaten: einspaltig, mit echtem Text und so, dass Bewerbungssoftware ihn lesen kann.",
   "cv.ausrichtung": "Ausrichtung",
   "cv.alleEintraege": "Alle Einträge",

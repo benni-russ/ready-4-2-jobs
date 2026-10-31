@@ -179,6 +179,8 @@
     }
 
     function pruefen() {
+      // Verschwindet das Feld samt Fokus, kommt der Blur erst nach dem Lösen der Referenz.
+      if (!feld.current) return;
       var v = feld.current.value.trim();
       if (!v) {
         setUngueltig(false);
