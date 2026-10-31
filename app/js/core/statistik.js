@@ -62,9 +62,10 @@
   }
 
   function kalenderwoche(d) {
-    var donnerstag = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 3);
-    var erster = new Date(donnerstag.getFullYear(), 0, 1);
-    return Math.round((donnerstag - erster) / 864e5 / 7 - 0.5) + 1;
+    // In UTC gerechnet, sonst verschiebt die Sommerzeit das Ergebnis um eine Stunde.
+    var donnerstag = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate() + 3));
+    var erster = Date.UTC(donnerstag.getUTCFullYear(), 0, 1);
+    return Math.floor((donnerstag - erster) / 864e5 / 7) + 1;
   }
 
   function wochen(jetzt) {

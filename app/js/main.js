@@ -20,7 +20,7 @@
     if (seite === "checklisten") return html`<${S.Checklisten} />`;
     if (seite === "wissen") return html`<${S.Wissen} teile=${teile} />`;
     if (seite === "statistik") return html`<${S.Statistik} />`;
-    return html`<${UI.EmptyState} icon="search-x" titel=${K.t("fehler.seiteTitel")} text=${K.t("fehler.seiteText")}>
+    return html`<${UI.EmptyState} icon="search-x" seitentitel=${true} titel=${K.t("fehler.seiteTitel")} text=${K.t("fehler.seiteText")}>
       <${UI.Button} variante="primary" href="#/uebersicht">${K.t("fehler.seiteAktion")}<//>
     <//>`;
   }

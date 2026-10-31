@@ -159,7 +159,16 @@
           return S.datumAnzeige(bezugsDatum(b));
         },
       },
-      { schluessel: "passung", titel: K.t("bewerbung.passung"), typ: "number", num: true, text: passungText },
+      {
+        schluessel: "passung",
+        titel: K.t("bewerbung.passung"),
+        typ: "number",
+        num: true,
+        text: passungText,
+        zelle: function (b) {
+          return passungText(b) || html`<span class="rj-nodata">${K.t("bewerbung.passungOffen")}</span>`;
+        },
+      },
     ];
     return html`<${UI.DataTable} spalten=${spalten} zeilen=${props.liste} schluessel="id" ohneSuche=${true} />`;
   }

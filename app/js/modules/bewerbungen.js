@@ -65,6 +65,10 @@
           var s = K.keywords.score(b.keywords);
           return s === null ? "" : s + " %";
         },
+        zelle: function (b) {
+          var s = K.keywords.score(b.keywords);
+          return s === null ? html`<span class="rj-nodata">${K.t("bewerbung.passungOffen")}</span>` : s + " %";
+        },
       },
       {
         schluessel: "erstellt",

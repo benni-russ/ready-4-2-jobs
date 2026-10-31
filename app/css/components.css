@@ -185,7 +185,7 @@ h1, h2, h3, p { margin: 0; }
 .rj-empty__icon .rj-icon { width: 28px; height: 28px; }
 .rj-empty p { color: var(--ink-muted); }
 
-.rj-tooltip { position: relative; display: inline-flex; }
+.rj-tooltip { position: relative; display: inline-flex; vertical-align: middle; }
 .rj-tooltip__bubble { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); width: max-content; max-width: 240px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); background: var(--ink); color: var(--surface); font-size: .875rem; line-height: 1.25rem; box-shadow: var(--shadow-2); }
 .rj-tooltip__bubble::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border: 6px solid transparent; border-top-color: var(--ink); }
 
@@ -278,7 +278,7 @@ h1, h2, h3, p { margin: 0; }
 .rj-table tbody tr:hover { background: var(--surface); }
 .rj-table .is-num { text-align: right; font-variant-numeric: tabular-nums; }
 .rj-table th[aria-sort] button { all: unset; position: relative; min-height: 32px; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
-.rj-best { display: inline-flex; align-items: center; gap: 4px; margin-left: var(--space-2); color: var(--success); font-size: .8125rem; font-weight: 700; }
+.rj-best { display: inline-flex; align-items: center; gap: 4px; margin-left: var(--space-2); color: var(--success); font-size: .8125rem; font-weight: 700; white-space: nowrap; }
 .rj-best .rj-icon { width: 16px; height: 16px; }
 
 /* ---------- Bewerbungen ---------- */
@@ -546,6 +546,13 @@ h1, h2, h3, p { margin: 0; }
 .rj-sidebar > * { flex-shrink: 0; }
 
 /* Schmale Fenster und starker Zoom: kein Querscrollen (WCAG 1.4.10). */
+/* Vergleichstabelle: Die Kopfspalte bleibt beim seitlichen Scrollen stehen. */
+@media (max-width: 600px) {
+  .rj-table--kopfspalte th:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface-raised); }
+  .rj-table--kopfspalte tbody tr:hover th { background: var(--surface); }
+  .rj-table--kopfspalte td { min-width: 8.5rem; }
+  .rj-table--kopfspalte .rj-best { display: flex; justify-content: flex-end; margin-left: 0; }
+}
 @media (max-width: 600px) {
   .rj-shell, .rj-shell[data-collapsed="true"] { --rj-side: 76px; }
   .rj-main { grid-column: 2; }
