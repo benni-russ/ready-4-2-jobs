@@ -25,6 +25,16 @@
     return "#/bewerbungen/" + b.id + "/details";
   }
 
+  // Reihenfolge wie in den Reitern. Ohne Dokument gilt der Schritt als offen.
+  function schritte(b) {
+    return [
+      { reiter: "lebenslauf", label: K.t("uebersicht.schrittLebenslauf"), erledigt: !!b.dokumente.lebenslauf },
+      { reiter: "anschreiben", label: K.t("uebersicht.schrittAnschreiben"), erledigt: !!b.dokumente.anschreiben },
+      { reiter: "anlagen", label: K.t("uebersicht.schrittAnlagen"), erledigt: !!b.dokumente.anlagenPdf },
+      { reiter: "versand", label: K.t("uebersicht.schrittVersand"), erledigt: !!b.versendetAm },
+    ];
+  }
+
   function altersText(b) {
     var tage = K.tageSeit(bezugsDatum(b));
     var art = b.versendetAm ? "versendet" : "erstellt";
@@ -111,12 +121,28 @@
         var termin = K.termine.naechster(b);
         var meta = [
           { icon: "layers", text: ausrichtungName(b) },
-          termin ? { icon: "calendar", text: K.t("uebersicht.termin", { datum: S.datumAnzeige(termin.start) }) } : { icon: "send", text: altersText(b) },
+          termin ? { icon: "calendar", text: K.t("uebersicht.termin", { datum: S.datumAnzeige(termin.start) }) } : { icon: b.versendetAm ? "send" : "calendar", text: altersText(b) },
           { icon: "star", text: passungText(b) },
         ].filter(function (m) {
           return m.text;
         });
-        return html`<${UI.ApplicationCard} key=${b.id} href=${detailsLink(b)} titel=${b.firma.name} rolle=${b.stelle.titel} status=${K.bewerbungen.anzeigeStatus(b)} meta=${meta} />`;
+        // Nach dem Versand oder einer Absage gibt es keinen nächsten Schritt mehr.
+        var stand = K.bewerbungen.aktuellerStatus(b) === "vorbereitung" ? schritte(b) : null;
+        var naechster =
+          stand &&
+          stand.filter(function (s) {
+            return !s.erledigt;
+          })[0];
+        return html`<${UI.ApplicationCard}
+          key=${b.id}
+          href=${naechster ? "#/bewerbungen/" + b.id + "/" + naechster.reiter : detailsLink(b)}
+          titel=${b.firma.name}
+          rolle=${b.stelle.titel}
+          status=${K.bewerbungen.anzeigeStatus(b)}
+          meta=${meta}
+          schritte=${stand || undefined}
+          naechster=${naechster && K.t("uebersicht.naechster", { schritt: naechster.label })}
+        />`;
       })}
     </div>`;
   }
@@ -184,7 +210,7 @@
     return html`<${UI.Alert}
       titel=${K.t("update.titel", { version: h.version })}
       aktionen=${html`
-        <${UI.Button} icon="external-link" href=${h.link} target="_blank" rel="noopener noreferrer">${K.t("update.zumRelease")}<//>
+        <${UI.Button} icon="download" href=${h.zip} target="_blank" rel="noopener noreferrer">${K.t("update.zumRelease")}<//>
         <${UI.Button} icon="book-open" href="#/wissen/update-installieren">${K.t("update.anleitung")}<//>
         <${UI.Button} onClick=${K.update.ausblenden}>${K.t("update.ausblenden")}<//>
       `}

@@ -143,7 +143,15 @@
   function absender(p) {
     var a = p.adresse || {};
     var ort = [a.plz, a.ort].filter(Boolean).join(" ");
-    return [[p.vorname, p.nachname].filter(Boolean).join(" "), a.strasse, ort, p.telefon, p.email].filter(Boolean).join(" · ");
+    return [
+      [[p.vorname, p.nachname].filter(Boolean).join(" "), a.strasse, ort],
+      [p.telefon, p.email],
+    ]
+      .map(function (zeile) {
+        return zeile.filter(Boolean).join(" · ");
+      })
+      .filter(Boolean)
+      .join("\n");
   }
 
   // Eine Zeile im Sichtfenster, ohne Telefon und E-Mail.

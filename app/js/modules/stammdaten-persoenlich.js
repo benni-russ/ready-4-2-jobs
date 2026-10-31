@@ -123,8 +123,8 @@
   function Lesen(props) {
     var p = props.profil;
     var a = p.adresse || {};
-    return html`
-      <section class="rj-card rj-stack">
+    return html`<div class="rj-cards">
+      <section class="rj-card rj-card--breit rj-stack">
         <${UI.LeseListe}
           eintraege=${eintraege(p, FELDER_PERSON)
             .concat([[K.t("profil.geburtsdatum"), datum(p.geburtsdatum)]])
@@ -148,7 +148,7 @@
             )}
         />
       </section>
-    `;
+    </div>`;
   }
 
   function istLeer(p) {
@@ -205,7 +205,8 @@
 
     return html`
       ${kopf}
-      <section class="rj-card rj-stack">
+      <div class="rj-cards">
+      <section class="rj-card rj-card--breit rj-stack">
         <${Felder}
           profil=${p}
           setze=${setze}
@@ -236,6 +237,7 @@
           <${AnlageWahl} feld="unterschrift" kategorie="unterschrift" profil=${p} setze=${setze} />
         </div>
       </section>
+      </div>
       <${UI.BearbeitenLeiste} form=${f} />
     `;
   };

@@ -111,7 +111,7 @@ Beim Start werden fehlende Ordner angelegt. Mitgelieferte Artikel werden direkt 
 
 ### 4.2 Passwort & Sperre
 - Mindestens 12 Zeichen, Stärke-Anzeige (zxcvbn-ähnliche Heuristik, lokal, ohne große Wörterliste).
-- **Auto-Sperre** nach Inaktivität (Standard 10 min, einstellbar 5–60), außerdem beim Schließen des Tabs. Sperre löscht DEK aus dem Speicher.
+- **Auto-Sperre** nach Inaktivität (Standard 10 min, einstellbar 5–60), außerdem beim Schließen des Tabs. Sperre löscht DEK aus dem Speicher. 60 Sekunden vorher erscheint ein Countdown; jede Aktivität oder „Weiterarbeiten“ bricht ihn ab.
 - Kein „Passwort merken“. Der Tresor bleibt nur bei einem echten Neuladen desselben Tabs offen: Der DEK liegt dafür verpackt im `sessionStorage`, die Hülle ist ein nicht extrahierbarer Schlüssel in IndexedDB (`core/sitzung.js`). Das gilt höchstens 30 Sekunden nach dem Neuladen und nur, wenn der Browser den Aufruf als `reload` meldet. Jeder andere Aufruf, auch ein wiederhergestellter Tab, und jede Sperre löschen beides.
 
 ### 4.3 Wiederherstellungsschlüssel
@@ -307,7 +307,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Platzhalter z. B. `{{firma}}`, `{{stelle}}`, `{{quelle}}`, `{{ansprechpartner_anrede}}`, `{{kompetenz_1}}`, `{{erfolg_1}}`, `{{eintritt}}`.
 - Editor mit Live-Vorschau, Rechtschreibprüfung des Browsers (`spellcheck`, `lang` passend).
 - Optional: Unterschrift (Standard aus; beim Aktivieren Hinweis auf Missbrauchsrisiko).
-- Optional: Postversand (Standard aus) für DL-Fensterumschläge nach DIN 5008 Form B: Anschrift ab 62,7 mm, Rücksendeangabe darüber, Falzmarken bei 105 und 210 mm, Lochmarke bei 148,5 mm. Hinweis bei fehlender oder zu langer Anschrift (mehr als 6 Zeilen).
+- Optional: Postversand (Standard aus) für DL-Fensterumschläge nach DIN 5008 Form B: Anschrift ab 62,7 mm, Rücksendeangabe darüber, Falzmarken bei 105 und 210 mm, Lochmarke bei 148,5 mm. Hinweis bei fehlender oder zu langer Anschrift (mehr als 6 Zeilen). Der Briefkopf steht mittig in zwei Zeilen: Name und Anschrift, darunter Telefon und E-Mail. Die Vorschau im Anschreiben zeigt die gewählte Versandart: beim Postversand mit Sichtfenster, Marken und Rücksendeangabe.
 - Max. 1 Seite, Warnung bei Überlänge.
 - Dateiname: `vorname-nachname-anschreiben-firma.pdf`.
 
@@ -326,6 +326,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 ### 6.9 Übersicht & Status
 - Liste/Karten aller Bewerbungen, Filter (Status, Ausrichtung, Zeitraum), Sortierung, Suche.
 - Status-Badges mit Farbe + Icon + Text (nicht nur Farbe).
+- Die ganze Karte ist klickbar. In Vorbereitung zeigt sie den Stand von Lebenslauf, Anschreiben, Anlagen und Versand und führt zum ersten offenen Schritt. In jedem anderen Status und in der Liste führt der Klick zu den Details.
 - **Erinnerungen** beim Öffnen: „Rückfrage fällig“ nach X Tagen (Std. 14) ohne Antwort; anstehende Termine (nächste 7 Tage); optional „Keine Antwort“ vorschlagen nach 6 Wochen (seit dem letzten Statuseintrag; ersetzt dann die Rückfrage-Erinnerung). „Später erinnern“ blendet eine Erinnerung 7 Tage aus.
 - „Rückfrage fällig“ ist abgeleitet: Status `versendet` und `versendetAm` mindestens X Kalendertage her. Der Wert steht nie in der Historie und ist im Statuswechsel-Dialog nicht wählbar.
 - Rückfrage-Vorlage (E-Mail-Baustein) direkt erzeugbar.
@@ -346,7 +347,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 ### 6.11 Vorbereitung
 - **Karteikarten** mit Leitner-System (5 Boxen, Intervalle 1/2/4/8/16 Tage).
 - **Multiple Choice** (1 richtige oder Mehrfachauswahl), sofortige Auflösung mit Erklärung.
-- **Kategorien (mitgeliefert):** Allgemeinwissen · Mathe & Dreisatz · Logik & Zahlenreihen · Deutsch (Rechtschreibung, Grammatik) · Englisch · Typische Interviewfragen.
+- **Kategorien (mitgeliefert):** Allgemeinwissen · Mathe & Dreisatz · Logik & Zahlenreihen · Deutsch (Rechtschreibung, Grammatik) · Englisch · Typische Interviewfragen · Konzentration · Räumliches Denken · Textverständnis · Büro- und Fachwissen · Persönlichkeitstests verstehen. Persönlichkeitstests haben keine richtigen Antworten: Der Katalog erklärt, was hinter typischen Aussagen gefragt wird, und übt nichts ein. Räumliche Aufgaben kommen ohne Bilder aus.
 - **STAR-Training:** Interviewfragen („Erzählen Sie von einer Situation, in der …“) → passende Erfolge aus dem Profil vorschlagen → Nutzer übt Antwort (Timer, Selbstbewertung).
 - **Unternehmenswissen:** per KI-Prompt (6.3) erzeugt, pro Bewerbung gespeichert. Gelöschte Bewerbungen nehmen ihren Lernstand mit.
 - **Lernen:** Alle Fragentypen laufen über denselben Lernstand. Gewusst rückt eine Box vor, nicht gewusst führt zurück in Box 1 und damit zum Folgetag. Eine Sitzung umfasst höchstens 20 Fragen, fällige vor neuen. Die Lern-ID eigener Kataloge enthält den Dateinamen, damit gleiche IDs in zwei Dateien nicht kollidieren.
@@ -380,7 +381,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Sprache, Theme, Farbschema (Auswahl mit Farbvorschau), Schriftgröße, Suche mit der Taste `/` (`suchTaste`, abschaltbar nach WCAG 2.1.4), Seitenleiste eingeklappt (auch per Strg/Cmd + B), Sperrzeit, Rückfrage-Frist, Feiertagspauschale (`feiertagsWochen`, Std. 2), Backup (Ziel 2, jetzt sichern, wiederherstellen), Passwort ändern, Wiederherstellungsschlüssel neu, Update-Prüfung, Profil exportieren/löschen, Export-Ordner leeren.
 
 ### 6.16 Updates
-- Opt-in: beim Start max. 1×/Tag `GET https://api.github.com/repos/benni-russ/ready-4-2-jobs/releases/latest` → Vergleich mit `app/version.js` → Hinweis mit Link zum Release.
+- Opt-in: beim Start max. 1×/Tag `GET https://api.github.com/repos/benni-russ/ready-4-2-jobs/releases/latest` → Vergleich mit `app/version.js` → Hinweis mit direktem Download der ZIP-Datei `r42j-vX.Y.Z.zip`. Die Adresse entsteht aus der Versionsnummer. Ein Selbst-Update, das `app/` ersetzt, gibt es bewusst nicht.
 - Anleitung „Update installieren“: ZIP entpacken, **nur** Ordner `app/` ersetzen. Startdateien liegen im ZIP mit, `daten/` ist nicht enthalten.
 - Das ZIP enthält `app/`, die Startdateien, `LIESMICH.html` und `LICENSE` ohne Oberordner. Es entsteht mit `tools/release-zip.mjs`. Ein Tag `vX.Y.Z` legt nur einen Release-Entwurf an, veröffentlicht wird er nach dem Testlauf von Hand.
 - Der Stand der Prüfung (`updateStand`: letzter Tag, gefundene Version, ausgeblendete Version) liegt im `localStorage`. Er enthält keine persönlichen Daten und ändert den Tresor nicht. Von der Antwort wird nur `tag_name` gelesen, der Link entsteht aus der Versionsnummer.

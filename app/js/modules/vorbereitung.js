@@ -39,10 +39,11 @@
       var e = K.lernen.einteilen(g.fragen);
       return Object.assign({ id: g.kategorie, name: K.fragen.kategorieName(g.kategorie), fragen: g.fragen }, e);
     });
-    var summe = { faellig: [], neu: 0, gelernt: 0, meister: 0, gesamt: 0 };
+    var summe = { faellig: [], neuKarten: [], neu: 0, gelernt: 0, meister: 0, gesamt: 0 };
     zeilen.forEach(function (z) {
       summe.faellig = summe.faellig.concat(z.faellig);
       summe.neu += z.neu.length;
+      summe.neuKarten = summe.neuKarten.concat(z.neu);
       summe.gelernt += z.gelernt;
       summe.meister += z.meister;
       summe.gesamt += z.gesamt;
@@ -98,11 +99,12 @@
         <${UI.Button}
           variante="primary"
           icon="play"
-          disabled=${summe.faellig.length === 0}
+          disabled=${summe.faellig.length + summe.neuKarten.length === 0}
           onClick=${function () {
-            sitzung[1]({ titel: K.t("vorbereitung.alleFaelligen"), karten: summe.faellig.slice(0, K.lernen.SITZUNG) });
+            var neu = summe.faellig.length === 0;
+            sitzung[1]({ titel: K.t(neu ? "vorbereitung.neueLernen" : "vorbereitung.alleFaelligen"), karten: (neu ? summe.neuKarten : summe.faellig).slice(0, K.lernen.SITZUNG) });
           }}
-          >${K.t("vorbereitung.alleLernen", { anzahl: summe.faellig.length })}<//
+          >${summe.faellig.length === 0 ? K.t("vorbereitung.neueLernen") : K.t("vorbereitung.alleLernen", { anzahl: summe.faellig.length })}<//
         >
       </div>
       <div class="rj-grid-2">

@@ -339,7 +339,7 @@ for (const channel of kanaele()) {
   await p.evaluate(() => {
     window.location.hash = "#/einstellungen";
   });
-  await waehle(p, p.getByRole("combobox", { name: "Feiertage pro Jahr" }), "3");
+  await waehle(p, p.getByRole("combobox", { name: "Abzug für Feiertage" }), "3");
   const pause = await p.evaluate(() => window.R42J_CORE.vergleich.feiertagsWochen());
   ok("Feiertagspauschale einstellbar", pause === 3);
   await p.evaluate(() => {

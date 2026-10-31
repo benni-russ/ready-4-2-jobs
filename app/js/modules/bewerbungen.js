@@ -212,12 +212,13 @@
     }
 
     return html`<section class="rj-card rj-stack">
+      <div class="rj-spalten">
+      <div class="rj-stack">
       <p>${K.t("bewerbung.lebenslaufText")}</p>
       ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
       ${hinweise[0].map(function (h) {
         return html`<${UI.Alert} art="warning" key=${h.text}>${K.t(h.text, h.werte)}<//>`;
       })}
-      <${S.WissenLink} artikel="ats-erklaert" />
       <${UI.Switch}
         label=${K.t("cv.foto")}
         wert=${b.dokumente.mitFoto}
@@ -227,11 +228,18 @@
           });
         }}
       />
-      <${S.WissenLink} artikel="foto-ja-nein" />
       <div class="rj-row">
         <${UI.Button} variante="primary" icon="file-text" laedt=${laedt[0]} disabled=${laedt[0]} onClick=${erstellen}>${K.t("cv.erstellen")}<//>
       </div>
+      </div>
+      <div class="rj-stack">
+      <h2 class="h3">${K.t("bewerbung.lebenslaufFertig")}</h2>
+      ${!b.dokumente.lebenslauf && html`<p class="rj-muted">${K.t("bewerbung.lebenslaufNochNicht")}</p>`}
       <${S.DokumentZeile} bewerbung=${b} art="lebenslauf" />
+      <${S.WissenLink} artikel="ats-erklaert" />
+      <${S.WissenLink} artikel="foto-ja-nein" />
+      </div>
+      </div>
     </section>`;
   }
 

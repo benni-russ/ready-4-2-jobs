@@ -32,7 +32,7 @@
 
   K.anschreibenVorlage = function (d) {
     var inhalt = [
-      { text: d.absender, style: "absender", absolutePosition: { x: RAND_LINKS, y: 18 * MM } },
+      { text: d.absender, alignment: "center", style: "kopf", absolutePosition: { x: RAND_LINKS, y: 18 * MM } },
       { text: d.empfaenger.join("\n"), absolutePosition: { x: RAND_LINKS, y: d.postversand ? ANSCHRIFTZONE_OBEN : ANSCHRIFT_OBEN } },
       { text: d.ortDatum, alignment: "right", style: "absender", absolutePosition: { x: RAND_LINKS, y: DATUM_OBEN } },
       { text: d.betreff, style: "betreff", margin: [0, BETREFF_OBEN - RAND_OBEN, 0, 0] },
@@ -62,6 +62,7 @@
       info: { title: d.betreff, author: d.name, subject: d.betreff, creator: "R42J" },
       defaultStyle: { font: K.pdf.FAMILIE, fontSize: 10.5, lineHeight: 1.22, color: TINTE },
       styles: {
+        kopf: { color: GEDAEMPFT, fontSize: 9 },
         absender: { color: GEDAEMPFT, fontSize: 9.5 },
         betreff: { bold: true, fontSize: 11.5 },
         ruecksende: { color: GEDAEMPFT, fontSize: 7.5 },

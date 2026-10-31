@@ -155,9 +155,15 @@
 
   function Vorschau(props) {
     var f = K.anschreiben.fertig(props.bewerbung);
-    return html`<div class="rj-letter" lang=${props.bewerbung.sprache} aria-label=${K.t("anschreiben.vorschau")}>
-      <p class="rj-letter__absender">${f.absender}</p>
-      <p>${f.empfaenger.join("\n")}</p>
+    return html`<div class=${"rj-letter" + (f.postversand ? " rj-letter--post" : "")} lang=${props.bewerbung.sprache} role="group" aria-label=${K.t("anschreiben.vorschau")}>
+      <div class="rj-letter__blatt">
+      ${f.postversand && html`<span class="rj-letter__fenster" aria-hidden="true"></span>
+        <span class="rj-letter__marke" style="--oben:105" aria-hidden="true"></span>
+        <span class="rj-letter__marke rj-letter__marke--loch" style="--oben:148.5" aria-hidden="true"></span>
+        <span class="rj-letter__marke" style="--oben:210" aria-hidden="true"></span>
+        <p class="rj-letter__ruecksende">${f.ruecksende}</p>`}
+      <p class="rj-letter__absender rj-letter__kopf">${f.absender}</p>
+      <p class="rj-letter__anschrift">${f.empfaenger.join("\n")}</p>
       <p class="rj-letter__datum">${f.ortDatum}</p>
       <p class="rj-letter__betreff">${f.betreff}</p>
       ${f.referenz && html`<p class="rj-letter__absender">${f.referenz}</p>`}
@@ -167,6 +173,7 @@
       })}
       <p>${f.gruss}</p>
       <p>${f.name}</p>
+      </div>
     </div>`;
   }
 
@@ -423,7 +430,21 @@
         r.hinweise.map(function (h) {
           return html`<${UI.Alert} art="warning" key=${h.text}>${K.t(h.text, h.werte)}<//>`;
         })}
+        <${UI.SegmentedControl}
+          label=${K.t("anschreiben.vorschauArt")}
+          wert=${b.dokumente.postversand ? "post" : "digital"}
+          optionen=${[
+            { wert: "digital", icon: "file-text", label: K.t("anschreiben.artDigital") },
+            { wert: "post", icon: "mail", label: K.t("anschreiben.artPost") },
+          ]}
+          beiAenderung=${function (w) {
+            K.bewerbungen.aendern(b.id, function (x) {
+              x.dokumente.postversand = w === "post";
+            });
+          }}
+        />
         <${Vorschau} bewerbung=${b} />
+        ${b.dokumente.postversand && html`<p class="rj-hint">${K.t("anschreiben.postLegende")}</p>`}
       </div>
     </div>
     ${ki[0] &&

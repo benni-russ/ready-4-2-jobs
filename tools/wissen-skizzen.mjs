@@ -90,6 +90,10 @@ function spanne(punkte, hinweis) {
 }
 
 const SKIZZEN = {
+  einstellungstest: {
+    de: schritte([["Schulwissen", ["Rechnen,", "Rechtschreibung"]], ["Fähigkeiten", ["Logik,", "Konzentration"]], ["Arbeitsprobe", ["Aufgabe aus", "dem Alltag"]], ["Persönlichkeit", ["Ehrliche", "Selbsteinschätzung"]]]),
+    en: schritte([["School", ["Maths,", "spelling"]], ["Abilities", ["Logic,", "concentration"]], ["Work sample", ["Task from", "everyday work"]], ["Personality", ["Honest", "self-assessment"]]]),
+  },
   "star-methode": {
     de: schritte([["Situation", ["Wo warst du,", "was war los?"]], ["Aufgabe", ["Was war dein", "Auftrag?"]], ["Aktion", ["Was hast du", "selbst getan?"]], ["Ergebnis", ["Was kam dabei", "heraus?"]]]),
     en: schritte([["Situation", ["Where were you,", "what happened?"]], ["Task", ["What was", "your job?"]], ["Action", ["What did you", "do yourself?"]], ["Result", ["What came", "of it?"]]]),

@@ -116,7 +116,7 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 - [x] Multiple Choice inkl. Erklärung.
 - [x] STAR-Training mit Timer.
 - [x] Unternehmensfragen per KI-Prompt.
-- [x] Fragenkataloge erstellen: Allgemeinwissen, Mathe & Dreisatz, Logik & Zahlenreihen, Deutsch, Englisch, Interviewfragen (Ziel SPEC §8).
+- [x] Fragenkataloge erstellen: Allgemeinwissen, Mathe & Dreisatz, Logik & Zahlenreihen, Deutsch, Englisch, Interviewfragen, Konzentration, Räumliches Denken, Textverständnis, Büro- und Fachwissen, Persönlichkeitstests (Ziel SPEC §8).
 
 **Akzeptanz:** Falsch beantwortete Karte erscheint am Folgetag erneut; Katalog-Import mit fehlerhafter Datei bricht nicht ab.
 
@@ -140,6 +140,8 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 - [x] PDF-Schrift auf Latin Extended und Vietnamesisch erweitert.
 - [x] Feedback-Feinschliff: Name mit Unterzeile, 1920 × 1080, Brotkrumen, Suchleiste, Speicheranzeige, Formulare mit Bearbeiten, Anschreiben in Schritten, DIN 5008, Status-Icons, Kompetenzfilter, Anlagen-Vorschläge, Vergleichspunkte, Kataloge per KI, Wissen mit eigenen Artikeln, Quellen und Skizzen.
 - [x] Befunde aus dem USB-Lauf: Neuladen ohne Abmeldung, Meldungen verdecken keine Aktionen, Speicheranzeige nur beim Speichern, Filter mit Überschriften, Farbschema-Vorschau, Vorschläge für gespeicherte Anlagen, Postversand, Textwerkzeug und Kategorien im Wissen, Sprunglink, Taste `/` abschaltbar
+- [x] Briefkopf mittig in zwei Zeilen, Countdown vor der automatischen Sperre, direkter Update-Download mit kürzerer Anleitung
+- [x] Volles Impeccable-Review: Karten und Formulare füllen die Breite, Karten der Übersicht ganz klickbar mit Stand und nächstem Schritt, Fokusringe in Akkordeon und sortierter Spalte, Reflow bis 320 px, fünf weitere Kataloge, Artikel zu Einstellungstests
 
 **Akzeptanz (offen):**
 - [ ] Nicht-technische Testperson schafft Onboarding + erste Bewerbung ohne Hilfe in < 30 min.

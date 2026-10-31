@@ -407,6 +407,10 @@ for (const channel of kanaele()) {
   await p.evaluate(() => {
     const K = window.R42J_CORE;
     window.__neu = K.bewerbungen.neu({ firma: "Vorbereitung GmbH", titel: "Einkauf", ausrichtungId: K.tresor.daten().ausrichtungen[0].id, sprache: "de", anrede: "sie" }).id;
+    // Die Warnung erscheint erst, wenn es etwas zu versenden gibt.
+    K.bewerbungen.aendern(window.__neu, (x) => {
+      x.dokumente.anlagenPdf = { erzeugtAm: new Date().toISOString(), dateiname: "anlagen.pdf", anlageId: "kopie", groesse: 1 };
+    });
     location.hash = "#/bewerbungen/" + window.__neu + "/versand";
   });
   await p.getByText("8 von 8 Punkten auf der Checkliste sind offen").waitFor();

@@ -5,6 +5,11 @@
 
   // Quellen und Skizze je Artikel. Die Quellen wurden abgerufen und geprüft.
   var ZUSATZ = {
+    "einstellungstest": {
+      "sources": "Federal Employment Agency (Germany): Guide to selection tests (German) | https://www.arbeitsagentur.de/vor-ort/datei/orientierungshilfen_ba095452.pdf ;; Victoria University of Wellington: Psychometric testing | https://wgtn.ac.nz/careers/employment/jobs/psychometric-testing",
+      "image": "einstellungstest",
+      "imageAlt": "Four kinds of test: school knowledge, abilities, work sample and personality"
+    },
     "foto-ja-nein": {
       "sources": "EURES (European Commission): Living and working conditions in Germany, applications and photo | https://eures.europa.eu/living-and-working/living-and-working-conditions/living-and-working-conditions-germany_en ;; University of St Andrews Careers: CVs, no photo on UK CVs | https://www.st-andrews.ac.uk/careers/how-to-apply/cv/ ;; Pomona College Career Development: U.S. résumé tips for international students | https://cdo.pomona.edu/resources/u-s-resume-tips-for-international-students/",
       "image": "foto-ja-nein",
@@ -78,6 +83,34 @@
   var RECHT = "Contract and law";
   var GESPRAECH = "Interview";
   var AUFTRITT = "Online presence";
+
+  artikel("einstellungstest", "Understanding selection tests", BEWERBUNG, `
+Some companies and public bodies invite you to a test before the interview. This is especially common for apprenticeships. You don't need any special skill: if you know the task types, you can walk in calmer.
+
+## What may come up
+
+- **School knowledge:** Maths, spelling, general knowledge. These tasks resemble class tests, so practice helps most here.
+- **Abilities:** Logic, concentration, spatial reasoning. Many people find these unfamiliar at first.
+- **Work samples:** You complete a small task from everyday work.
+- **Personality:** You assess yourself. There are no right or wrong answers here.
+
+## How to prepare
+
+1. Practise the areas you find hard under [Preparation](#/vorbereitung).
+2. Set a timer while practising so you get used to time pressure.
+3. Get a good night's sleep and plan your journey so you arrive on time. Pack your glasses and something to drink.
+
+## During the test
+
+- Read the instructions carefully and ask if an example is unclear.
+- Don't get stuck on one task. Move on and come back later.
+- Don't worry if you can't finish. Time pressure is intended, and there are often more tasks than anyone can complete.
+- Only guess if wrong answers don't cost points.
+
+## Personality tests
+
+Answer honestly and the way you behave at work. Your goal is a job that suits you. The catalogue "Understanding personality tests" explains what typical statements are asking about.
+`);
 
   artikel("foto-ja-nein", "Photo or no photo?", BEWERBUNG, `
 In Germany, a photo on your CV is common, but no law requires it. It is voluntary, and you may leave it out.
@@ -376,14 +409,12 @@ An update only replaces the program. Your data in the \`daten\` folder stays unt
 
 ## How to do it
 
-1. Lock R42J and close the browser tab.
-2. To be safe, back up the \`daten\` folder, for example by copying it to your computer.
-3. Download the ZIP file \`r42j-vX.Y.Z.zip\` from the release and unpack it.
-4. Delete the old \`app\` folder on the stick.
-5. Copy the new \`app\` folder from the ZIP to the same place.
-6. Start R42J as usual and unlock your profile.
+1. Click "Download update" on the overview and unpack the ZIP file.
+2. Lock R42J and close the browser tab.
+3. Replace the \`app\` folder on the stick with the new one from the ZIP.
+4. Start R42J as usual and unlock your profile.
 
-You only need to replace the start files if the release note says so. \`daten\` is not in the ZIP and is never overwritten. Never delete this folder.
+If the button is missing, download the file \`r42j-vX.Y.Z.zip\` from the release page on GitHub. You only need to replace the start files if the release note says so. \`daten\` is not in the ZIP and is never overwritten. Never delete this folder. To be extra safe, copy it to your computer first.
 
 ## Check for updates automatically
 

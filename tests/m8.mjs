@@ -206,7 +206,7 @@ for (const channel of kanaele()) {
   await p.getByRole("heading", { name: "Wissen", exact: true }).waitFor();
   await p.getByRole("link", { name: "Mein Testartikel" }).waitFor();
   ok("Eigener Artikel in der Liste", true);
-  ok("Je Kennung eine Zeile", (await p.locator(".rj-datatable tbody tr").count()) === 14, await p.locator(".rj-datatable tbody tr").count());
+  ok("Je Kennung eine Zeile", (await p.locator(".rj-datatable tbody tr").count()) === 15, await p.locator(".rj-datatable tbody tr").count());
   ok("Geänderte Datei bleibt", await p.getByRole("link", { name: "Geänderte Probezeit" }).isVisible());
   ok("Zu große Datei gemeldet", await p.getByText("Übersprungene Dateien: 1").isVisible());
   const stand = await p.evaluate(async () => (await window.R42J_CORE.wissen.laden()).artikel.find((a) => a.kennung === "star-methode"));

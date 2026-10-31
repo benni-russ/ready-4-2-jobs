@@ -3,7 +3,7 @@
   var K = window.R42J_CORE;
 
   var TYPEN = ["karte", "mc", "mc-multi", "zahlenreihe"];
-  var KATEGORIEN = ["allgemeinwissen", "mathe", "logik", "deutsch", "englisch", "interview"];
+  var KATEGORIEN = ["allgemeinwissen", "mathe", "logik", "deutsch", "englisch", "interview", "konzentration", "raeumlich", "textverstaendnis", "fachwissen", "persoenlichkeit"];
   var INTERVALLE = [1, 2, 4, 8, 16];
   var MAX_BYTES = 2 * 1024 * 1024;
   var MAX_MELDUNGEN = 5;

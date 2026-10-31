@@ -286,10 +286,17 @@
     });
 
     return html`
-      ${!b.versendetAm && html`<${ChecklistenWarnung} bewerbung=${b} />`}
+      ${!b.versendetAm && dokumente.length > 0 && html`<${ChecklistenWarnung} bewerbung=${b} />`}
+      <div class="rj-cards">
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("versand.dokumente")}</h2>
-        ${dokumente.length === 0 && html`<${UI.Alert} art="info">${K.t("versand.keineDokumente")}<//>`}
+        ${dokumente.length === 0 &&
+        html`<p>${K.t("versand.keineDokumente")}</p>
+          <div class="rj-row">
+            <${UI.Button} href=${"#/bewerbungen/" + b.id + "/lebenslauf"}>${K.t("versand.zumLebenslauf")}<//>
+            <${UI.Button} href=${"#/bewerbungen/" + b.id + "/anschreiben"}>${K.t("versand.zumAnschreiben")}<//>
+            <${UI.Button} href=${"#/bewerbungen/" + b.id + "/anlagen"}>${K.t("versand.zuDenAnlagen")}<//>
+          </div>`}
         ${dokumente.map(function (a) {
           return html`<${S.DokumentZeile} bewerbung=${b} art=${a} key=${a} />`;
         })}
@@ -326,7 +333,7 @@
         html`<p class="rj-muted">${K.t("versand.portalText")}</p>
           <${UI.CopyFieldList} felder=${portalFelder(b)} />`}
       </section>
-      <section class="rj-card rj-stack">
+      <section class="rj-card rj-card--breit rj-stack">
         <h2 class="h3">${K.t("versand.abschluss")}</h2>
         ${b.versendetAm
           ? html`<${UI.Alert} art="success">${K.t("versand.warVersendet", { datum: S.datumAnzeige(b.versendetAm) })}<//>`
@@ -342,6 +349,7 @@
                 <//>
               </div>`}
       </section>
+      </div>
       ${email[0] &&
       html`<${S.EmailDialog}
         bewerbung=${b}

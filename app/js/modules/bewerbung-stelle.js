@@ -167,6 +167,7 @@
           </details>
         </div>`}
       </section>
+      <div class="rj-cards">
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("stelle.firma")}</h2>
         <${UI.LeseListe}
@@ -190,6 +191,7 @@
           ]}
         />
       </section>
+      </div>
     `;
   }
 
@@ -328,6 +330,7 @@
         </div>
       </section>
 
+      <div class="rj-cards">
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("stelle.firma")}</h2>
         <div class="rj-grid-2">
@@ -356,6 +359,7 @@
           <${UI.TextField} label=${K.t("stelle.ansprechTelefon")} placeholder=${K.t("stelle.ansprechTelefonPlatzhalter")} ...${feld("ansprechpartner", "telefon")} />
         </div>
       </section>
+      </div>
 
       <${UI.BearbeitenLeiste} form=${f} />`}
       ${kiOffen[0] &&

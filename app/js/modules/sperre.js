@@ -47,14 +47,14 @@
       <//>
       <div class="rj-row" style="justify-content:space-between">
         <a
-          class="rj-link"
+          class="rj-link rj-link--solo"
           href="#"
           onClick=${klick(function () {
             K.zumSchluessel(e);
           })}
           >${K.t("sperre.mitSchluessel")}</a
         >
-        <a class="rj-link" href="#" onClick=${klick(K.zuProfilen)}>${K.t("sperre.anderesProfil")}</a>
+        <a class="rj-link rj-link--solo" href="#" onClick=${klick(K.zuProfilen)}>${K.t("sperre.anderesProfil")}</a>
       </div>
     <//>`;
   };
@@ -90,7 +90,7 @@
         ${K.t(laedt[0] ? "sperre.laedt" : "sperre.aktion")}
       <//>
       <a
-        class="rj-link"
+        class="rj-link rj-link--solo"
         href="#"
         onClick=${klick(function () {
           K.zurSperre(e);

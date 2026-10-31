@@ -50,7 +50,7 @@
     if (a.phase === "schluesselNeu") seite = html`<${S.SchluesselNeu} />`;
     if (a.phase === "sperrt") seite = html`<${UI.Bildschirm} titel=${K.t("sperre.sperrt")} />`;
     if (a.phase === "app") seite = html`<${App} />`;
-    return html`${seite}<${UI.Toaster} />`;
+    return html`${seite}${a.phase === "app" && html`<${UI.SperrCountdown} />`}<${UI.Toaster} />`;
   }
 
   K.darstellungStarten();

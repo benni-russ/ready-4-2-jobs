@@ -342,6 +342,66 @@ for (const channel of kanaele()) {
   const html = await p.evaluate(() => window.R42J_CORE.wissen.alsHtml("![a](https://beispiel.invalid/x.png)\n\n![b](data:image/svg+xml;base64,PHN2Zy8+)\n\n<img src=x onerror=alert(1)>"));
   ok("Fremde Bilder entfallen", !html.includes("<img"), html);
 
+  // Die ganze Karte in der Übersicht ist klickbar, nicht nur der Name
+  await hin(p, "#/uebersicht");
+  const karte = p.locator(".rj-appcard").first();
+  const box = await karte.boundingBox();
+  await p.mouse.click(box.x + box.width - 12, box.y + box.height - 12);
+  await p.waitForFunction(() => /#\/bewerbungen\/[^/]+\/lebenslauf/.test(location.hash));
+  ok("Klick auf die freie Kartenfläche öffnet den nächsten Schritt", true);
+  ok("Offene Schritte haben ein sichtbares Symbol", await p.evaluate(() => !!window.R42J.icons.circle));
+
+  // Fokus bleibt sichtbar: sortierte Spalte und aufklappbare Bereiche
+  await hin(p, "#/bewerbungen");
+  await p.locator("th button").first().click();
+  await p.locator("th button").first().focus();
+  await p.keyboard.press("Shift+Tab");
+  await p.keyboard.press("Tab");
+  const ring = await p.evaluate(() => getComputedStyle(document.activeElement).outlineStyle);
+  ok("Sortierte Spalte zeigt den Fokusring", ring === "solid", ring);
+
+  // Bei 320 px (400 % Zoom) läuft nichts seitlich über
+  await p.setViewportSize({ width: 320, height: 800 });
+  for (const ziel of ["#/vergleich", "#/stammdaten/stationen", "#/einstellungen"]) {
+    await hin(p, ziel);
+    await p.waitForSelector("h1");
+    await p.waitForTimeout(400); // Die Seitenleiste klappt animiert ein
+    const zuviel = await p.evaluate(() => ({ px: document.documentElement.scrollWidth - innerWidth, bei: [...document.querySelectorAll("body *")].filter((e) => e.scrollWidth > e.clientWidth && e.clientWidth > 0 && getComputedStyle(e).display !== "inline").slice(0, 8).map((e) => e.tagName + "." + e.className + " " + e.scrollWidth + ">" + e.clientWidth) }));
+    ok("Kein Querscrollen bei 320 px: " + ziel, zuviel.px <= 0, zuviel);
+  }
+  await p.setViewportSize({ width: 1280, height: 800 });
+
+  // Nach dem Versand gibt es keinen nächsten Schritt mehr, auch wenn Dokumente fehlen
+  const versendet = await p.evaluate(() => {
+    const K = window.R42J_CORE;
+    const b = K.tresor.daten().bewerbungen[0];
+    K.bewerbungen.statusSetzen(b.id, "versendet", new Date().toISOString());
+    return b.id;
+  });
+  await hin(p, "#/uebersicht");
+  const gesendet = p.locator(".rj-appcard", { has: p.locator(`a[href="#/bewerbungen/${versendet}/details"]`) });
+  await gesendet.waitFor();
+  ok("Versendete Karte führt zu Details, ohne „Als Nächstes“", (await gesendet.locator(".rj-appcard__naechster").count()) === 0 && (await gesendet.locator(".rj-appcard__schritte").count()) === 0);
+
+  // Einstellungen füllen die Breite
+  await p.setViewportSize({ width: 1920, height: 1080 });
+  await hin(p, "#/einstellungen");
+  await p.waitForSelector(".rj-cards");
+  const spalten = await p.evaluate(() => {
+    const k = [...document.querySelectorAll(".rj-cards > .rj-card")].map((x) => x.getBoundingClientRect());
+    return { nebeneinander: k.some((a, i) => k.some((b, j) => i !== j && a.top === b.top)), ueberlauf: document.documentElement.scrollWidth > innerWidth };
+  });
+  ok("Einstellungen nutzen bei 1920 px mehrere Spalten", spalten.nebeneinander && !spalten.ueberlauf, spalten);
+  await hin(p, "#/wissen/star-methode");
+  await p.waitForSelector(".rj-wissen-artikel");
+  const mitte = await p.evaluate(() => {
+    const a = document.querySelector(".rj-wissen-artikel").getBoundingClientRect();
+    const m = document.querySelector(".rj-main, main").getBoundingClientRect();
+    return Math.abs(a.left + a.width / 2 - (m.left + m.width / 2));
+  });
+  ok("Wissen-Artikel steht mittig", mitte < 20, mitte);
+  await p.setViewportSize({ width: 1280, height: 800 });
+
   // Anlagen und Postversand
   const v = await p.evaluate(() => window.R42J_CORE.anlagen.vorschlagFuer({ id: "x", mime: "image/png", dateiname: "Arbeitszeugnis_2021.png" }));
   ok("Vorschlag für gespeicherte Anlage", v.kategorie === "zeugnis-arbeit" && v.stichwoerter.includes("2021"), v);
@@ -353,6 +413,18 @@ for (const channel of kanaele()) {
   });
   ok("Postversand: Anschrift im Sichtfenster", Math.abs(post.y - (62.7 * 72) / 25.4) < 0.1, post);
   ok("Postversand: Marken und Rücksendeangabe", post.marken === 3 && post.ruecksende, post);
+  const kopf = await p.evaluate(() => {
+    const K = window.R42J_CORE;
+    const pr = K.tresor.daten().profil;
+    const alt = [pr.telefon, pr.email];
+    pr.telefon = "0123 456789";
+    pr.email = "test@example.org";
+    const zeilen = K.anschreiben.fertig(K.tresor.daten().bewerbungen[0]).absender.split("\n");
+    pr.telefon = alt[0];
+    pr.email = alt[1];
+    return zeilen;
+  });
+  ok("Briefkopf: Kontakt in zweiter Zeile", kopf.length === 2 && kopf[1] === "0123 456789 · test@example.org" && !kopf[0].includes("@"), kopf);
 
   // Neuladen bleibt angemeldet, Sperren nicht. Der Schlüssel liegt nie im Klartext.
   await p.evaluate(() => window.R42J_CORE.tresor.speichernJetzt());
@@ -384,6 +456,27 @@ for (const channel of kanaele()) {
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");
+  // Countdown vor der automatischen Sperre
+  await p.evaluate(() => { window.R42J_CORE.tresor.daten().einstellungen.sperreMinuten = 1.05; });
+  const weiter = p.getByRole("button", { name: "Weiterarbeiten" });
+  await weiter.waitFor();
+  ok("Countdown zählt", /^R42J sperrt sich in 0:\d\d|^R42J sperrt sich in 1:00/.test(await p.locator(".rj-sperrcountdown strong").innerText()));
+  ok("Countdown wird nur einmal angesagt", (await p.locator('.rj-sperrcountdown [role="alert"]').count()) === 1 && (await p.locator('.rj-sperrcountdown [role="timer"]').getAttribute("aria-live")) === "off");
+  await weiter.evaluate((k) => k.click());
+  ok("Weiterarbeiten bricht den Countdown ab", (await weiter.count()) === 0 && (await p.evaluate(() => window.R42J_CORE.tresor.offen())));
+  await weiter.waitFor();
+  await p.mouse.move(300, 300);
+  await p.mouse.move(320, 320);
+  await weiter.waitFor({ state: "detached" });
+  ok("Mausbewegung bricht den Countdown ab", true);
+  await p.evaluate(() => { window.R42J_CORE.tresor.daten().einstellungen.sperreMinuten = 0.02; });
+  await p.waitForFunction(() => !window.R42J_CORE.tresor.offen());
+  await p.getByLabel("Passwort", { exact: true }).waitFor();
+  ok("Ohne Reaktion sperrt R42J", (await p.locator(".rj-sperrcountdown").count()) === 0);
+  await p.getByLabel("Passwort", { exact: true }).fill(PW);
+  await p.getByRole("button", { name: "Entsperren" }).click();
+  await p.waitForSelector(".rj-shell");
+  await p.evaluate(() => { window.R42J_CORE.tresor.daten().einstellungen.sperreMinuten = 10; });
   await p.evaluate(() => window.R42J_CORE.jetztSperren());
   await p.waitForFunction(() => !window.R42J_CORE.tresor.offen());
   ok("Sperren löscht die Sitzung", (await p.evaluate(() => sessionStorage.getItem("r42j.sitzung"))) === null);

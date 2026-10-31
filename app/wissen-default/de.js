@@ -6,6 +6,11 @@
 
   // Quellen und Skizze je Artikel. Die Quellen wurden abgerufen und geprüft.
   var ZUSATZ = {
+    "einstellungstest": {
+      "sources": "Bundesagentur für Arbeit: Orientierungshilfe zu Auswahltests | https://www.arbeitsagentur.de/vor-ort/datei/orientierungshilfen_ba095452.pdf ;; Victoria University of Wellington: Psychometric testing (englisch) | https://wgtn.ac.nz/careers/employment/jobs/psychometric-testing",
+      "image": "einstellungstest",
+      "imageAlt": "Vier Testarten: Schulwissen, Fähigkeiten, Arbeitsprobe und Persönlichkeit"
+    },
     "foto-ja-nein": {
       "sources": "Bundesagentur für Arbeit: Bewerbungskompass für Arbeitsstellen (Foto freiwillig, aber üblich) | https://www.arbeitsagentur.de/vor-ort/datei/353-bewerbungskompass-arbeitsstellen-_ba095207.pdf ;; Bundesagentur für Arbeit: Bewerbung schreiben | https://www.arbeitsagentur.de/arbeitslos-arbeit-finden/bewerbungstraining/bewerbung-schreiben ;; Antidiskriminierungsstelle des Bundes: FAQ zu anonymisierten Bewerbungsverfahren | https://www.antidiskriminierungsstelle.gov.de/SharedDocs/downloads/DE/projekte/faqs_anonymisierte_bewerbungsverfahren.pdf?__blob=publicationFile&v=1",
       "image": "foto-ja-nein",
@@ -79,6 +84,34 @@
   var RECHT = "Vertrag und Recht";
   var GESPRAECH = "Gespräch";
   var AUFTRITT = "Online-Auftritt";
+
+  artikel("einstellungstest", "Einstellungstests verstehen", BEWERBUNG, `
+Manche Firmen und Behörden laden vor dem Gespräch zu einem Test ein. Das ist vor allem bei Ausbildungsplätzen üblich. Du musst nichts Besonderes können: Wer die Aufgabenarten kennt, geht ruhiger hinein.
+
+## Das kann drankommen
+
+- **Schulwissen:** Rechnen, Rechtschreibung, Allgemeinwissen. Diese Aufgaben ähneln Klassenarbeiten, Üben hilft hier am meisten.
+- **Fähigkeiten:** Logik, Konzentration, räumliches Denken. Viele finden solche Aufgaben zuerst ungewohnt.
+- **Arbeitsproben:** Du erledigst eine kleine Aufgabe aus dem Berufsalltag.
+- **Persönlichkeit:** Du schätzt dich selbst ein. Hier gibt es keine richtigen oder falschen Antworten.
+
+## So bereitest du dich vor
+
+1. Übe unter [Vorbereitung](#/vorbereitung) die Bereiche, die dir schwerfallen.
+2. Stell dir beim Üben einen Wecker, damit du Zeitdruck kennenlernst.
+3. Geh ausgeschlafen hin und plane den Weg so, dass du pünktlich bist. Pack Brille und etwas zu trinken ein.
+
+## Im Test
+
+- Lies die Anleitung genau und frag nach, wenn ein Beispiel unklar ist.
+- Bleib nicht an einer Aufgabe hängen. Geh weiter und komm später zurück.
+- Lass dich nicht stressen, wenn du nicht fertig wirst. Zeitdruck ist gewollt, oft gibt es mehr Aufgaben, als jemand schaffen kann.
+- Rate nur, wenn falsche Antworten keine Punkte kosten.
+
+## Persönlichkeitstests
+
+Antworte ehrlich und so, wie du dich im Beruf verhältst. Dein Ziel ist eine Stelle, die zu dir passt. Der Katalog „Persönlichkeitstests verstehen“ erklärt, was hinter typischen Aussagen gefragt wird.
+`);
 
   artikel("foto-ja-nein", "Foto ja oder nein?", BEWERBUNG, `
 In Deutschland ist ein Bewerbungsfoto üblich, aber kein Gesetz schreibt es vor. Es ist freiwillig, und du darfst es weglassen.
@@ -377,14 +410,12 @@ Ein Update ersetzt nur das Programm. Deine Daten im Ordner \`daten\` bleiben unb
 
 ## So gehst du vor
 
-1. Sperre R42J und schließe den Browser-Tab.
-2. Sichere zur Vorsicht den Ordner \`daten\`, zum Beispiel per Kopie auf den Rechner.
-3. Lade die ZIP-Datei \`r42j-vX.Y.Z.zip\` aus dem Release herunter und entpacke sie.
-4. Lösche auf dem Stick den alten Ordner \`app\`.
-5. Kopiere den neuen Ordner \`app\` aus dem ZIP an dieselbe Stelle.
-6. Starte R42J wie gewohnt und entsperre dein Profil.
+1. Klicke in der Übersicht auf „Update herunterladen“ und entpacke die ZIP-Datei.
+2. Sperre R42J und schließe den Browser-Tab.
+3. Ersetze auf dem Stick den Ordner \`app\` durch den neuen aus dem ZIP.
+4. Starte R42J wie gewohnt und entsperre dein Profil.
 
-Die Startdateien musst du nur ersetzen, wenn die Release-Notiz das sagt. \`daten\` liegt nicht im ZIP und wird nie überschrieben. Lösche diesen Ordner nie.
+Fehlt der Knopf, lade die Datei \`r42j-vX.Y.Z.zip\` von der Release-Seite auf GitHub. Die Startdateien musst du nur ersetzen, wenn die Release-Notiz das sagt. \`daten\` liegt nicht im ZIP und wird nie überschrieben. Lösche diesen Ordner nie. Wer ganz sichergehen will, kopiert ihn vorher auf den Rechner.
 
 ## Automatisch nach Updates suchen
 
