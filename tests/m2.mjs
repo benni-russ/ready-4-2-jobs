@@ -73,13 +73,29 @@ for (const channel of kanaele()) {
   await p.keyboard.type(NAME);
   await p.keyboard.press("Enter");
   await p.getByRole("heading", { name: "Wie soll R42J aussehen?" }).waitFor();
+  await p.setViewportSize({ width: 1920, height: 1080 });
+  const versatz = await p.evaluate(() => {
+    const li = document.querySelector(".rj-stepper li[aria-current]").getBoundingClientRect();
+    const t = document.querySelector(".rj-stepper li[aria-current] span").getBoundingClientRect();
+    return Math.abs(li.left + li.width / 2 - (t.left + t.width / 2));
+  });
+  ok("Stepper-Beschriftung steht unter dem ersten Schritt", versatz <= 1, versatz);
+  await p.setViewportSize({ width: 1280, height: 900 });
   await knopf(p, "Weiter").click();
   const pwf = p.locator('input[autocomplete="new-password"]');
   await pwf.nth(0).fill(PW); await pwf.nth(1).fill(PW);
+  if (process.env.R42J_AUSGABE) await p.screenshot({ path: process.env.R42J_AUSGABE + "/onboarding-passwort-" + channel + ".png" });
   await knopf(p, "Weiter").click();
   await p.getByRole("heading", { name: "Sichere deinen" }).waitFor();
   const code = await p.locator(".rj-recovery code").allInnerTexts();
   await p.getByLabel("Die ersten zwei Blöcke").fill(code[0] + " " + code[1]);
+  for (const breite of [375, 320]) {
+    await p.setViewportSize({ width: breite, height: 760 });
+    ok("Schlüssel " + breite + " px ohne Querscroll", (await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)) <= 0);
+  }
+  await p.setViewportSize({ width: 1920, height: 1080 });
+  ok("Schlüssel breit in vier Spalten", (await p.locator(".rj-recovery").evaluate((e) => getComputedStyle(e).gridTemplateColumns.split(" ").length)) === 4);
+  await p.setViewportSize({ width: 1280, height: 900 });
   await knopf(p, "Weiter").click();
   await p.getByRole("heading", { name: "zweiten Ort" }).waitFor({ timeout: 8000 });
   await p.evaluate(() => { window.__wahl = "zweiter-ort"; });
