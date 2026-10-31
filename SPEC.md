@@ -202,6 +202,7 @@ Bewerbung {
               mitFoto: boolean, mitUnterschrift: boolean, postversand: boolean, komprimierung: "original"|"mittel"|"klein",
               anlagenAuswahl: AnlageId[], anlagenVorausgewaehlt: boolean, deckblatt: boolean, allesInEinem: boolean },
   anschreiben { abschnitte: Record<string, string>, varianten: Record<string, string>,
+                signatur?: string,  // Name unter dem Brief, leer = Titel, Vor- und Nachname aus dem Profil
                 rahmen { eintritt, gehalt, kuendigungsfrist } },
   emails: EmailEntwurf[],
   status: StatusEintrag[]         // Historie, letzter = aktuell

@@ -182,7 +182,7 @@
           return html`<div key=${i}>${f}</div>`;
         })}
       <//>`}
-      ${alle.length === 0 && !laden[0] && html`<${UI.EmptyState} icon="files" titel=${K.t("anlagen.leerTitel")} text=${K.t("anlagen.leerText")} />`}
+      ${alle.length === 0 && !laden[0] && html`<p class="rj-muted">${K.t("anlagen.leerText")}</p>`}
       ${alle.length > 0 &&
       html`<div class="rj-grid-2">
         <${UI.SearchField} label=${K.t("anlagen.suchen")} platzhalter=${K.t("anlagen.suchen")} wert=${suche[0]} beiAenderung=${suche[1]} />

@@ -151,24 +151,29 @@
       });
     }
 
+    var anlegen = html`<${UI.Button}
+      variante="primary"
+      icon="plus"
+      onClick=${function () {
+        offen[1]({ eintrag: def.leer(), neu: true });
+      }}
+    >
+      ${K.t(def.titel + ".hinzufuegen")}
+    <//>`;
+
     return html`<section class="rj-stack">
       <div class="rj-pagehead">
         <div>
           <h2 class="h2">${K.t(def.titel)}</h2>
           ${def.erklaerung && html`<p class="rj-muted">${K.t(def.erklaerung)}</p>`}
         </div>
-        <${UI.Button}
-          variante="primary"
-          icon="plus"
-          onClick=${function () {
-            offen[1]({ eintrag: def.leer(), neu: true });
-          }}
-        >
-          ${K.t(def.titel + ".hinzufuegen")}
-        <//>
+        ${eintraege.length > 0 && anlegen}
       </div>
       ${!eintraege.length &&
-      html`<${UI.EmptyState} icon=${def.icon} titel=${K.t(def.titel + ".leerTitel")} text=${K.t(def.titel + ".leerText")} />`}
+      html`<${UI.EmptyState} icon=${def.icon} titel=${K.t(def.titel + ".leerTitel")} text=${K.t(def.titel + ".leerText")}>
+        ${anlegen}
+        ${(def.titel === "station" || def.titel === "kompetenz") && html`<${UI.Button} icon="sparkles" href="#/stammdaten/import">${K.t("import.knopf")}<//>`}
+      <//>`}
       ${eintraege.length > 0 &&
       def.filter &&
       html`<div class="rj-filterbar">

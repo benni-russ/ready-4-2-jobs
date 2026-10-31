@@ -513,6 +513,19 @@ for (const channel of kanaele()) {
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");
   await p.evaluate(() => { window.R42J_CORE.tresor.daten().einstellungen.sperreMinuten = 10; });
+  // Der Name unter dem Brief lässt sich je Bewerbung ändern, leer gilt wieder der aus dem Profil.
+  const briefName = () => p.evaluate(() => {
+    const K = window.R42J_CORE;
+    return K.anschreiben.fertig(K.tresor.daten().bewerbungen[0]).name;
+  });
+  const nameVorher = await briefName();
+  await hin(p, "#/bewerbungen/" + anschreibenId + "/anschreiben");
+  await p.getByRole("button", { name: "Unterschrift" }).click();
+  await p.getByLabel("Name unter dem Brief").fill("Dr. Testperson Muster");
+  ok("Name unter dem Brief geändert", (await briefName()) === "Dr. Testperson Muster");
+  await p.getByLabel("Name unter dem Brief").fill("");
+  ok("Leerer Name fällt auf das Profil zurück", (await briefName()) === nameVorher);
+
   await p.evaluate(() => window.R42J_CORE.jetztSperren());
   await p.waitForFunction(() => !window.R42J_CORE.tresor.offen());
   ok("Sperren löscht die Sitzung", (await p.evaluate(() => sessionStorage.getItem("r42j.sitzung"))) === null);

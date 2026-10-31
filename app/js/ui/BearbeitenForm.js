@@ -126,7 +126,13 @@
     var gefuellt = props.eintraege.filter(function (e) {
       return e[1];
     });
-    if (!gefuellt.length) return html`<p class="rj-muted">${K.t("speichern.nochLeer")}</p>`;
+    if (!gefuellt.length) {
+      return html`<p class="rj-muted">${K.t("speichern.nochLeer")}</p>
+        ${props.leerAktion &&
+        html`<div class="rj-row">
+          <${UI.Button} icon="pencil" onClick=${props.leerAktion.onClick}>${props.leerAktion.label}<//>
+        </div>`}`;
+    }
     return html`<dl class=${"rj-readlist" + (props.voll ? " rj-readlist--voll" : "")}>
       ${gefuellt.map(function (e) {
         return html`<div key=${e[0]}>

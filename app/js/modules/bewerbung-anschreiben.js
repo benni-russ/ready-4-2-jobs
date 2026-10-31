@@ -366,6 +366,17 @@
         ${nr === 3 &&
         html`<section class="rj-card rj-stack">
           <h2 class="h3">${K.t("anschreiben.unterschrift")}</h2>
+          <${UI.TextField}
+            label=${K.t("anschreiben.signatur")}
+            hinweis=${K.t("anschreiben.signaturHinweis")}
+            placeholder=${K.anschreiben.nameStandard()}
+            wert=${b.anschreiben.signatur == null ? K.anschreiben.nameStandard() : b.anschreiben.signatur}
+            beiAenderung=${function (w) {
+              K.bewerbungen.aendern(b.id, function (x) {
+                x.anschreiben.signatur = w;
+              });
+            }}
+          />
           <${UI.Switch}
             label=${K.t("anschreiben.unterschriftSchalter")}
             wert=${b.dokumente.mitUnterschrift}

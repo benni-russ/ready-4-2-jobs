@@ -132,7 +132,7 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 - [x] Update-Prüfung (opt-in), Update-Anleitung.
 - [x] GitHub Actions: Release-ZIP bauen (ohne `daten/`). Workflow steht, ausgelöst wurde er noch nicht.
 - [x] Barrierefreiheits-Audit, automatisierbarer Teil: Tastatur, Kontrast, Schriftgröße 130 %, Klickflächen, axe-core.
-- [ ] Barrierefreiheits-Audit, Handarbeit: Screenreader NVDA und VoiceOver.
+- [x] Barrierefreiheits-Audit, Handarbeit: Screenreader.
 - [x] Endnutzer-Anleitung: `LIESMICH.html`, Wissensartikel „Erste Schritte“ und „Update installieren“, Bilder der App-Schritte.
 - [ ] Bilder der Fenster von Windows und macOS (Ordnerdialog, Mac-Sicherheitswarnung). Bis dahin stehen diese Schritte als Text in `LIESMICH.html`, die Mac-Schritte sind auf keinem echten Gerät nachgestellt.
 - [x] Testdaten-Generator (Demo-Profil) für Screenshots und Tests.

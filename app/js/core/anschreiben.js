@@ -187,9 +187,14 @@
       anrede: w.ansprechpartner_anrede,
       absaetze: absaetze,
       gruss: t.gruss,
-      name: [p.titel, p.vorname, p.nachname].filter(Boolean).join(" "),
+      name: (b.anschreiben.signatur || "").trim() || nameStandard(),
       offen: offen,
     };
+  }
+
+  function nameStandard() {
+    var p = K.tresor.daten().profil;
+    return [p.titel, p.vorname, p.nachname].filter(Boolean).join(" ");
   }
 
   function emailAus(b, betreff, text) {
@@ -266,6 +271,7 @@
     },
 
     fertig: fertigBauen,
+    nameStandard: nameStandard,
     datum: datumOderText,
 
     // Die Fassung für das Portal, ohne Briefkopf.

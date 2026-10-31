@@ -470,6 +470,7 @@ html:has(.rj-overlay) .rj-toaster { top: var(--space-3); bottom: auto; left: 50%
 .rj-letter__marke { top: calc(var(--oben) * var(--mm)); left: calc(5 * var(--mm)); width: calc(5 * var(--mm)); border-top: 1px solid var(--letter-muted); }
 .rj-letter__marke--loch { width: calc(3 * var(--mm)); }
 .rj-letter p { margin: 0; white-space: pre-line; }
+.rj-letter p.rj-letter__ruecksende { white-space: nowrap; text-overflow: ellipsis; }
 .rj-letter__absender { color: var(--letter-muted); }
 .rj-letter__datum { color: var(--letter-muted); }
 .rj-letter__betreff { font-weight: 700; }
@@ -762,13 +763,12 @@ html:has(.rj-editbar--klebt) { scroll-padding-bottom: 8rem; }
 .rj-content:has(.rj-wissen-artikel) { max-width: calc(var(--size-article) + 2 * var(--space-8)); }
 
 /* Karte einer Bewerbung: Stand der Unterlagen statt leerer rechter Hälfte. */
-.rj-appcard__schritte { grid-column: 1 / -1; list-style: none; margin: var(--space-2) 0 0; padding: var(--space-3) 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); font-size: .875rem; color: var(--ink-muted); }
+.rj-appcard__schritte { grid-column: 1 / -1; list-style: none; margin: var(--space-2) 0 0; padding: var(--space-3) 0 0; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); font-size: .875rem; color: var(--ink-muted); }
 .rj-appcard__schritte li { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .rj-appcard__schritte li[data-erledigt] { color: var(--ink); font-weight: 700; }
 .rj-appcard__schritte .rj-icon { width: 16px; height: 16px; flex: none; }
 .rj-appcard__naechster { grid-column: 1 / -1; font-size: .875rem; font-weight: 700; color: var(--accent); }
 .rj-kartenzeile--letzte > .rj-stack { flex: 1 1 320px; }
-@media (max-width: 600px) { .rj-appcard__schritte { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* Audit: lange Beschriftungen brechen in schmalen Fenstern um, Klickflächen erreichen 44 px. */
 @media (max-width: 900px) { .rj-btn { white-space: normal; max-width: 100%; min-width: 0; text-align: center; overflow-wrap: anywhere; hyphens: auto; } }

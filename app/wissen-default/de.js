@@ -162,14 +162,14 @@ Mit der STAR-Methode antwortest du im Gespräch auf Fragen wie „Erzählen Sie 
 | --- | --- | --- |
 | Situation | Wo und wann war das? | kurz |
 | Task (Aufgabe) | Was war dein Auftrag? | kurz |
-| Action (Handlung) | Was hast du selbst getan? | der größte Teil |
+| Aktion | Was hast du selbst getan? | der größte Teil |
 | Result (Ergebnis) | Was kam dabei heraus? | kurz, möglichst mit Zahl |
 
 ## Ein Beispiel
 
 - **Situation:** Im Kundenservice stapelten sich vor Weihnachten die Anfragen.
 - **Aufgabe:** Ich sollte die Wartezeit senken.
-- **Handlung:** Ich habe die häufigsten Fragen ausgewertet und Antwortvorlagen geschrieben.
+- **Aktion:** Ich habe die häufigsten Fragen ausgewertet und Antwortvorlagen geschrieben.
 - **Ergebnis:** Die Wartezeit sank in zwei Wochen von drei Tagen auf einen.
 
 ## Tipps

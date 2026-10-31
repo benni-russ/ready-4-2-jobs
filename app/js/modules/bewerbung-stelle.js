@@ -182,6 +182,7 @@
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("stelle.ansprechpartner")}</h2>
         <${UI.LeseListe}
+          leerAktion=${{ label: K.t("stelle.ansprechEintragen"), onClick: props.beiBearbeiten }}
           eintraege=${[
             [K.t("stelle.ansprechAnrede"), anredeWort],
             [K.t("stelle.ansprechName"), a.name],
@@ -285,7 +286,7 @@
         </div>
       </section>
 
-      ${!f.bearbeiten && html`<${Lesen} bewerbung=${b} />`}
+      ${!f.bearbeiten && html`<${Lesen} bewerbung=${b} beiBearbeiten=${f.starten} />`}
       ${f.bearbeiten &&
       html`<section class="rj-card rj-stack">
         <h2 class="h3">${K.t("stelle.anzeige")}</h2>

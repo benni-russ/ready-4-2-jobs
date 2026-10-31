@@ -134,7 +134,7 @@
       </section>
       <section class="rj-card rj-stack">
         <h3 class="h3">${K.t("profil.online")}</h3>
-        <${UI.LeseListe} eintraege=${eintraege(p, FELDER_ONLINE)} />
+        <${UI.LeseListe} eintraege=${eintraege(p, FELDER_ONLINE)} leerAktion=${{ label: K.t("profil.onlineEintragen"), onClick: props.beiBearbeiten }} />
       </section>
       <section class="rj-card rj-stack">
         <h3 class="h3">${K.t("profil.bewerbung")}</h3>
@@ -201,7 +201,7 @@
       ${!f.bearbeiten && html`<${UI.BearbeitenLeiste} form=${f} />`}
     </div>`;
 
-    if (!f.bearbeiten) return html`${kopf}<${Lesen} profil=${K.tresor.daten().profil} />`;
+    if (!f.bearbeiten) return html`${kopf}<${Lesen} profil=${K.tresor.daten().profil} beiBearbeiten=${f.starten} />`;
 
     return html`
       ${kopf}
