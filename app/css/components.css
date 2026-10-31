@@ -645,6 +645,14 @@ h1, h2, h3, p { margin: 0; }
 }
 
 /* Ausgelegt auf 1920 × 1080. Die Grenze liegt tiefer, weil Browserrand und Bildlaufleiste Breite kosten. */
+.rj-wissen-bild { margin: 0 0 var(--space-6); max-width: var(--size-prose); }
+.rj-wissen-bild img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius-md); background: #fff; }
+.rj-wissen-quellen { max-width: var(--size-prose); margin-top: var(--space-8); padding-top: var(--space-4); border-top: 1px solid var(--line); }
+.rj-wissen-quellen ol { margin: var(--space-3) 0 0; padding-left: 1.25em; }
+.rj-wissen-quellen li { margin-bottom: var(--space-2); }
+.rj-wissen-editor { align-items: start; }
+.rj-wissen-editor .rj-prose { overflow-wrap: anywhere; }
+
 @media (min-width: 1800px) {
   .rj-content { max-width: var(--size-content-wide); }
   .rj-dialog--wide { width: min(1560px, 100%); }

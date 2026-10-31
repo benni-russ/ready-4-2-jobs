@@ -36,6 +36,7 @@
   K.brotkrumenTitel = K.beobachtbar({ titel: "" });
 
   function wissen(teile) {
+    if (teile[0] === "neu") return [krume(K.t("wissen.neu"))];
     return teile[0] ? [krume(K.brotkrumenTitel.get().titel || K.t("wissen.artikel"))] : [];
   }
 

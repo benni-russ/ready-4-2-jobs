@@ -81,9 +81,7 @@ for (const channel of kanaele()) {
   await p.goto(URLAPP);
   await p.getByRole("button", { name: "Ordner auswählen" }).click();
   await p.waitForFunction(() => window.R42J_CORE.ablauf.get().phase === "profile");
-  const kopiert = await wissenDateien(p);
-  ok("26 Artikel kopiert", kopiert.filter((n) => n.endsWith(".md")).length === 26, kopiert);
-  ok("Prüfliste-Kennungen vorhanden", ["arbeitsvertrag-pruefen.de.md", "kuendigungsfristen.en.md", "probezeit.de.md"].every((n) => kopiert.includes(n)));
+  ok("Mitgelieferte Artikel werden nicht kopiert", (await wissenDateien(p)).length === 0, await wissenDateien(p));
 
   await p.getByRole("button", { name: "Neues Profil anlegen" }).click();
   await p.waitForFunction(() => document.activeElement.tagName === "INPUT");
@@ -200,6 +198,8 @@ for (const channel of kanaele()) {
   await inWissen(p, "mein-test.md", EIGENER);
   await inWissen(p, "probezeit.de.md", "---\ntitle: Geänderte Probezeit\ncategory: Vertrag und Recht\nlang: de\n---\n\nMein Stand.\n");
   await inWissen(p, "kaputt.md", new Uint8Array(1024 * 1024 + 10).fill(65));
+  const altkopie = await p.evaluate(() => window.R42J_WISSEN.find((a) => a.datei === "star-methode.de.md").md.replace(/sources:.*\n|image.*\n/g, ""));
+  await inWissen(p, "star-methode.de.md", altkopie);
   await p.reload();
   await p.waitForFunction(() => window.R42J_CORE.ablauf.get().phase === "profile");
   await einloggen(p);
@@ -210,6 +210,8 @@ for (const channel of kanaele()) {
   ok("Je Kennung eine Zeile", (await p.locator(".rj-datatable tbody tr").count()) === 14, await p.locator(".rj-datatable tbody tr").count());
   ok("Geänderte Datei bleibt", await p.getByRole("link", { name: "Geänderte Probezeit" }).isVisible());
   ok("Zu große Datei gemeldet", await p.getByText("Übersprungene Dateien: 1").isVisible());
+  const stand = await p.evaluate(async () => (await window.R42J_CORE.wissen.laden()).artikel.find((a) => a.kennung === "star-methode"));
+  ok("Unveränderte Altkopie steht zurück", !stand.eigen && stand.quellen.length > 0, stand);
 
   await p.getByRole("searchbox", { name: "Artikel durchsuchen" }).fill("gurkchen");
   ok("Suche umlaut-tolerant im Text", (await p.locator(".rj-datatable tbody tr").count()) === 1);
@@ -232,6 +234,43 @@ for (const channel of kanaele()) {
   ok("HTTPS öffnet extern", a.l.Extern[0] === "https://example.com/a" && a.l.Extern[1] === "_blank" && /noopener/.test(a.l.Extern[2]), a.l);
   ok("HTTP und javascript ohne Ziel", a.l.Unsicher[0] === null && a.l.Skript[0] === null, a.l);
   ok("App-Link bleibt", a.l.Intern[0] === "#/wissen/probezeit", a.l);
+
+  // Quellen und Skizze
+  await hin(p, "#/wissen/star-methode");
+  await p.locator(".rj-wissen-quellen a").first().waitFor();
+  const bild = await p.evaluate(async () => {
+    const i = document.querySelector(".rj-wissen-bild img");
+    await i.decode();
+    const q = document.querySelector(".rj-wissen-quellen a");
+    return { breite: i.naturalWidth, alt: i.alt, ziel: q.href, fenster: q.target };
+  });
+  ok("Skizze lädt mit Alternativtext", bild.breite > 0 && bild.alt.length > 0, bild);
+  ok("Quelle öffnet extern", bild.ziel.startsWith("https://") && bild.fenster === "_blank", bild);
+
+  // Eigener Artikel im Editor
+  await hin(p, "#/wissen/neu");
+  await p.getByLabel("Titel").fill("Mein Merkzettel");
+  await p.getByLabel("Text", { exact: false }).first().fill("## Wichtig\n\n**Fett** gedruckt");
+  await p.locator(".rj-wissen-editor .rj-prose strong").waitFor();
+  ok("Vorschau zeigt Markdown", true);
+  await p.getByLabel("Quellen").fill("kaputte Zeile");
+  await p.getByRole("button", { name: "Speichern" }).click();
+  await p.getByText("Eine Quelle ist nicht lesbar").waitFor();
+  ok("Unlesbare Quelle erklärt", true);
+  await p.getByLabel("Quellen").fill("Beispielquelle | https://example.com/merkzettel");
+  await p.getByRole("button", { name: "Speichern" }).click();
+  await p.getByRole("heading", { name: "Mein Merkzettel", level: 1 }).waitFor();
+  ok("Eigener Artikel gespeichert", (await wissenDateien(p)).includes("mein-merkzettel.md"));
+  ok("Eigene Quelle sichtbar", await p.getByRole("link", { name: "Beispielquelle" }).isVisible());
+  await p.getByRole("link", { name: "Bearbeiten", exact: true }).click();
+  await p.getByLabel("Titel").fill("Mein neuer Merkzettel");
+  await p.getByRole("button", { name: "Speichern" }).click();
+  await p.getByRole("heading", { name: "Mein neuer Merkzettel", level: 1 }).waitFor();
+  ok("Bearbeiten behält die Datei", (await wissenDateien(p)).filter((n) => n.includes("merkzettel")).length === 1);
+  await p.getByRole("button", { name: /löschen/ }).click();
+  await p.getByRole("dialog").getByRole("button", { name: "Löschen" }).click();
+  await p.getByRole("searchbox", { name: "Artikel durchsuchen" }).waitFor();
+  ok("Eigener Artikel gelöscht", !(await wissenDateien(p)).includes("mein-merkzettel.md"));
 
   // Links aus der App, auch die Prüfliste im Vergleich.
   for (const [k, titel] of [["arbeitsvertrag-pruefen", "Arbeitsvertrag prüfen"], ["kuendigungsfristen", "Kündigungsfristen"], ["foto-ja-nein", "Foto ja oder nein?"]]) {

@@ -11,8 +11,139 @@
     return html`<p class="rj-hint"><a class="rj-link" href=${"#/wissen/" + props.artikel}>${K.t("wissen.link." + props.artikel)}</a></p>`;
   };
 
+  function Editor(props) {
+    var a = props.artikel;
+    var entwurf = hooks.useState({
+      titel: a ? a.titel : "",
+      kategorie: a ? a.kategorie : "",
+      quellen: a ? a.quellen.map(function (q) { return q.titel + " | " + q.url; }).join("\n") : "",
+      text: a ? a.text.trim() : "",
+    });
+    var fehler = hooks.useState("");
+    var laedt = hooks.useState(false);
+    var e = entwurf[0];
+    var aktuell = hooks.useRef(e);
+    aktuell.current = e;
+    var basis = hooks.useRef(JSON.stringify(e));
+
+    function setze(feld) {
+      return function (wert) {
+        var neu = Object.assign({}, aktuell.current);
+        neu[feld] = wert;
+        entwurf[1](neu);
+      };
+    }
+
+    function quellenLesen(wert) {
+      var zeilen = wert.split(/\r?\n/).filter(function (z) {
+        return z.trim();
+      });
+      var gueltig = K.wissen.quellenLesen(zeilen.join(" ;; "));
+      return gueltig.length === zeilen.length ? gueltig : null;
+    }
+
+    function schreiben() {
+      var w = aktuell.current;
+      return K.wissen.speichern({ datei: a && a.datei, titel: w.titel, kategorie: w.kategorie, text: w.text, quellen: quellenLesen(w.quellen) || [] });
+    }
+
+    hooks.useEffect(function () {
+      K.brotkrumenTitel.set({ titel: a ? a.titel : "" });
+      function geaendert() {
+        return JSON.stringify(aktuell.current) !== basis.current;
+      }
+      K.verlassenSchutz.setzen(geaendert, function () {
+        if (aktuell.current.titel.trim()) schreiben().catch(function () {});
+      });
+      return function () {
+        K.verlassenSchutz.loesen(geaendert);
+      };
+    }, []);
+
+    async function speichern() {
+      if (!e.titel.trim()) return fehler[1](K.t("wissen.fehlerTitel"));
+      if (!e.text.trim()) return fehler[1](K.t("wissen.fehlerText"));
+      if (!quellenLesen(e.quellen)) return fehler[1](K.t("wissen.fehlerQuellen"));
+      laedt[1](true);
+      try {
+        var kennung = await schreiben();
+        basis.current = JSON.stringify(aktuell.current);
+        await props.beiNeuLesen();
+        K.meldung(K.t("speichern.gespeichert"));
+        K.navigieren("wissen/" + encodeURIComponent(kennung));
+      } catch (x) {
+        fehler[1](K.fehlerText(x));
+      }
+      laedt[1](false);
+    }
+
+    async function dateiLesen(dateien) {
+      try {
+        var inhalt = await K.kiInterview.dateiLesen(dateien[0]);
+        var f = K.frontmatter(inhalt);
+        entwurf[1](
+          Object.assign({}, aktuell.current, {
+            titel: f.felder.title || aktuell.current.titel || dateien[0].name.replace(/\.[^.]+$/, ""),
+            kategorie: f.felder.category || aktuell.current.kategorie,
+            text: f.rest.trim(),
+          }),
+        );
+        fehler[1]("");
+      } catch (x) {
+        fehler[1](K.fehlerText(x));
+      }
+    }
+
+    return html`
+      <div class="rj-pagehead"><h1 class="h1">${K.t(a ? "wissen.bearbeiten" : "wissen.neu")}</h1></div>
+      <${UI.Alert} art="warning">${K.t("wissen.datenschutz")}<//>
+      <div class="rj-grid-2 rj-wissen-editor">
+        <div class="rj-stack">
+          <${UI.TextField} label=${K.t("wissen.titel")} wert=${e.titel} beiAenderung=${setze("titel")} />
+          <${UI.TextField} label=${K.t("wissen.kategorie")} wert=${e.kategorie} beiAenderung=${setze("kategorie")} />
+          <${UI.Textarea} label=${K.t("wissen.text")} hinweis=${K.t("wissen.textHinweis")} wert=${e.text} beiAenderung=${setze("text")} rows="16" spellcheck="true" />
+          <${UI.Textarea} label=${K.t("wissen.quellen")} hinweis=${K.t("wissen.quellenHinweis")} wert=${e.quellen} beiAenderung=${setze("quellen")} rows="3" spellcheck="false" />
+          <${UI.FileDrop} accept=".md,.txt" hinweis=${K.t("wissen.dateiHinweis")} beiDateien=${dateiLesen} />
+        </div>
+        <section class="rj-card rj-stack" aria-label=${K.t("wissen.vorschau")}>
+          <h2 class="h3">${K.t("wissen.vorschau")}</h2>
+          <div class="rj-prose" dangerouslySetInnerHTML=${{ __html: K.wissen.alsHtml(e.text) }}></div>
+        </section>
+      </div>
+      ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
+      <div class="rj-row">
+        <${UI.Button} variante="primary" icon="save" laedt=${laedt[0]} disabled=${laedt[0]} onClick=${speichern}>${K.t("aktion.speichern")}<//>
+        <${UI.Button} variante="ghost" href=${a ? "#/wissen/" + encodeURIComponent(a.kennung) : "#/wissen"}>${K.t("aktion.abbrechen")}<//>
+      </div>
+    `;
+  }
+
+  function Quellen(props) {
+    return html`<section class="rj-wissen-quellen">
+      <h2 class="h3">${K.t("wissen.quellen")}</h2>
+      <ol>
+        ${props.quellen.map(function (q) {
+          return html`<li key=${q.url}><a class="rj-link" href=${q.url} target="_blank" rel="noopener noreferrer">${q.titel}</a></li>`;
+        })}
+      </ol>
+    </section>`;
+  }
+
   function Artikel(props) {
     var a = props.artikel;
+    var loeschen = hooks.useState(false);
+
+    async function entfernen() {
+      try {
+        await K.wissen.entfernen(a.datei);
+        await props.beiNeuLesen();
+        K.meldung(K.t("stammdaten.geloescht"));
+        K.navigieren("wissen");
+      } catch (e) {
+        K.meldung(K.fehlerText(e), "danger");
+      }
+    }
+
     hooks.useEffect(
       function () {
         K.brotkrumenTitel.set({ titel: a.titel });
@@ -22,9 +153,38 @@
     return html`
       <div class="rj-pagehead">
         <h1 class="h1">${a.titel}</h1>
+        ${a.eigen &&
+        html`<div class="rj-row">
+          <${UI.Button} icon="pencil" href=${"#/wissen/" + encodeURIComponent(a.kennung) + "/bearbeiten"}>${K.t("speichern.bearbeiten")}<//>
+          <${UI.IconButton}
+            icon="trash-2"
+            gefahr=${true}
+            label=${K.t("stammdaten.loeschenVon", { name: a.titel })}
+            onClick=${function () {
+              loeschen[1](true);
+            }}
+          />
+        </div>`}
       </div>
       <p class="rj-muted">${a.kategorie}</p>
+      ${a.bild &&
+      html`<figure class="rj-wissen-bild">
+        <img src=${"img/wissen/" + a.bild + "." + (a.sprache || "de") + ".svg"} alt=${a.bildText} />
+      </figure>`}
       <article class="rj-prose" dangerouslySetInnerHTML=${{ __html: K.wissen.alsHtml(a.text) }}></article>
+      ${a.quellen.length > 0 && html`<${Quellen} quellen=${a.quellen} />`}
+      ${loeschen[0] &&
+      html`<${UI.Dialog}
+        titel=${K.t("stammdaten.loeschenTitel")}
+        bestaetigen=${K.t("aktion.loeschen")}
+        gefahr=${true}
+        beiBestaetigen=${entfernen}
+        beiSchliessen=${function () {
+          loeschen[1](false);
+        }}
+      >
+        <p>${K.t("wissen.loeschenText", { name: a.titel })}</p>
+      <//>`}
     `;
   }
 
@@ -50,7 +210,7 @@
         schluessel: "titel",
         titel: K.t("wissen.artikel"),
         zelle: function (a) {
-          return html`<a class="rj-link" href=${"#/wissen/" + encodeURIComponent(a.kennung)}>${a.titel}</a>`;
+          return html`<a class="rj-link" href=${"#/wissen/" + encodeURIComponent(a.kennung)}>${a.titel}</a>${a.eigen ? html` <span class="rj-chip">${K.t("wissen.eigen")}</span>` : ""}`;
         },
       },
       { schluessel: "kategorie", titel: K.t("wissen.kategorie") },
@@ -77,10 +237,14 @@
     var stand = hooks.useState(null);
     var fehler = hooks.useState(null);
 
-    hooks.useEffect(function () {
-      K.wissen.laden().then(stand[1], function (e) {
+    function neuLaden() {
+      return K.wissen.laden().then(stand[1], function (e) {
         fehler[1](K.fehlerText(e));
       });
+    }
+
+    hooks.useEffect(function () {
+      neuLaden();
     }, []);
 
     var kopf = html`<div class="rj-pagehead"><h1 class="h1">${K.t("nav.wissen")}</h1></div>`;
@@ -88,18 +252,23 @@
     if (!stand[0]) return kopf;
 
     var kennung = props.teile[0];
+    if (kennung === "neu") return html`<${Editor} key="neu" beiNeuLesen=${neuLaden} />`;
     if (kennung) {
       var artikel = stand[0].artikel.filter(function (a) {
         return a.kennung === kennung;
       })[0];
-      if (artikel) return html`<${Artikel} key=${kennung} artikel=${artikel} />`;
+      if (artikel && artikel.eigen && props.teile[1] === "bearbeiten") return html`<${Editor} key=${kennung + "-edit"} artikel=${artikel} beiNeuLesen=${neuLaden} />`;
+      if (artikel) return html`<${Artikel} key=${kennung} artikel=${artikel} beiNeuLesen=${neuLaden} />`;
       return html`${kopf}<${UI.EmptyState} icon="search-x" titel=${K.t("wissen.fehltTitel")} text=${K.t("wissen.fehltText")}>
         <${UI.Button} href="#/wissen">${K.t("wissen.alleArtikel")}<//>
       <//>`;
     }
 
     return html`
-      ${kopf}
+      <div class="rj-pagehead">
+        <h1 class="h1">${K.t("nav.wissen")}</h1>
+        <${UI.Button} variante="primary" icon="plus" href="#/wissen/neu">${K.t("wissen.neu")}<//>
+      </div>
       ${stand[0].uebersprungen > 0 && html`<${UI.Alert} art="warning">${K.t("wissen.uebersprungen", { anzahl: stand[0].uebersprungen })}<//>`}
       <${Liste} artikel=${stand[0].artikel} />
     `;

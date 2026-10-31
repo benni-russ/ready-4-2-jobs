@@ -1,13 +1,77 @@
 // Mitgelieferte Wissensartikel. Sie liegen als .js vor, weil file:// kein fetch() erlaubt,
-// und landen beim ersten Start als .md in daten/wissen/.
+// und werden direkt von hier gelesen. Eigene Artikel liegen in daten/wissen/.
 (function () {
   "use strict";
   var liste = (window.R42J_WISSEN = window.R42J_WISSEN || []);
 
+  // Quellen und Skizze je Artikel. Die Quellen wurden abgerufen und geprüft.
+  var ZUSATZ = {
+    "foto-ja-nein": {
+      "sources": "Bundesagentur für Arbeit: Bewerbungskompass für Arbeitsstellen (Foto freiwillig, aber üblich) | https://www.arbeitsagentur.de/vor-ort/datei/353-bewerbungskompass-arbeitsstellen-_ba095207.pdf ;; Bundesagentur für Arbeit: Bewerbung schreiben | https://www.arbeitsagentur.de/arbeitslos-arbeit-finden/bewerbungstraining/bewerbung-schreiben ;; Antidiskriminierungsstelle des Bundes: FAQ zu anonymisierten Bewerbungsverfahren | https://www.antidiskriminierungsstelle.gov.de/SharedDocs/downloads/DE/projekte/faqs_anonymisierte_bewerbungsverfahren.pdf?__blob=publicationFile&v=1",
+      "image": "foto-ja-nein",
+      "imageAlt": "Gegenüberstellung, wann ein Foto hilft und wann du es besser weglässt"
+    },
+    "ats-erklaert": {
+      "sources": "Bundesagentur für Arbeit: Bewerbungskompass für Arbeitsstellen (Abschnitt ATS-Scanner) | https://www.arbeitsagentur.de/vor-ort/datei/353-bewerbungskompass-arbeitsstellen-_ba095207.pdf ;; Roche Karriere: FAQ zum Auslesen von Lebensläufen | https://careers.roche.com/de/de/resume-parsing-faq",
+      "image": "ats-erklaert",
+      "imageAlt": "Ablauf: Bewerbung hochladen, Software liest den Text, Kompetenzen werden gefunden, Menschen entscheiden"
+    },
+    "star-methode": {
+      "sources": "MIT Career Advising: Leitfaden zum Vorstellungsgespräch mit STAR (englisch) | https://capd.mit.edu/resources/career-toolkit-interviewing/ ;; University of Washington Career Center: Die STAR-Methode (englisch) | https://careers.uw.edu/resources/star-method-of-interviewing/",
+      "image": "star-methode",
+      "imageAlt": "Vier Schritte: Situation, Aufgabe, Aktion und Ergebnis"
+    },
+    "anschreiben-aufbau": {
+      "sources": "Bundesagentur für Arbeit: Das perfekte Anschreiben erstellen | https://www.arbeitsagentur.de/bildung/bewerbung/anschreiben ;; Bundesagentur für Arbeit: Bewerbung schreiben | https://www.arbeitsagentur.de/arbeitslos-arbeit-finden/bewerbungstraining/bewerbung-schreiben ;; DIN Media: Themenseite DIN 5008 | https://www.dinmedia.de/de/themenseiten/din-5008",
+      "image": "anschreiben-aufbau",
+      "imageAlt": "Seite mit Absender, Betreff, Einstieg, Hauptteil, Schluss und Unterschrift"
+    },
+    "gehaltsverhandlung": {
+      "sources": "Bundesagentur für Arbeit: Entgeltatlas | https://web.arbeitsagentur.de/entgeltatlas/ ;; FH Münster Career & Talent Service: Manual Gehaltsverhandlung | https://www-backend.fh-muenster.de/career-service/downloads-Career-Service/25-11-Manual_Gehalt-verhandeln.pdf ;; IHK Hannover: Entgeltatlas zeigt regionale Gehaltsstruktur | https://www.ihk.de/hannover/hauptnavigation/standort/konjunktur-statistik/aktuell/entgeltatlas-zeigt-regionale-gehaltsstruktur-6642998",
+      "image": "gehaltsverhandlung",
+      "imageAlt": "Spanne aus Untergrenze, Ziel und Wunsch"
+    },
+    "kuendigungsfristen": {
+      "sources": "Gesetze im Internet: § 622 BGB, Kündigungsfristen | https://www.gesetze-im-internet.de/bgb/__622.html ;; Gesetze im Internet: § 623 BGB, Schriftform der Kündigung | https://www.gesetze-im-internet.de/bgb/__623.html ;; BMAS: Broschüre Kündigungsschutz | https://www.bmas.de/DE/Service/Publikationen/Broschueren/A163-kuendigungsschutz.html",
+      "image": "kuendigungsfristen",
+      "imageAlt": "Treppe: Nach 2, 5, 8, 10, 12, 15 und 20 Jahren steigt die Frist auf 1 bis 7 Monate"
+    },
+    "arbeitsvertrag-pruefen": {
+      "sources": "BMAS: Broschüre Arbeitsrecht | https://www.bmas.de/DE/Service/Publikationen/Broschueren/a711-arbeitsrecht.html ;; IHK Karlsruhe: Einstellung von Arbeitnehmern | https://www.ihk.de/karlsruhe/fachthemen/recht/arbeitsrecht/mitarbeiter-einstellen-und-kuendigen/einstellung-von-arbeitnehmern-2459246 ;; Gesetze im Internet: § 74 HGB, Wettbewerbsverbot | https://www.gesetze-im-internet.de/hgb/__74.html",
+      "image": "arbeitsvertrag-pruefen",
+      "imageAlt": "Vertragsseite mit Tätigkeit, Gehalt, Arbeitszeit, Urlaub, Probezeit und Kündigungsfristen"
+    },
+    "vorstellungsgespraech": {
+      "sources": "Bundesagentur für Arbeit: Das Vorstellungsgespräch | https://www.arbeitsagentur.de/bildung/bewerbung/bewerbungsgespraech ;; Bundesagentur für Arbeit: Bewerbungskompass für Arbeitsstellen | https://www.arbeitsagentur.de/vor-ort/datei/353-bewerbungskompass-arbeitsstellen-_ba095207.pdf ;; Antidiskriminierungsstelle des Bundes: Zugang zum Arbeitsleben, unzulässige Fragen | https://www.antidiskriminierungsstelle.gov.de/DE/ueber-diskriminierung/lebensbereiche/arbeitsleben/zugang-zum-arbeitsleben/zugang-zum-arbeitsleben-node.html",
+      "image": "vorstellungsgespraech",
+      "imageAlt": "Fünf Phasen: Ankommen, Vorstellen, Fragen, Rückfragen und Abschluss"
+    },
+    "linkedin-xing-profil": {
+      "sources": "LinkedIn Hilfe: Ein gutes LinkedIn Profil erstellen | https://www.linkedin.com/help/linkedin/answer/a554351?lang=de ;; LinkedIn Hilfe: Offen für Jobangebote und Sichtbarkeit | https://www.linkedin.com/help/linkedin/answer/a507508?lang=de ;; Universität Hohenheim: Fünf Tipps für deine Karriere auf Xing und LinkedIn | https://mub.uni-hohenheim.de/fileadmin/einrichtungen/marketing1/Lehre/Xing_und_LinkedIn_Final_2021.pdf",
+      "image": "linkedin-xing-profil",
+      "imageAlt": "Profil mit Foto, Überschrift, Kurzprofil, Berufserfahrung und Kompetenzen"
+    },
+    "serioese-email": {
+      "sources": "Universität Duisburg-Essen Career Service: Bewerbung per E-Mail | https://www.uni-due.de/imperia/md/content/abz/career/bewerbung_permail_barrierefrei.pdf ;; TU Darmstadt: Bewerbungen per Mail | https://www.owl.tu-darmstadt.de/media/owl/schreibtechniken_und__uebungen/Bewerbungen_per_Mail.pdf ;; BSI: Zwei-Faktor-Authentisierung | https://www.bsi.bund.de/DE/Themen/Verbraucherinnen-und-Verbraucher/Informationen-und-Empfehlungen/Cyber-Sicherheitsempfehlungen/Accountschutz/Zwei-Faktor-Authentisierung/zwei-faktor-authentisierung_node.html",
+      "image": "serioese-email",
+      "imageAlt": "Beispiele für seriöse und unpassende E-Mail-Adressen"
+    },
+    "probezeit": {
+      "sources": "Gesetze im Internet: § 622 BGB, Kündigungsfristen | https://www.gesetze-im-internet.de/bgb/__622.html ;; Gesetze im Internet: § 1 KSchG, sozial ungerechtfertigte Kündigungen | https://www.gesetze-im-internet.de/kschg/__1.html ;; Gesetze im Internet: § 3 EntgFG, Entgeltfortzahlung im Krankheitsfall | https://www.gesetze-im-internet.de/entgfg/__3.html",
+      "image": "probezeit",
+      "imageAlt": "Zeitstrahl: Bis sechs Monate meist zwei Wochen Frist, danach längere Fristen"
+    }
+  };
+
+  function zusatzZeilen(kennung) {
+    var z = ZUSATZ[kennung];
+    return z ? "sources: " + z.sources + "\nimage: " + z.image + "\nimage-alt: " + z.imageAlt + "\n" : "";
+  }
+
   function artikel(kennung, titel, kategorie, text) {
     liste.push({
       datei: kennung + ".de.md",
-      md: "---\ntitle: " + titel + "\ncategory: " + kategorie + "\nlang: de\n---\n\n" + text.trim() + "\n",
+      md: "---\ntitle: " + titel + "\ncategory: " + kategorie + "\nlang: de\n" + zusatzZeilen(kennung) + "---\n\n" + text.trim() + "\n",
     });
   }
 
@@ -17,7 +81,7 @@
   var AUFTRITT = "Online-Auftritt";
 
   artikel("foto-ja-nein", "Foto ja oder nein?", BEWERBUNG, `
-In Deutschland ist ein Bewerbungsfoto üblich, aber nicht vorgeschrieben. Niemand darf es von dir verlangen, und du darfst es weglassen.
+In Deutschland ist ein Bewerbungsfoto üblich, aber kein Gesetz schreibt es vor. Es ist freiwillig, und du darfst es weglassen.
 
 ## Wann ein Foto hilft
 
@@ -101,11 +165,11 @@ Ein Anschreiben passt auf eine Seite. Es wiederholt nicht den Lebenslauf, sonder
 `);
 
   artikel("gehaltsverhandlung", "Gehalt verhandeln", GESPRAECH, `
-Gehaltsverhandlungen sind normal. Wer freundlich und gut vorbereitet fragt, verliert dadurch kein Angebot.
+Gehaltsverhandlungen sind normal. Wer freundlich und gut vorbereitet fragt, verliert dadurch in aller Regel kein Angebot.
 
 ## Vorbereitung
 
-- **Markt prüfen:** Vergleiche Gehälter für Beruf, Region und Berufserfahrung, etwa im Entgeltatlas der Bundesagentur für Arbeit.
+- **Markt prüfen:** Vergleiche Gehälter für Beruf und Region, etwa im Entgeltatlas der Bundesagentur für Arbeit.
 - **Eigenen Wert belegen:** Sammle Erfolge mit Zahlen.
 - **Spanne festlegen:** Lege Wunsch, Ziel und Untergrenze fest, bevor du ins Gespräch gehst.
 - **Brutto im Jahr rechnen:** Unternehmen sprechen meist über das Jahresbrutto.
@@ -126,7 +190,7 @@ Dieser Artikel gibt einen Überblick für Arbeitsverhältnisse in Deutschland. E
 
 ## Die gesetzliche Grundregel
 
-Nach § 622 BGB gilt: vier Wochen zum 15. oder zum Ende eines Kalendermonats. Das gilt für Beschäftigte unabhängig von der Dauer der Beschäftigung, solange der Vertrag nichts anderes regelt.
+Nach § 622 BGB gilt: vier Wochen zum 15. oder zum Ende eines Kalendermonats. Das gilt für Beschäftigte unabhängig von der Dauer der Beschäftigung.
 
 ## Kündigung durch das Unternehmen
 
@@ -144,7 +208,8 @@ Die Frist wird mit der Dauer der Beschäftigung länger, jeweils zum Monatsende:
 
 ## Worauf du achtest
 
-- **Vertrag und Tarifvertrag:** Sie können andere Fristen vorsehen.
+- **Vertrag:** Längere Fristen sind möglich, für dich aber nie länger als für das Unternehmen. Kürzere Fristen gehen nur in engen Ausnahmen (§ 622 Abs. 5 und 6 BGB).
+- **Tarifvertrag:** Er kann andere Fristen vorsehen.
 - **Probezeit:** Hier gelten meist zwei Wochen, siehe [Probezeit](#/wissen/probezeit).
 - **Schriftform:** Eine Kündigung muss auf Papier mit Unterschrift erfolgen. E-Mail oder Messenger reichen nicht.
 - **Rückwärts rechnen:** Prüfe vor einer Zusage, wann du frühestens wechseln kannst.
@@ -159,7 +224,7 @@ Lies den Vertrag vollständig, bevor du unterschreibst. Du darfst dir dafür Zei
 - **Probezeit:** Üblich sind bis zu sechs Monate. Mehr dazu unter [Probezeit](#/wissen/probezeit).
 - **Kündigungsfrist:** Sie steht im Vertrag oder folgt dem Gesetz, siehe [Kündigungsfristen](#/wissen/kuendigungsfristen).
 - **Überstunden:** Klauseln wie „mit dem Gehalt abgegolten“ sind heikel, wenn nicht klar ist, wie viele Stunden gemeint sind.
-- **Befristung:** Ein Ende mit Datum oder ein Sachgrund muss schriftlich vor Arbeitsbeginn feststehen.
+- **Befristung:** Sie muss mit Enddatum oder Zweck schriftlich vereinbart sein, bevor du anfängst.
 - **Wettbewerbsverbot nach dem Ausscheiden:** Es gilt höchstens zwei Jahre und setzt eine Entschädigung von mindestens der Hälfte der letzten Bezüge voraus.
 - **Rückzahlung von Fortbildungskosten:** Achte auf Höhe und Bindungsdauer.
 - **Versetzung:** Prüfe, ob das Unternehmen dich an andere Orte oder in andere Aufgaben schicken darf.
