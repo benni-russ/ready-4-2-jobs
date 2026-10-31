@@ -42,3 +42,12 @@ export function pdfInfo(pfad) {
     }),
   );
 }
+
+// Bleibt die Profilauswahl aus, zeigt die Ausgabe, was stattdessen auf dem Bildschirm stand.
+export async function profilWaehlen(p, name) {
+  await p.getByRole("button", { name: new RegExp(name) }).click().catch(async (e) => {
+    const stand = await p.evaluate(() => ({ url: location.href, ablauf: window.R42J_CORE?.ablauf.get(), text: document.body.innerText.slice(0, 500) }));
+    console.log("Profilauswahl fehlt: " + JSON.stringify(stand));
+    throw e;
+  });
+}
