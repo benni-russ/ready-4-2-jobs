@@ -16,7 +16,7 @@
       },
       [props.schritt],
     );
-    return html`<main class="rj-content" style="margin:0 auto;width:min(720px,100%)">
+    return html`<main class="rj-content">
       <${UI.Stepper}
         aktuell=${props.schritt}
         schritte=${[1, 2, 3, 4, 5, 6, 7, 8].map(function (n) {
