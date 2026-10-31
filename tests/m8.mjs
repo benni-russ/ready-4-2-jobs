@@ -215,7 +215,7 @@ for (const channel of kanaele()) {
   ok("Suche umlaut-tolerant im Text", (await p.locator(".rj-datatable tbody tr").count()) === 1);
   await p.getByRole("searchbox", { name: "Artikel durchsuchen" }).fill("");
 
-  await p.getByRole("combobox").first().click();
+  await p.locator("main").getByRole("combobox").first().click();
   await p.getByRole("option", { name: "Eigene Notizen" }).click();
   ok("Kategoriefilter", (await p.locator(".rj-datatable tbody tr").count()) === 1);
 

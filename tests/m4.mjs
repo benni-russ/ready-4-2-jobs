@@ -168,10 +168,12 @@ for (const channel of kanaele()) {
   ok("Lücke wird Treffer", nachher > vorher, { vorher, nachher });
 
   // KI-Antwort über den Tresor-Workflow: Keyword kommt dazu.
+  await p.getByRole("button", { name: "Bearbeiten", exact: true }).click();
   await p.getByLabel("Name", { exact: true }).fill("Dr. Beispiel");
   await waehle(p, p.getByLabel("Anrede", { exact: true }), "frau");
   await p.getByLabel("Adresse", { exact: true }).fill("Beispiel Müller AG\nHauptstraße 5\n54321 Musterdorf");
-  await p.getByText("Anzeige mit einer KI auswerten").click();
+  await p.getByRole("button", { name: "Speichern", exact: true }).click();
+  await p.getByRole("button", { name: "Anzeige mit einer KI auswerten" }).click();
   await p.getByRole("textbox", { name: /Antwort/ }).first().fill('{"keywords":["Workday"],"anforderungen":["Erfahrung"],"branche":"Handel"}');
   await p.getByRole("button", { name: /prüfen/i }).first().click();
   await p.getByRole("button", { name: "Übernehmen" }).click();

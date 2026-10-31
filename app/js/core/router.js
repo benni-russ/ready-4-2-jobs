@@ -61,6 +61,7 @@
           K.verlassenFrage.set({ ziel: neu });
           // Auch Browser-Zurück landet hier. replace erzeugt keinen neuen Verlaufseintrag und löst keine Rückfrage aus.
           window.location.replace(bestaetigt || "#/");
+          bestaetigt = window.location.hash;
           return;
         }
         bestaetigt = neu;
