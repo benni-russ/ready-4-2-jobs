@@ -450,7 +450,7 @@ for (const channel of kanaele()) {
   ok("Export beim Sperren geleert", (await exportNamen()).length === 0);
   await p.goto("about:blank");
   await p.goto(URLAPP + "#/bewerbungen");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await p.getByRole("button", { name: new RegExp(NAME) }).click({ timeout: 12000 }).catch(async (e) => { console.log("DIAG", await p.evaluate(() => JSON.stringify({ url: location.href, ablauf: window.R42J_CORE && window.R42J_CORE.ablauf.get(), text: document.body.innerText.slice(0, 500), html: document.body.innerHTML.slice(0, 300) }))); throw e; });
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");

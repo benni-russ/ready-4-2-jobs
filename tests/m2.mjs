@@ -44,7 +44,7 @@ async function scr(p, name) { await p.screenshot({ path: `${SP}/m2-${name}.png`,
 async function neuLaden(p) {
   await p.evaluate(() => window.R42J_CORE.tresor.speichernJetzt());
   await p.goto("about:blank"); await p.goto(URLAPP);
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await p.getByRole("button", { name: new RegExp(NAME) }).click({ timeout: 12000 }).catch(async (e) => { console.log("DIAG", await p.evaluate(() => JSON.stringify({ url: location.href, ablauf: window.R42J_CORE && window.R42J_CORE.ablauf.get(), text: document.body.innerText.slice(0, 500), html: document.body.innerHTML.slice(0, 300) }))); throw e; });
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");
@@ -251,7 +251,7 @@ for (const channel of kanaele()) {
   // Neustart, Vorschau.
   await neuLaden(p);
   await p.goto("about:blank"); await p.goto(URLAPP + "#/anlagen");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await p.getByRole("button", { name: new RegExp(NAME) }).click({ timeout: 12000 }).catch(async (e) => { console.log("DIAG", await p.evaluate(() => JSON.stringify({ url: location.href, ablauf: window.R42J_CORE && window.R42J_CORE.ablauf.get(), text: document.body.innerText.slice(0, 500), html: document.body.innerHTML.slice(0, 300) }))); throw e; });
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");
@@ -292,7 +292,7 @@ for (const channel of kanaele()) {
 
   // KI-Import.
   await p.goto("about:blank"); await p.goto(URLAPP + "#/stammdaten/import");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await p.getByRole("button", { name: new RegExp(NAME) }).click({ timeout: 12000 }).catch(async (e) => { console.log("DIAG", await p.evaluate(() => JSON.stringify({ url: location.href, ablauf: window.R42J_CORE && window.R42J_CORE.ablauf.get(), text: document.body.innerText.slice(0, 500), html: document.body.innerHTML.slice(0, 300) }))); throw e; });
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.getByRole("heading", { name: "Lebenslauf importieren" }).first().waitFor();
@@ -349,7 +349,7 @@ for (const channel of kanaele()) {
 
   // Englisch und schmale Fenster, dunkler Modus.
   await p.goto("about:blank"); await p.goto(URLAPP + "#/stammdaten/stationen");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await p.getByRole("button", { name: new RegExp(NAME) }).click({ timeout: 12000 }).catch(async (e) => { console.log("DIAG", await p.evaluate(() => JSON.stringify({ url: location.href, ablauf: window.R42J_CORE && window.R42J_CORE.ablauf.get(), text: document.body.innerText.slice(0, 500), html: document.body.innerHTML.slice(0, 300) }))); throw e; });
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");
