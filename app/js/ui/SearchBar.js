@@ -71,9 +71,10 @@
           aria-controls=${id}
           aria-activedescendant=${alle.length ? id + "-" + markierter : undefined}
           aria-autocomplete="list"
+          aria-keyshortcuts="Control+K Meta+K /"
           autocomplete="off"
           spellcheck="false"
-          placeholder=${K.t("suche.platzhalter")}
+          placeholder=${K.t(window.innerWidth <= 600 ? "suche.kurz" : "suche.platzhalter")}
           value=${anfrage[0]}
           onFocus=${function () {
             offen[1](true);

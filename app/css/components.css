@@ -596,7 +596,7 @@ h1, h2, h3, p { margin: 0; }
 /* ---------- Breadcrumb ---------- */
 .rj-breadcrumb ol { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); list-style: none; margin: 0; padding: 0; font-size: .875rem; line-height: 1.25rem; }
 .rj-breadcrumb li { display: inline-flex; align-items: center; gap: var(--space-1); min-width: 0; color: var(--ink-muted); }
-.rj-breadcrumb li + li::before { content: "/"; color: var(--ink-muted); padding-right: var(--space-1); }
+.rj-breadcrumb li:not(:last-child)::after { content: "/"; color: var(--ink-muted); padding-left: var(--space-1); }
 .rj-breadcrumb a { display: inline-flex; align-items: center; min-height: var(--size-control); padding: 0 var(--space-1); color: var(--accent); text-underline-offset: 3px; }
 .rj-breadcrumb [aria-current="page"] { padding: 0 var(--space-1); color: var(--ink); font-weight: 700; }
 .rj-content > .rj-breadcrumb { margin-block: calc(-1 * var(--space-4)) calc(-1 * var(--space-3)); }
@@ -615,10 +615,12 @@ h1, h2, h3, p { margin: 0; }
 .rj-savestate { display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--size-control); color: var(--ink-muted); font-size: .875rem; white-space: nowrap; }
 .rj-savestate .rj-icon { width: 16px; height: 16px; }
 .rj-savestate[data-stand="gespeichert"] { color: var(--success); }
+.rj-savestate[data-stand="entwurf"] { color: var(--ink-muted); }
 .rj-savestate[data-stand="fehler"] { color: var(--danger); font-weight: 700; }
 
 /* ---------- Bearbeiten-Leiste und Leseansicht ---------- */
 .rj-editbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+html:has(.rj-editbar--klebt) { scroll-padding-bottom: 8rem; }
 .rj-editbar--klebt { position: sticky; bottom: 0; z-index: 2; padding-block: var(--space-3); background: var(--surface); border-top: 1px solid var(--line); }
 .rj-editbar__aktionen { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-left: auto; }
 .rj-readlist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin: 0; }
@@ -640,12 +642,13 @@ h1, h2, h3, p { margin: 0; }
 
 @media (max-width: 600px) {
   .rj-searchbar__tasten { display: none; }
-  .rj-savestate__text { display: none; }
+  .rj-savestate__text { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .rj-wissen-bild { overflow-x: auto; }
+  .rj-wissen-bild img { min-width: 560px; }
   .rj-readlist { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* Ausgelegt auf 1920 × 1080. Die Grenze liegt tiefer, weil Browserrand und Bildlaufleiste Breite kosten. */
-.rj-wissen-bild { margin: 0 0 var(--space-6); max-width: var(--size-prose); }
+.rj-wissen-bild { margin: 0; max-width: var(--size-prose); }
 .rj-wissen-bild img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius-md); background: #fff; }
 .rj-wissen-quellen { max-width: var(--size-prose); margin-top: var(--space-8); padding-top: var(--space-4); border-top: 1px solid var(--line); }
 .rj-wissen-quellen ol { margin: var(--space-3) 0 0; padding-left: 1.25em; }
@@ -653,6 +656,14 @@ h1, h2, h3, p { margin: 0; }
 .rj-wissen-editor { align-items: start; }
 .rj-wissen-editor .rj-prose { overflow-wrap: anywhere; }
 
+/* Schmal verankert die Trefferliste an der ganzen Kopfzeile, sonst ragt sie über den rechten Rand. */
+@media (max-width: 840px) {
+  .rj-topbar { position: relative; }
+  .rj-searchbar { position: static; }
+  .rj-searchbar .rj-palette { left: var(--space-4); right: var(--space-4); width: auto; }
+}
+
+/* Ausgelegt auf 1920 × 1080. Die Grenze liegt tiefer, weil Browserrand und Bildlaufleiste Breite kosten. */
 @media (min-width: 1800px) {
   .rj-content { max-width: var(--size-content-wide); }
   .rj-dialog--wide { width: min(1560px, 100%); }

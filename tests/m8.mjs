@@ -257,6 +257,18 @@ for (const channel of kanaele()) {
   await p.getByRole("button", { name: "Speichern" }).click();
   await p.getByText("Eine Quelle ist nicht lesbar").waitFor();
   ok("Unlesbare Quelle erklärt", true);
+  await p.getByLabel("Quellen").fill("Gute Quelle | https://example.com/gut\nkaputte Zeile");
+  await p.evaluate(() => window.R42J_CORE.verlassenSchutz.entwurfSichern());
+  const gesichert = await p.evaluate(async () => {
+    for (let i = 0; i < 40; i++) {
+      const treffer = (await window.R42J_CORE.wissen.laden()).artikel.find((a) => a.kennung === "mein-merkzettel");
+      if (treffer) return treffer.quellen;
+      await new Promise((f) => setTimeout(f, 50));
+    }
+    return null;
+  });
+  ok("Sichern behält gültige Quellen", gesichert && gesichert.length === 1, gesichert);
+  await p.evaluate(() => window.R42J_CORE.wissen.entfernen("mein-merkzettel.md"));
   await p.getByLabel("Quellen").fill("Beispielquelle | https://example.com/merkzettel");
   await p.getByRole("button", { name: "Speichern" }).click();
   await p.getByRole("heading", { name: "Mein Merkzettel", level: 1 }).waitFor();

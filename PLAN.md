@@ -138,6 +138,7 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 - [x] Testdaten-Generator (Demo-Profil) für Screenshots und Tests.
 - [x] Sicherheitsreview: CSP, keine Klartextreste in `export/`, keine Daten in Logs/Konsole (`docs/SICHERHEIT.md`).
 - [x] PDF-Schrift auf Latin Extended und Vietnamesisch erweitert.
+- [x] Feedback-Feinschliff: Name mit Unterzeile, 1920 × 1080, Brotkrumen, Suchleiste, Speicheranzeige, Formulare mit Bearbeiten, Anschreiben in Schritten, DIN 5008, Status-Icons, Kompetenzfilter, Anlagen-Vorschläge, Vergleichspunkte, Kataloge per KI, Wissen mit eigenen Artikeln, Quellen und Skizzen.
 
 **Akzeptanz (offen):**
 - [ ] Nicht-technische Testperson schafft Onboarding + erste Bewerbung ohne Hilfe in < 30 min.

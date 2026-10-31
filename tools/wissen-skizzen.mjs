@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ZIEL = join(dirname(fileURLToPath(import.meta.url)), "..", "app", "img", "wissen");
-const FARBE = { grund: "#ffffff", flaeche: "#eaeef3", linie: "#d5dbe3", text: "#17202b", leise: "#4a5563", akzent: "#2456a6", weich: "#dfe9f7" };
+const FARBE = { grund: "#ffffff", flaeche: "#eaeef3", linie: "#d5dbe3", text: "#17202b", leise: "#4a5563", akzent: "#1f5fae", weich: "#e3edf9" };
 const BREITE = 720;
 
 const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

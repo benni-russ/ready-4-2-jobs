@@ -42,6 +42,19 @@
       [bearbeiten[0]],
     );
 
+    var erstesMal = hooks.useRef(true);
+    hooks.useEffect(
+      function () {
+        if (erstesMal.current) {
+          erstesMal.current = false;
+          return;
+        }
+        var ziel = document.querySelector(bearbeiten[0] ? "main input:not([type=file]):not([type=hidden]), main textarea" : "main .rj-editbar__aktionen button");
+        if (ziel) ziel.focus();
+      },
+      [bearbeiten[0]],
+    );
+
     function neuLaden() {
       var frisch = klon(o.current.lesen());
       basis.current = JSON.stringify(frisch);

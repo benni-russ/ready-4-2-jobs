@@ -37,7 +37,7 @@
 | Build | **Kein Build-Schritt.** Klassische `<script src>`-Einbindung, keine ES-Module (`import` scheitert auf `file://`), kein `fetch()` auf lokale Dateien |
 | Framework | **Preact + Preact Hooks + htm** als UMD-Dateien (`window.preact`, `window.preactHooks`, `window.htm`), Templates per `htm` statt JSX – kein Build, CSP-konform ohne `unsafe-eval` |
 | Dateizugriff | File System Access API: Nutzer wählt einmal pro Rechner den R42J-Ordner (`showDirectoryPicker`). Handle in IndexedDB, Berechtigung pro Sitzung per Klick erneuern. Laufwerksbuchstabe-Wechsel → Ordner neu wählen |
-| Bibliotheken (lokal in `app/lib/`) | Preact · Preact Hooks · htm · pdfmake (Text-PDFs) · pdf-lib (Zusammenführen/Komprimieren) · MiniSearch (Volltextsuche) · marked + DOMPurify (Markdown) |
+| Bibliotheken (lokal in `app/lib/`) | Preact · Preact Hooks · htm · pdfmake (Text-PDFs) · pdf-lib (Zusammenführen/Komprimieren) · pdf.js (nur Anlagen-Vorschläge: Text der ersten zwei Seiten, lokal, ohne Eval) · MiniSearch (Volltextsuche) · marked + DOMPurify (Markdown) |
 | Schrift | IBM Plex Sans (OFL), lokal mitgeliefert; im PDF zusätzlich eingebettet |
 | Icons | Lucide (ISC), als Pfaddaten in `R42J.icons` (Design-System-Bundle) |
 | UI-Design | Design-System „R42J“: Tokens, Farbschemata, Komponenten mit Präfix `rj-`; die Oberfläche duzt (Anrede in Bewerbungstexten separat pro Bewerbung: Sie/Du); Datumsfelder über eigenen DatePicker (TT.MM.JJJJ) |
@@ -85,7 +85,7 @@ R42J/
    ├─ fragen/                  # eigene Fragenkataloge (*.json, unverschlüsselt, ohne personenbezogene Daten)
    └─ export/                  # temporär (.eml, PDFs) – wird beim Start geleert
 ```
-Beim Start werden fehlende Ordner angelegt und die Artikel aus `wissen-default/` als `<kennung>.<sprache>.md` nach `daten/wissen/` geschrieben, wenn die Datei dort noch fehlt. Der Griff zeigt auf `daten/`, nach `app/` kommt er nicht; deshalb liegen die Artikel im Code. Geänderte Dateien bleiben unberührt, gelöschte kommen beim nächsten Start zurück.
+Beim Start werden fehlende Ordner angelegt. Mitgelieferte Artikel werden direkt aus `wissen-default/` gelesen und nicht mehr kopiert, damit Updates sie erreichen; `daten/wissen/` enthält nur eigene Artikel. Kopien früherer Versionen werden nicht gelöscht: Unveränderte stehen hinter der mitgelieferten Fassung zurück, geänderte gelten als eigene Artikel.
 
 ---
 
@@ -263,7 +263,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Jeder Eintrag mit Ausrichtungs-Tags (Mehrfachauswahl, „alle“ als Abkürzung; gespeichert werden die einzelnen IDs).
 - Zweisprachige Felder: DE/EN-Umschalter am Feld; fehlende Übersetzung wird markiert. Fehlt eine Fassung, bietet das Feld „In DeepL öffnen“: ein vom Nutzer geklickter HTTPS-Link (`https://www.deepl.com/translator#<von>/<nach>/<Text>`), Text kodiert im Fragment, `rel="noopener noreferrer"`, mit sichtbarem Hinweis auf die Weitergabe an DeepL. Über 1.500 Zeichen entfällt der Link zugunsten eines Hinweises. Kein API-Schlüssel, keine Netzanfrage der App, keine CSP-Änderung.
 - Anlagen: Drag & Drop (PDF, JPG, PNG), Vorschau, Kategorie, Tags. Bilder werden beim Einfügen in die Bewerbungsmappe (M5) in PDF gewandelt.
-- **Suche** (global, `Strg/Cmd + K`): MiniSearch über Kompetenzen (inkl. Synonyme), Stationen, Erfolge, Zertifikate, Anlagen-Titel/Tags, Bewerbungen (Firma, Stelle). Index nur im Speicher.
+- **Suche** (global, Suchleiste im Kopf, `Strg/Cmd + K` oder `/`): MiniSearch über Kompetenzen (inkl. Synonyme), Stationen, Erfolge, Zertifikate, Anlagen-Titel/Tags, Bewerbungen (Firma, Stelle). Index nur im Speicher.
 
 ### 6.3 KI-Prompts (generisch)
 - Jeder KI-Workflow = **Prompt kopieren** → externer Chat → **Antwort einfügen** → Validierung → Vorschau → Übernehmen.
@@ -277,7 +277,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
   - Rechtschreib-/Stilkorrektur (Text → korrigierter Text + Änderungsliste)
   - Unternehmensfragen (Firma + Anzeige → Fragen im Lernformat)
 - Platzhalter-Ersetzung gemäß 4.6. Unbekannte Platzhalter in einer Antwort führen zu einer Fehlermeldung. Der Hinweis, keine Namen Dritter zu nennen und dass die Maskierung nicht alles erkennt, steht sichtbar am Ablauf.
-- Interview und Übersetzungen nehmen die Antwort auch als `.txt`, `.md` oder `.json` bis 2 MB an. PDF-Dateien liest die App nicht aus.
+- Interview und Übersetzungen nehmen die Antwort auch als `.txt`, `.md` oder `.json` bis 2 MB an. PDF-Dateien liest die App dort nicht aus. Einzige Ausnahme sind die Anlagen-Vorschläge: Aus Dateiname und Text der ersten zwei Seiten schlägt die App Kategorie, Datum und Stichwörter vor; nichts verlässt das Gerät.
 - Vor dem Übernehmen wählt der Nutzer in der Vorschau einzelne Einträge aus. Dubletten (Vergleich ohne Groß-/Kleinschreibung und Umlaut-Schreibweise, bei Kompetenzen inkl. Synonyme) werden nicht angelegt. Stationen werden über `S1`, `S2` … oder den Namen aufgelöst, Kompetenzen und Ausrichtungen über den Namen. Unbekannte Kompetenzen eines gewählten Eintrags entstehen mit, nicht zuordenbare Verweise entfallen mit Hinweis.
 
 ### 6.4 Stelle erfassen
@@ -365,9 +365,9 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Fortschritt als Balken; offene Punkte vor „Versenden“ als Warnung (nicht blockierend).
 
 ### 6.13 Wissen
-- Markdown-Artikel aus `daten/wissen/` (Ordner-Handle), gerendert mit marked + DOMPurify.
+- Mitgelieferte Artikel aus `wissen-default/`, eigene Markdown-Artikel aus `daten/wissen/` (Ordner-Handle), gerendert mit marked + DOMPurify. Eigene entstehen im Editor (mit Vorschau) oder aus einer `.md`-Datei und lassen sich bearbeiten und löschen. Sie liegen unverschlüsselt, der Editor sagt das.
 - Mitgeliefert (DE/EN): Foto ja/nein · ATS erklärt · STAR-Methode · Anschreiben-Aufbau · Gehaltsverhandlung · Kündigungsfristen · Arbeitsvertrag prüfen · Vorstellungsgespräch · LinkedIn-/XING-Profil · Seriöse E-Mail-Adresse · Probezeit.
-- Suche + Kategorien über Frontmatter (`title`, `category`, `lang`). Die Kennung ist der Dateiname ohne Sprache und Endung; je Kennung gilt die Fassung der Oberflächensprache, sonst die vorhandene. Artikel sind fremder Text: Bilder und Einbettungen fallen weg, Links bleiben nur als App-Link (`#/…`) oder HTTPS.
+- Suche + Kategorien über Frontmatter (`title`, `category`, `lang`), Quellen über `sources: Titel | https://… ;; Titel | https://…`, Skizzen mitgelieferter Artikel über `image` und `image-alt` (`app/img/wissen/<name>.<sprache>.svg`, erzeugt von `tools/wissen-skizzen.mjs`). Die Kennung ist der Dateiname ohne Sprache und Endung; je Kennung gilt die Fassung der Oberflächensprache, sonst die vorhandene. Artikel sind fremder Text: Bilder und Einbettungen fallen weg, Links bleiben nur als App-Link (`#/…`) oder HTTPS.
 - Links aus der App kontextbezogen in passende Artikel (z. B. Foto-Schalter → „Foto ja/nein“).
 
 ### 6.14 Statistik
@@ -394,7 +394,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 | Schriftgröße | 3 Stufen (100 / 115 / 130 %), Layout bricht nicht |
 | Theme | Hell/Dunkel, Standard = System, umschaltbar; Farbschemata als Voreinstellungen (Blau, Petrol, Grün, Violett, Graphit), alle AA-geprüft in beiden Modi |
 | Performance | Entsperren < 2 s, Lebenslauf-PDF < 3 s, Anlagen-PDF (20 Seiten) < 10 s |
-| Robustheit | Atomares Speichern, Autosave (debounced 2 s), Warnung bei ungespeicherten Änderungen |
+| Robustheit | Atomares Speichern. Arbeitsflächen speichern automatisch (debounced 2 s) und zeigen den Stand. Formulare (Persönliches, Stelle) zeigen eine Leseansicht und speichern erst über Bearbeiten → Speichern; beim Verlassen kommt eine Rückfrage, beim Sperren wird der Entwurf in den Tresor gesichert |
 | Sprache | Alle UI-Texte über `i18n`, keine harten Strings im Markup |
 | Tabellen | Alle Listen-Tabellen durchsuchbar (umlaut-tolerant) und nach jeder Spalte sortierbar (Text, Zahl, Datum) |
 | Verständlichkeit | Keine Fachbegriffe ohne Erklärung; Leere Zustände mit Handlungsaufforderung; Fehler in Klartext mit Lösung |

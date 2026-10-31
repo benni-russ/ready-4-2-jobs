@@ -170,12 +170,15 @@
     </div>`;
   }
 
+  // Der Schritt bleibt beim Reiterwechsel erhalten.
+  var letzterSchritt = {};
+
   function Abschnitt(props) {
     var b = props.bewerbung;
     var a = props.abschnitt;
     return html`<div class="rj-stack" style="gap:var(--space-2)">
       <${UI.Textarea}
-        label=${K.t("anschreiben.abschnitt." + a)}
+        label=${props.label || K.t("anschreiben.abschnitt." + a)}
         placeholder=${K.t("anschreiben.platzhalter." + a)}
         rows="5"
         spellcheck="true"
@@ -243,7 +246,7 @@
     var pruefung = hooks.useState(null);
     var laedt = hooks.useState(false);
     var fehler = hooks.useState(null);
-    var schritt = hooks.useState(1);
+    var schritt = hooks.useState(letzterSchritt[b.id] || 1);
     var ki = hooks.useState(null);
     var stand = JSON.stringify([b.anschreiben, b.dokumente.mitUnterschrift, b.firma, b.ansprechpartner, b.stelle.titel, b.stelle.referenz, b.keywords.treffer]);
 
@@ -281,12 +284,22 @@
     }
 
     function wechseln(nr) {
+      letzterSchritt[b.id] = nr;
       schritt[1](nr);
       window.scrollTo(0, 0);
+      // Tastatur und Screenreader landen beim neuen Schritt, nicht am Anfang der Seite.
+      window.setTimeout(function () {
+        var kopf = document.querySelector(".rj-editor .rj-card h2");
+        if (!kopf) return;
+        kopf.setAttribute("tabindex", "-1");
+        kopf.focus({ preventScroll: true });
+      }, 0);
     }
 
     var r = pruefung[0];
     var nr = schritt[0];
+    var rahmen = b.anschreiben.rahmen;
+    var wertFehlt = (rahmen.eintritt && !p.verfuegbarAb) || (rahmen.kuendigungsfrist && !p.kuendigungsfrist) || (rahmen.gehalt && !p.gehaltsvorstellung);
     return html`<div class="rj-aktionen">
         <${UI.Button}
           icon="sparkles"
@@ -305,7 +318,7 @@
           ${K.t("anschreiben.korrekturKnopf")}
         <//>
       </div>
-      <${UI.Stepper} kompakt=${true} aktuell=${nr} schritte=${[K.t("anschreiben.rahmen"), K.t("anschreiben.schrittInhalt"), K.t("anschreiben.unterschrift"), K.t("anschreiben.schrittPruefen")]} />
+      <${UI.Stepper} kompakt=${window.innerWidth <= 600} aktuell=${nr} schritte=${[K.t("anschreiben.rahmen"), K.t("anschreiben.schrittInhalt"), K.t("anschreiben.unterschrift"), K.t("anschreiben.schrittPruefen")]} />
       <div class="rj-editor">
       <div class="rj-stack">
         ${nr === 1 &&
@@ -316,7 +329,19 @@
           <${UI.Switch} label=${K.t("anschreiben.rahmenEintritt")} wert=${b.anschreiben.rahmen.eintritt} beiAenderung=${schalter(b, "eintritt")} />
           <${UI.Switch} label=${K.t("anschreiben.rahmenKuendigung")} wert=${b.anschreiben.rahmen.kuendigungsfrist} beiAenderung=${schalter(b, "kuendigungsfrist")} />
           <${UI.Switch} label=${K.t("anschreiben.rahmenGehalt")} wert=${b.anschreiben.rahmen.gehalt} beiAenderung=${schalter(b, "gehalt")} />
-          <${Abschnitt} bewerbung=${b} abschnitt="rahmen" />
+          ${wertFehlt &&
+          html`<${UI.Alert} art="info">
+            ${K.t("anschreiben.rahmenFehlt")} <a class="rj-link" href="#/stammdaten/persoenlich">${K.t("anschreiben.rahmenFehltLink")}</a>
+          <//>`}
+          <div class="rj-accordion">
+            <details>
+              <summary>${K.t("anschreiben.wortlautAendern")}<${UI.Icon} name="chevron-down" /></summary>
+              <div class="rj-stack" style="padding:var(--space-4)">
+                <p class="rj-muted">${K.t("anschreiben.platzhalterHinweis")}</p>
+                <${Abschnitt} bewerbung=${b} abschnitt="rahmen" label=${K.t("anschreiben.wortlaut")} />
+              </div>
+            </details>
+          </div>
         </section>`}
         ${nr === 2 &&
         html`<section class="rj-card rj-stack">

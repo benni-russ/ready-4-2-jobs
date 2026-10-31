@@ -19,8 +19,9 @@
       quellen: a ? a.quellen.map(function (q) { return q.titel + " | " + q.url; }).join("\n") : "",
       text: a ? a.text.trim() : "",
     });
-    var fehler = hooks.useState("");
+    var fehler = hooks.useState({});
     var laedt = hooks.useState(false);
+    var ersetzen = hooks.useState(null);
     var e = entwurf[0];
     var aktuell = hooks.useRef(e);
     aktuell.current = e;
@@ -34,17 +35,16 @@
       };
     }
 
-    function quellenLesen(wert) {
-      var zeilen = wert.split(/\r?\n/).filter(function (z) {
+    function quellenZeilen(wert) {
+      return wert.split(/\r?\n/).filter(function (z) {
         return z.trim();
       });
-      var gueltig = K.wissen.quellenLesen(zeilen.join(" ;; "));
-      return gueltig.length === zeilen.length ? gueltig : null;
     }
 
+    // Beim Sichern ohne Rückfrage bleiben gültige Quellen auch dann erhalten, wenn eine Zeile unlesbar ist.
     function schreiben() {
       var w = aktuell.current;
-      return K.wissen.speichern({ datei: a && a.datei, titel: w.titel, kategorie: w.kategorie, text: w.text, quellen: quellenLesen(w.quellen) || [] });
+      return K.wissen.speichern({ datei: a && a.datei, titel: w.titel.trim() || K.t("wissen.entwurfTitel"), kategorie: w.kategorie, text: w.text, quellen: K.wissen.quellenLesen(quellenZeilen(w.quellen).join(" ;; ")) });
     }
 
     hooks.useEffect(function () {
@@ -53,7 +53,10 @@
         return JSON.stringify(aktuell.current) !== basis.current;
       }
       K.verlassenSchutz.setzen(geaendert, function () {
-        if (aktuell.current.titel.trim()) schreiben().catch(function () {});
+        if (!aktuell.current.titel.trim() && !aktuell.current.text.trim()) return;
+        schreiben().catch(function (x) {
+          K.meldung(K.fehlerText(x), "danger");
+        });
       });
       return function () {
         K.verlassenSchutz.loesen(geaendert);
@@ -61,9 +64,13 @@
     }, []);
 
     async function speichern() {
-      if (!e.titel.trim()) return fehler[1](K.t("wissen.fehlerTitel"));
-      if (!e.text.trim()) return fehler[1](K.t("wissen.fehlerText"));
-      if (!quellenLesen(e.quellen)) return fehler[1](K.t("wissen.fehlerQuellen"));
+      var problem = {};
+      if (!e.titel.trim()) problem.titel = K.t("wissen.fehlerTitel");
+      if (!e.text.trim()) problem.text = K.t("wissen.fehlerText");
+      var zeilen = quellenZeilen(e.quellen);
+      if (K.wissen.quellenLesen(zeilen.join(" ;; ")).length !== zeilen.length) problem.quellen = K.t("wissen.fehlerQuellen");
+      fehler[1](problem);
+      if (Object.keys(problem).length) return;
       laedt[1](true);
       try {
         var kennung = await schreiben();
@@ -72,7 +79,7 @@
         K.meldung(K.t("speichern.gespeichert"));
         K.navigieren("wissen/" + encodeURIComponent(kennung));
       } catch (x) {
-        fehler[1](K.fehlerText(x));
+        fehler[1]({ allgemein: K.fehlerText(x) });
       }
       laedt[1](false);
     }
@@ -88,33 +95,61 @@
             text: f.rest.trim(),
           }),
         );
-        fehler[1]("");
+        fehler[1]({});
       } catch (x) {
-        fehler[1](K.fehlerText(x));
+        fehler[1]({ allgemein: K.fehlerText(x) });
       }
     }
+
+    function dateiGewaehlt(dateien) {
+      if (aktuell.current.text.trim()) ersetzen[1](dateien);
+      else dateiLesen(dateien);
+    }
+
+    var vorschau = hooks.useMemo(
+      function () {
+        return K.wissen.alsHtml(e.text);
+      },
+      [e.text],
+    );
 
     return html`
       <div class="rj-pagehead"><h1 class="h1">${K.t(a ? "wissen.bearbeiten" : "wissen.neu")}</h1></div>
       <${UI.Alert} art="warning">${K.t("wissen.datenschutz")}<//>
       <div class="rj-grid-2 rj-wissen-editor">
         <div class="rj-stack">
-          <${UI.TextField} label=${K.t("wissen.titel")} wert=${e.titel} beiAenderung=${setze("titel")} />
+          <${UI.TextField} label=${K.t("wissen.titel")} pflicht=${true} fehler=${fehler[0].titel} wert=${e.titel} beiAenderung=${setze("titel")} />
           <${UI.TextField} label=${K.t("wissen.kategorie")} wert=${e.kategorie} beiAenderung=${setze("kategorie")} />
-          <${UI.Textarea} label=${K.t("wissen.text")} hinweis=${K.t("wissen.textHinweis")} wert=${e.text} beiAenderung=${setze("text")} rows="16" spellcheck="true" />
-          <${UI.Textarea} label=${K.t("wissen.quellen")} hinweis=${K.t("wissen.quellenHinweis")} wert=${e.quellen} beiAenderung=${setze("quellen")} rows="3" spellcheck="false" />
-          <${UI.FileDrop} accept=".md,.txt" hinweis=${K.t("wissen.dateiHinweis")} beiDateien=${dateiLesen} />
+          <${UI.Textarea} label=${K.t("wissen.text")} pflicht=${true} fehler=${fehler[0].text} hinweis=${K.t("wissen.textHinweis")} wert=${e.text} beiAenderung=${setze("text")} rows="16" spellcheck="true" />
+          <${UI.Textarea} label=${K.t("wissen.quellen")} fehler=${fehler[0].quellen} hinweis=${K.t("wissen.quellenHinweis")} wert=${e.quellen} beiAenderung=${setze("quellen")} rows="3" spellcheck="false" />
+          <${UI.FileDrop} accept=".md,.txt" hinweis=${K.t("wissen.dateiHinweis")} beiDateien=${dateiGewaehlt} />
         </div>
         <section class="rj-card rj-stack" aria-label=${K.t("wissen.vorschau")}>
           <h2 class="h3">${K.t("wissen.vorschau")}</h2>
-          <div class="rj-prose" dangerouslySetInnerHTML=${{ __html: K.wissen.alsHtml(e.text) }}></div>
+          <div class="rj-prose" dangerouslySetInnerHTML=${{ __html: vorschau }}></div>
         </section>
       </div>
-      ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
-      <div class="rj-row">
-        <${UI.Button} variante="primary" icon="save" laedt=${laedt[0]} disabled=${laedt[0]} onClick=${speichern}>${K.t("aktion.speichern")}<//>
-        <${UI.Button} variante="ghost" href=${a ? "#/wissen/" + encodeURIComponent(a.kennung) : "#/wissen"}>${K.t("aktion.abbrechen")}<//>
+      <div class="rj-editbar rj-editbar--klebt">
+        ${fehler[0].allgemein ? html`<${UI.Alert} art="danger">${fehler[0].allgemein}<//>` : html`<span class="rj-muted">${K.t("speichern.entwurfHinweis")}</span>`}
+        <div class="rj-editbar__aktionen">
+          <${UI.Button} variante="ghost" href=${a ? "#/wissen/" + encodeURIComponent(a.kennung) : "#/wissen"}>${K.t("aktion.abbrechen")}<//>
+          <${UI.Button} variante="primary" icon="save" laedt=${laedt[0]} disabled=${laedt[0]} onClick=${speichern}>${K.t("speichern.speichern")}<//>
+        </div>
       </div>
+      ${ersetzen[0] &&
+      html`<${UI.Dialog}
+        titel=${K.t("wissen.ersetzenTitel")}
+        bestaetigen=${K.t("wissen.ersetzenKnopf")}
+        beiBestaetigen=${function () {
+          dateiLesen(ersetzen[0]);
+          ersetzen[1](null);
+        }}
+        beiSchliessen=${function () {
+          ersetzen[1](null);
+        }}
+      >
+        <p>${K.t("wissen.ersetzenText")}</p>
+      <//>`}
     `;
   }
 
@@ -168,7 +203,7 @@
       </div>
       <p class="rj-muted">${a.kategorie}</p>
       ${a.bild &&
-      html`<figure class="rj-wissen-bild">
+      html`<figure class="rj-wissen-bild" tabindex=${window.innerWidth <= 600 ? "0" : undefined}>
         <img src=${"img/wissen/" + a.bild + "." + (a.sprache || "de") + ".svg"} alt=${a.bildText} />
       </figure>`}
       <article class="rj-prose" dangerouslySetInnerHTML=${{ __html: K.wissen.alsHtml(a.text) }}></article>

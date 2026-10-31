@@ -20,16 +20,19 @@
   var bestaetigt = window.location.hash;
 
   K.verlassenFrage = K.beobachtbar({ ziel: null });
+  K.entwurfOffen = K.beobachtbar({ offen: false });
 
   K.verlassenSchutz = {
     setzen: function (f, entwurfSichern) {
       pruefung = f;
       sichern = entwurfSichern;
+      K.entwurfOffen.set({ offen: true });
     },
     loesen: function (f) {
       if (pruefung === f) {
         pruefung = null;
         sichern = null;
+        K.entwurfOffen.set({ offen: false });
       }
     },
     // Vor dem Sperren: Der Entwurf wandert in den Tresor, statt beim Sperren still verloren zu gehen.
@@ -42,6 +45,7 @@
     verwerfen: function () {
       var ziel = K.verlassenFrage.get().ziel;
       pruefung = null;
+      K.entwurfOffen.set({ offen: false });
       K.verlassenFrage.set({ ziel: null });
       if (ziel !== null) window.location.hash = ziel;
     },
