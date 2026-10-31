@@ -29,8 +29,27 @@
   // spalten: [{ schluessel, titel }]
   // zeilen: [{ schluessel, titel, erklaerung?, zellen: [{ text, beste?, fehlt? }] }]
   UI.ComparisonTable = function (props) {
-    return html`<div class="rj-table-wrap">
-      <table class="rj-table">
+    var rahmen = hooks.useRef(null);
+    var zuBreit = hooks.useState(false);
+    hooks.useLayoutEffect(function () {
+      function messen() {
+        var e = rahmen.current;
+        zuBreit[1](e.scrollWidth > e.clientWidth);
+      }
+      messen();
+      window.addEventListener("resize", messen);
+      return function () {
+        window.removeEventListener("resize", messen);
+      };
+    }, [props.spalten.length]);
+    return html`<div
+      class="rj-table-wrap"
+      ref=${rahmen}
+      tabindex=${zuBreit[0] ? 0 : undefined}
+      role=${zuBreit[0] ? "region" : undefined}
+      aria-label=${zuBreit[0] ? props.label : undefined}
+    >
+      <table class="rj-table rj-table--kopfspalte">
         <caption class="rj-sr-only">${props.label}</caption>
         <thead>
           <tr>
@@ -55,6 +74,7 @@
           })}
         </tbody>
       </table>
-    </div>`;
+    </div>
+    ${zuBreit[0] && html`<p class="rj-hint">${K.t("vergleich.seitlichScrollen", { anzahl: props.spalten.length })}</p>`}`;
   };
 })();

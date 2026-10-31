@@ -192,6 +192,10 @@ for (const channel of kanaele()) {
   });
   ok("Kalenderwoche", kw[0] === "KW 53" && kw[1] === "KW 1", kw);
 
+  // Beginnt das Jahr an einem Donnerstag, darf die Sommerzeit keine Woche verschieben.
+  const sommer = await p.evaluate(() => window.R42J_CORE.statistik.auswerten([], [], new Date(2026, 9, 31, 12)).proWoche.map((w) => w.label));
+  ok("Acht Wochen lückenlos", sommer.join() === [37, 38, 39, 40, 41, 42, 43, 44].map((n) => "KW " + n).join(), sommer);
+
   // Eigener Artikel: erscheint nach Neustart, eine geänderte mitgelieferte Datei bleibt.
   await inWissen(p, "mein-test.md", EIGENER);
   await inWissen(p, "probezeit.de.md", "---\ntitle: Geänderte Probezeit\ncategory: Vertrag und Recht\nlang: de\n---\n\nMein Stand.\n");
@@ -277,6 +281,13 @@ for (const channel of kanaele()) {
   const ueberlauf = await p.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   ok("Kein Überlauf", !ueberlauf);
   await p.screenshot({ path: join(SP, `m8-statistik-${channel}.png`), fullPage: true });
+
+  // Eine unbekannte Adresse hat wie jede Seite eine Hauptüberschrift.
+  await p.evaluate(() => { location.hash = "#/gibtsnicht"; });
+  await p.getByRole("heading", { level: 1, name: "Diese Seite gibt es nicht" }).waitFor();
+  ok("Leere Seite mit h1", true);
+  await p.evaluate(() => { location.hash = "#/statistik"; });
+  await p.getByRole("heading", { level: 1, name: "Statistik" }).waitFor();
   await p.setViewportSize({ width: 390, height: 800 });
   await p.waitForTimeout(600);
   ok("Kein Überlauf schmal", !(await p.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)));

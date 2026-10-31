@@ -4,9 +4,10 @@
   var html = UI.html;
 
   UI.EmptyState = function (props) {
+    var Titel = props.seitentitel ? "h1" : "h2";
     return html`<div class="rj-empty">
       <div class="rj-empty__icon"><${UI.Icon} name=${props.icon} /></div>
-      <h2 class="h3">${props.titel}</h2>
+      <${Titel} class="h3">${props.titel}<//>
       <p>${props.text}</p>
       ${props.children}
     </div>`;

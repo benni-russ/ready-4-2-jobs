@@ -346,6 +346,19 @@ for (const channel of kanaele()) {
   await p.getByRole("table").waitFor();
   ok("Pauschale wirkt in der Tabelle", (await p.getByRole("row", { name: /^Arbeitswochen/ }).locator("td").allInnerTexts()).some((t) => t.trim().startsWith("43")));
   await p.setViewportSize({ width: 390, height: 800 });
+  // Im schmalen Fenster sagt die Tabelle, dass es mehr Angebote gibt, und die Kriterien bleiben stehen.
+  const tabellenRahmen = p.getByRole("region", { name: "Angebote im Vergleich" });
+  await tabellenRahmen.waitFor();
+  ok("Hinweis auf weitere Angebote", await p.getByText(/Wische oder scrolle zur Seite/).isVisible());
+  await p.waitForTimeout(500); // Die Seitenleiste klappt nach dem Verkleinern animiert ein.
+  await tabellenRahmen.focus();
+  await tabellenRahmen.evaluate((e) => { e.scrollLeft = e.scrollWidth; });
+  const stehen = await tabellenRahmen.evaluate((e) => {
+    const r = e.getBoundingClientRect();
+    return Math.abs(e.querySelector("tbody th").getBoundingClientRect().left - r.left) < 2;
+  });
+  ok("Kriterien bleiben beim Scrollen stehen", stehen);
+  await p.screenshot({ path: join(SP, `m6-tabelle-schmal-${channel}.png`), fullPage: true });
   await p.getByRole("tab", { name: "Punktwertung" }).click();
   await p.locator(".rj-scorelist").waitFor();
   const breite = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
