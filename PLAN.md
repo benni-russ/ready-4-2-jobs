@@ -149,7 +149,7 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 **Akzeptanz (offen):**
 - [ ] Nicht-technische Testperson schafft Onboarding + erste Bewerbung ohne Hilfe in < 30 min.
 - [ ] ATS-Test des Lebenslaufs mit einem echten ATS-Checker.
-- [ ] Testlauf im Browser mit dem fertigen Stand vor dem Release.
+- [x] Testlauf im Browser mit dem fertigen Stand vor dem Release.
 
 ---
 
