@@ -257,10 +257,12 @@ html:has(.rj-overlay) .rj-toaster { top: var(--space-3); bottom: auto; left: 50%
 .rj-stepper--kompakt li { min-width: 0; }
 .rj-stepper--kompakt li:not([aria-current="step"]) span { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .rj-stepper--kompakt li span { white-space: nowrap; }
-.rj-stepper--kompakt li:first-child span { align-self: flex-start; }
-.rj-stepper--kompakt li:first-child .rj-stepper__knopf { text-align: left; }
-.rj-stepper--kompakt li:last-child .rj-stepper__knopf { text-align: right; }
-.rj-stepper--kompakt li:last-child span { align-self: flex-end; }
+@media (max-width: 720px) {
+  .rj-stepper--kompakt li:first-child span { align-self: flex-start; }
+  .rj-stepper--kompakt li:first-child .rj-stepper__knopf { text-align: left; }
+  .rj-stepper--kompakt li:last-child .rj-stepper__knopf { text-align: right; }
+  .rj-stepper--kompakt li:last-child span { align-self: flex-end; }
+}
 
 .rj-accordion { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface-raised); overflow: hidden; }
 .rj-accordion summary:focus-visible { outline-offset: -3px; }
@@ -450,7 +452,8 @@ html:has(.rj-overlay) .rj-toaster { top: var(--space-3); bottom: auto; left: 50%
 .rj-lock { min-height: 100%; display: grid; place-items: center; padding: var(--space-8) var(--space-4); background: var(--surface); }
 .rj-lock__card { width: min(420px, 100%); display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-8); background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); }
 
-.rj-recovery { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
+input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display: none; }
+.rj-recovery { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(calc(25% - var(--space-2)), 7.5rem), 1fr)); gap: var(--space-2); }
 .rj-recovery code { display: grid; place-items: center; min-height: 48px; border: 2px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface-raised); font: 700 1.125rem/1 var(--font-sans); letter-spacing: .12em; font-variant-numeric: tabular-nums; }
 /* LetterPreview */
 @media (min-width: 1100px) and (min-height: 700px) {
