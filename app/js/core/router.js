@@ -14,10 +14,56 @@
     window.location.hash = "#/" + pfad;
   };
 
+  // Ein offenes Formular meldet hier seinen Entwurf. Solange die Prüfung wahr liefert, fragt jeder Seitenwechsel nach.
+  var pruefung = null;
+  var sichern = null;
+  var bestaetigt = window.location.hash;
+
+  K.verlassenFrage = K.beobachtbar({ ziel: null });
+
+  K.verlassenSchutz = {
+    setzen: function (f, entwurfSichern) {
+      pruefung = f;
+      sichern = entwurfSichern;
+    },
+    loesen: function (f) {
+      if (pruefung === f) {
+        pruefung = null;
+        sichern = null;
+      }
+    },
+    // Vor dem Sperren: Der Entwurf wandert in den Tresor, statt beim Sperren still verloren zu gehen.
+    entwurfSichern: function () {
+      if (pruefung && pruefung() && sichern) sichern();
+    },
+    aktiv: function () {
+      return !!pruefung && pruefung();
+    },
+    verwerfen: function () {
+      var ziel = K.verlassenFrage.get().ziel;
+      pruefung = null;
+      K.verlassenFrage.set({ ziel: null });
+      if (ziel !== null) window.location.hash = ziel;
+    },
+    bleiben: function () {
+      K.verlassenFrage.set({ ziel: null });
+    },
+  };
+
   K.useRoute = function () {
     var paar = hooks.useState(lesen);
     hooks.useEffect(function () {
+      bestaetigt = window.location.hash;
       function wechsel() {
+        var neu = window.location.hash;
+        if (neu === bestaetigt) return;
+        if (K.verlassenSchutz.aktiv()) {
+          K.verlassenFrage.set({ ziel: neu });
+          // Auch Browser-Zurück landet hier. replace erzeugt keinen neuen Verlaufseintrag und löst keine Rückfrage aus.
+          window.location.replace(bestaetigt || "#/");
+          return;
+        }
+        bestaetigt = neu;
         paar[1](lesen());
       }
       window.addEventListener("hashchange", wechsel);

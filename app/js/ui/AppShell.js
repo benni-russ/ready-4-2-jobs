@@ -29,6 +29,11 @@
   // Gleiche Grenze wie der Schmal-Block in components.css.
   var SCHMAL = window.matchMedia("(max-width: 600px)");
 
+  // Im Feld bleibt „/“ ein normales Zeichen, auch in eigenen Bedienelementen wie dem Dropdown.
+  function inEingabe(el) {
+    return !!(el.closest && el.closest("input, textarea, select, [contenteditable], [role=combobox], [role=listbox]"));
+  }
+
   function NavEintrag(props) {
     var text = K.t("nav." + props.seite);
     return html`<li>
@@ -51,7 +56,8 @@
     var eingeklappt = schmal[0] ? !ueberlagert[0] : z.seitenleisteEingeklappt;
     var seite = props.seite;
     var inhalt = hooks.useRef(null);
-    var sucheOffen = hooks.useState(false);
+    var suchfeld = hooks.useRef(null);
+    var frage = K.useBeobachtbar(K.verlassenFrage);
     var profilName = K.tresor.eintrag().name;
     var dunkel = document.documentElement.getAttribute("data-theme") === "dark";
 
@@ -77,13 +83,18 @@
     hooks.useEffect(function () {
       function taste(e) {
         if (e.key === "Escape") ueberlagert[1](false);
+        var dialogOffen = !!document.querySelector("[role=dialog]");
         if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === "b" || e.key === "B")) {
           e.preventDefault();
           umschalten();
         }
         if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === "k" || e.key === "K")) {
           e.preventDefault();
-          sucheOffen[1](true);
+          if (!dialogOffen) suchfeld.current.focus();
+        }
+        if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !dialogOffen && !inEingabe(e.target)) {
+          e.preventDefault();
+          suchfeld.current.focus();
         }
       }
       document.addEventListener("keydown", taste);
@@ -151,38 +162,42 @@
       </nav>
       <div class="rj-main">
         <div class="rj-topbar">
-          <span style="flex:1"></span>
-          <${UI.IconButton}
-            icon="search"
-            label=${K.t("suche.oeffnen")}
-            title=${K.t("suche.oeffnen") + " (" + K.t("suche.taste") + ")"}
-            onClick=${function () {
-              sucheOffen[1](true);
+          <${UI.SearchBar}
+            feld=${suchfeld}
+            beiSuche=${K.suche.suchen}
+            beiWahl=${function (t) {
+              K.navigieren(t.ziel);
             }}
           />
-          <${UI.IconButton} icon=${dunkel ? "moon" : "sun"} label=${labelTheme} onClick=${themeWechseln} />
-          <${UI.IconButton}
-            icon="settings"
-            label=${K.t("nav.einstellungen")}
-            aria-current=${seite === "einstellungen" ? "page" : undefined}
-            onClick=${function () {
-              K.navigieren("einstellungen");
-            }}
-          />
+          <div class="rj-topbar__rechts">
+            <${UI.SaveState} />
+            <${UI.IconButton} icon=${dunkel ? "moon" : "sun"} label=${labelTheme} onClick=${themeWechseln} />
+            <${UI.IconButton}
+              icon="settings"
+              label=${K.t("nav.einstellungen")}
+              aria-current=${seite === "einstellungen" ? "page" : undefined}
+              onClick=${function () {
+                K.navigieren("einstellungen");
+              }}
+            />
+          </div>
         </div>
-        <main class="rj-content" tabindex="-1" ref=${inhalt}>${props.children}</main>
+        <main class="rj-content" tabindex="-1" ref=${inhalt}>
+          <${UI.Breadcrumb} route=${props.route} />
+          ${props.children}
+        </main>
       </div>
-      ${sucheOffen[0] &&
-      html`<${UI.CommandPalette}
-        beiSuche=${K.suche.suchen}
-        beiWahl=${function (t) {
-          sucheOffen[1](false);
-          K.navigieren(t.ziel);
-        }}
-        beiSchliessen=${function () {
-          sucheOffen[1](false);
-        }}
-      />`}
+      ${frage.ziel !== null &&
+      html`<${UI.Dialog}
+        titel=${K.t("verlassen.titel")}
+        bestaetigen=${K.t("verlassen.verwerfen")}
+        abbrechen=${K.t("verlassen.bleiben")}
+        gefahr=${true}
+        beiBestaetigen=${K.verlassenSchutz.verwerfen}
+        beiSchliessen=${K.verlassenSchutz.bleiben}
+      >
+        <p>${K.t("verlassen.text")}</p>
+      <//>`}
     </div>`;
   };
 })();

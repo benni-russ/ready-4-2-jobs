@@ -16,6 +16,7 @@
   var warteschlange = Promise.resolve();
 
   K.tresorStand = K.beobachtbar({ offen: false, version: 0 });
+  K.speicherStand = K.beobachtbar({ stand: "leerlauf" });
 
   function melden() {
     K.tresorStand.set({ offen: !!dek, version: K.tresorStand.get().version + 1 });
@@ -57,10 +58,13 @@
     return einreihen(async function () {
       if (!dek || !ungespeichert) return;
       ungespeichert = false;
+      K.speicherStand.set({ stand: "speichert" });
       try {
         await schreiben();
+        if (!ungespeichert) K.speicherStand.set({ stand: "gespeichert" });
       } catch (e) {
         ungespeichert = true;
+        K.speicherStand.set({ stand: "fehler" });
         throw e;
       }
     });
@@ -68,6 +72,7 @@
 
   function vormerken() {
     ungespeichert = true;
+    K.speicherStand.set({ stand: "speichert" });
     window.clearTimeout(timer);
     timer = window.setTimeout(function () {
       speichern().catch(function (e) {
@@ -91,6 +96,7 @@
     eintrag = e;
     ungespeichert = migrieren;
     if (migrieren) await speichern();
+    K.speicherStand.set({ stand: "leerlauf" });
     K.store.set(darstellungAus(tresor.einstellungen));
     if (tresor.einstellungen.anzeigename !== e.name) {
       eintrag = Object.assign({}, e, { name: tresor.einstellungen.anzeigename });
@@ -258,6 +264,7 @@
     // Der Datenschlüssel verschwindet auch dann, wenn das letzte Speichern scheitert.
     sperren: async function () {
       if (!dek) return null;
+      K.verlassenSchutz.entwurfSichern();
       window.clearTimeout(timer);
       var e = eintrag;
       var fehler = null;
@@ -283,6 +290,6 @@
   };
 
   window.addEventListener("beforeunload", function (e) {
-    if (ungespeichert) e.preventDefault();
+    if (ungespeichert || K.verlassenSchutz.aktiv()) e.preventDefault();
   });
 })();

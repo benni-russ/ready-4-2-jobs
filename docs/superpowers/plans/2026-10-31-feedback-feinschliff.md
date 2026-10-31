@@ -23,7 +23,7 @@
 
 1. Rückfrage beim Verlassen: Browser-Zurück mit ungespeichertem Entwurf darf weder Daten verlieren noch in einer Hash-Schleife hängen.
 2. `/` in Eingabefeldern, Textareas und im Dropdown bleibt ein normales Zeichen.
-3. Automatische Sperre bei offenem Entwurf: Der Entwurf verschwindet, der Tresor bleibt konsistent.
+3. Automatische Sperre bei offenem Entwurf: Der Entwurf wird vorher im Tresor gespeichert, nichts geht verloren.
 4. Wissen: Ein alter Kopie-Artikel in `daten/wissen/` darf nach dem Update nicht doppelt erscheinen.
 5. Anschreiben-PDF nach DIN 5008: Lange Texte bleiben auf einer Seite oder melden den Überlauf wie bisher.
 
@@ -43,7 +43,7 @@
 
 **Files:** Create `app/js/ui/Breadcrumb.js`, `app/js/ui/SaveState.js`, `app/js/ui/SearchBar.js`, `app/js/core/brotkrumen.js`. Modify `AppShell.js`, `main.js`, `core/tresor.js`, `index.html`, Module mit Zurück-Knopf.
 
-**Produces:** `K.brotkrumen(route) -> [{ text, ziel? }]`; `K.speicherStand` (beobachtbar: `leerlauf|speichert|gespeichert|fehler`); `K.verlassenSchutz.setzen(fn|null)`, Navigation fragt vorher nach.
+**Produces:** `K.brotkrumen(route) -> [{ text, ziel? }]`; `K.speicherStand` (beobachtbar: `leerlauf|speichert|gespeichert|fehler`); `K.verlassenSchutz.setzen(pruefung, entwurfSichern)`, `loesen(pruefung)`, `entwurfSichern()`; Navigation fragt vorher nach.
 
 - [ ] Test `tests/feinschliff.mjs`: Breadcrumb je Route, Strg+K und `/`, `/` im Feld schreibt, Topbar-Symbole rechts
 - [ ] Umsetzung, alle Zurück-Knöpfe aus dem Pagehead entfernen
@@ -55,7 +55,7 @@
 
 **Produces:** `UI.useEntwurf(lesen, schreiben) -> { entwurf, setze, bearbeiten, starten, speichern, abbrechen, geaendert }`, `UI.BearbeitenLeiste`.
 
-- [ ] Test: ausgefülltes Formular ist gesperrt, Bearbeiten → Speichern schreibt mit Toast, Abbrechen verwirft, Verlassen fragt nach, Sperre verwirft
+- [ ] Test: ausgefülltes Formular ist gesperrt, Bearbeiten → Speichern schreibt mit Toast, Abbrechen verwirft, Verlassen fragt nach, Sperre speichert den Entwurf
 - [ ] Umsetzung, Tests grün, Commit
 
 ### Task 4: Stelle und Anschreiben

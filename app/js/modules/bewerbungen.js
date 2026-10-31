@@ -147,7 +147,6 @@
     return html`
       <div class="rj-pagehead">
         <h1 class="h1">${K.t("bewerbung.neu")}</h1>
-        <${UI.Button} icon="chevron-left" href="#/bewerbungen">${K.t("nav.bewerbungen")}<//>
       </div>
       <section class="rj-card rj-stack">
         ${meldung[0] && html`<${UI.Alert} art="danger">${meldung[0]}<//>`}
@@ -292,7 +291,6 @@
               loeschen[1](true);
             }}
           />
-          <${UI.Button} icon="chevron-left" href="#/bewerbungen">${K.t("nav.bewerbungen")}<//>
         </div>
       </div>
       <${UI.Tabs}

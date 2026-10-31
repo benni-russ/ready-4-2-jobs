@@ -107,7 +107,6 @@
           <h1 class="h1">${K.t(b.angebot ? "angebot.bearbeiten" : "angebot.erfassen")}</h1>
           <p>${b.firma.name} · ${b.stelle.titel}</p>
         </div>
-        <${UI.Button} icon="chevron-left" href="#/vergleich">${K.t("nav.vergleich")}<//>
       </div>
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("angebot.geld")}</h2>

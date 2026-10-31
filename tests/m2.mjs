@@ -202,7 +202,7 @@ for (const channel of kanaele()) {
 
   // Suche über Synonym.
   await p.keyboard.press("Control+k");
-  const such = p.locator(".rj-palette input");
+  const such = p.locator(".rj-searchbar input");
   await such.waitFor();
   await such.fill("payrol");
   await p.getByText("Entgeltabrechnung").first().waitFor();

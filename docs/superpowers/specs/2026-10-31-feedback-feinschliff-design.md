@@ -25,6 +25,7 @@ Von unten nach oben: Bausteine im Design-System, gemeinsame Grundlagen, Module, 
 - Formular-Rahmen für Stammdaten > Persönlich, Stelle und Details. Leere Formulare sind direkt bearbeitbar, ausgefüllte starten als Leseansicht mit „Bearbeiten“, danach „Speichern“ und „Abbrechen“.
 - Der Rahmen arbeitet auf einem Entwurf und schreibt erst beim Speichern in den Tresor, mit Toast.
 - Ungespeicherte Änderungen lösen beim Verlassen eine Rückfrage aus, bei Breadcrumbs, Seitenleiste und Browser-Zurück.
+- Sperrt sich die App (automatisch oder von Hand), während ein Entwurf offen ist, wird er vorher verschlüsselt im Tresor gespeichert. So geht nichts verloren und nichts landet im Klartext.
 - Arbeitsflächen (Anschreiben-Text, Notizen, Checklisten, Gewichte) speichern weiter automatisch nach 2 Sekunden. Die Topbar zeigt zentral „Wird gespeichert …“ und „Gespeichert“.
 - Listen mit Dialog behalten ihren Ablauf.
 

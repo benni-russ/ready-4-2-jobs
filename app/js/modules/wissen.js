@@ -13,10 +13,15 @@
 
   function Artikel(props) {
     var a = props.artikel;
+    hooks.useEffect(
+      function () {
+        K.brotkrumenTitel.set({ titel: a.titel });
+      },
+      [a.titel],
+    );
     return html`
       <div class="rj-pagehead">
         <h1 class="h1">${a.titel}</h1>
-        <${UI.Button} icon="chevron-left" href="#/wissen">${K.t("nav.wissen")}<//>
       </div>
       <p class="rj-muted">${a.kategorie}</p>
       <article class="rj-prose" dangerouslySetInnerHTML=${{ __html: K.wissen.alsHtml(a.text) }}></article>

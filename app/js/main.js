@@ -32,8 +32,8 @@
       K.update.beimStart();
     }, []);
     var bekannt = route.seite === "komponenten" || EIGENE.indexOf(route.seite) > -1;
-    document.title = (bekannt && route.seite !== "komponenten" ? K.t("nav." + route.seite) + " · " : "") + "R42J";
-    return html`<${UI.AppShell} seite=${route.seite} key=${z.sprache}>${seitenInhalt(route.seite, route.teile)}<//>`;
+    document.title = (bekannt && route.seite !== "komponenten" ? K.t("nav." + route.seite) + " · " : "") + "R42J – Ready 4 2 Jobs";
+    return html`<${UI.AppShell} seite=${route.seite} route=${route} key=${z.sprache}>${seitenInhalt(route.seite, route.teile)}<//>`;
   }
 
   function Ablauf() {
