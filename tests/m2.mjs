@@ -216,7 +216,7 @@ for (const channel of kanaele()) {
   await p.keyboard.press("Enter");
   await dlg(p).getByRole("heading", { name: "Kompetenz bearbeiten" }).waitFor();
   ok("Enter öffnet den Eintrag", /stammdaten\/kompetenzen\//.test(p.url()));
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.activeElement.closest(".rj-dialog"));
   await p.keyboard.press("Escape");
   await dlg(p).waitFor({ state: "detached" });
   await p.waitForTimeout(100);
