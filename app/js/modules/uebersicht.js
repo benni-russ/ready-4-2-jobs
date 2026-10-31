@@ -6,6 +6,9 @@
   var hooks = window.preactHooks;
   var S = (window.R42J_SEITEN = window.R42J_SEITEN || {});
 
+  // Bei wenigen Bewerbungen lenken Filter nur ab.
+  S.UEBERSICHT_FILTER_AB = 6;
+
   var ZEITRAEUME = [30, 90, 365];
   var SORTIERUNGEN = ["neu", "alt", "firma", "passung"];
   var FILTER_LEER = { suche: "", status: "", ausrichtung: "", zeitraum: "", sortierung: "neu" };
@@ -227,6 +230,7 @@
     var erinnerungen = K.erinnerungen.liste();
     var treffer = filtern(d.bewerbungen, f[0]);
     var gefiltert = f[0].suche || f[0].status || f[0].ausrichtung || f[0].zeitraum;
+    var filterZeigen = gefiltert || d.bewerbungen.length >= S.UEBERSICHT_FILTER_AB;
     var mitRoute = erinnerungen.some(function (e) {
       return e.art === "termin" && e.termin.art === "vor_ort" && K.termine.ort(e.termin, e.bewerbung);
     });
@@ -268,7 +272,8 @@
         ${mitRoute && html`<p class="rj-muted">${K.t("route.hinweis")}</p>`}
       </section>`}
       <div class="rj-filterbar">
-        <${UI.SearchField} label=${K.t("uebersicht.suchen")} platzhalter=${K.t("uebersicht.suchen")} wert=${f[0].suche} beiAenderung=${setzen("suche")} />
+        ${filterZeigen &&
+        html`<${UI.SearchField} label=${K.t("uebersicht.suchen")} platzhalter=${K.t("uebersicht.suchen")} wert=${f[0].suche} beiAenderung=${setzen("suche")} />
         <${UI.FilterSelect} icon="funnel" label=${K.t("bewerbung.status")} wert=${f[0].status} optionen=${optionenMit(K.t("uebersicht.alleStatus"), S.statusOptionen())} beiAenderung=${setzen("status")} />
         <${UI.FilterSelect}
           icon="funnel"
@@ -302,7 +307,7 @@
             return { wert: s, label: K.t("uebersicht.sortierung." + s) };
           })}
           beiAenderung=${setzen("sortierung")}
-        />
+        />`}
         <div class="rj-filter">
           <span class="rj-filter__titel" aria-hidden="true">${K.t("uebersicht.ansicht")}</span>
           <${UI.SegmentedControl}
@@ -316,7 +321,8 @@
           />
         </div>
       </div>
-      <div class="rj-row" style="justify-content:space-between">
+      ${filterZeigen &&
+      html`<div class="rj-row" style="justify-content:space-between">
         <span class="rj-datatable__count" aria-live="polite">${K.t("tabelle.zaehler", { anzahl: treffer.length, gesamt: d.bewerbungen.length })}</span>
         ${gefiltert &&
         html`<${UI.Button}
@@ -326,7 +332,7 @@
           }}
           >${K.t("uebersicht.zuruecksetzen")}<//
         >`}
-      </div>
+      </div>`}
       ${treffer.length === 0 && html`<${UI.EmptyState} icon="search-x" titel=${K.t("uebersicht.keineTreffer")} text=${K.t("uebersicht.keineTrefferText")} />`}
       ${treffer.length > 0 && ansicht[0] === "karten" && html`<${Karten} liste=${treffer} />`}
       ${treffer.length > 0 && ansicht[0] === "liste" && html`<${Tabelle} liste=${treffer} />`}

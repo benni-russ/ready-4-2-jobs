@@ -134,7 +134,15 @@
           k === "recherche"
             ? html`<a class="rj-link rj-link--solo" style="font-size:.875rem" href=${"#/vorbereitung/unternehmen/" + b.id}>${K.t("vorbereitung.zuFragen")}</a>`
             : k === "rechtschreibung"
-            ? html`<a class="rj-link rj-link--solo" style="font-size:.875rem" href=${"#/bewerbungen/" + b.id + "/anschreiben"}>${K.t("bewerbungCheck.kiKorrektur")}</a>`
+            ? html`<a
+                class="rj-link rj-link--solo"
+                style="font-size:.875rem"
+                href=${"#/bewerbungen/" + b.id + "/anschreiben"}
+                onClick=${function () {
+                  S.anschreibenZuSchritt(b.id, 4);
+                }}
+                >${K.t("bewerbungCheck.kiKorrektur")}</a
+              >`
             : null,
       };
     });

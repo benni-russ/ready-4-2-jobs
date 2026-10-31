@@ -304,6 +304,7 @@ for (const channel of kanaele()) {
       if (png) {
         datei = new File([await new Promise((f) => c.toBlob(f, "image/png"))], "scan.png", { type: "image/png" });
       } else if (n % 2) {
+        await window.R42J_CORE.pdf.bibliothek();
         const doc = await window.PDFLib.PDFDocument.create();
         const j = await doc.embedJpg(await blob.arrayBuffer());
         doc.addPage([595, 842]).drawImage(j, { x: 0, y: 0, width: 595, height: 842 });

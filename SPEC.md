@@ -111,7 +111,7 @@ Beim Start werden fehlende Ordner angelegt. Mitgelieferte Artikel werden direkt 
 
 ### 4.2 Passwort & Sperre
 - Mindestens 12 Zeichen, Stärke-Anzeige (zxcvbn-ähnliche Heuristik, lokal, ohne große Wörterliste).
-- **Auto-Sperre** nach Inaktivität (Standard 10 min, einstellbar 5–60), außerdem beim Schließen des Tabs. Sperre löscht DEK aus dem Speicher. 60 Sekunden vorher erscheint ein Countdown; jede Aktivität oder „Weiterarbeiten“ bricht ihn ab.
+- **Auto-Sperre** nach Inaktivität (Standard 10 min, einstellbar 5–60), außerdem beim Schließen des Tabs. Sperre löscht DEK aus dem Speicher. 60 Sekunden vorher erscheint ein Countdown; jede Aktivität oder „Weiterarbeiten“ bricht ihn ab. Der Tab-Titel warnt mit, in einem Hintergrund-Tab schon drei Minuten vorher, weil Browser Timer dort drosseln; er zeigt keine Sekunden und keine persönlichen Daten.
 - Kein „Passwort merken“. Der Tresor bleibt nur bei einem echten Neuladen desselben Tabs offen: Der DEK liegt dafür verpackt im `sessionStorage`, die Hülle ist ein nicht extrahierbarer Schlüssel in IndexedDB (`core/sitzung.js`). Das gilt höchstens 30 Sekunden nach dem Neuladen und nur, wenn der Browser den Aufruf als `reload` meldet. Jeder andere Aufruf, auch ein wiederhergestellter Tab, und jede Sperre löschen beides.
 
 ### 4.3 Wiederherstellungsschlüssel

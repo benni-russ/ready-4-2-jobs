@@ -16,6 +16,7 @@
 
   async function seitenZaehlen(bytes) {
     try {
+      await K.pdf.bibliothek();
       var pdf = await window.PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true, updateMetadata: false });
       return pdf.getPageCount();
     } catch (e) {

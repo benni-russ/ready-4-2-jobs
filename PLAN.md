@@ -140,6 +140,9 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 - [x] PDF-Schrift auf Latin Extended und Vietnamesisch erweitert.
 - [x] Feedback-Feinschliff: Name mit Unterzeile, 1920 × 1080, Brotkrumen, Suchleiste, Speicheranzeige, Formulare mit Bearbeiten, Anschreiben in Schritten, DIN 5008, Status-Icons, Kompetenzfilter, Anlagen-Vorschläge, Vergleichspunkte, Kataloge per KI, Wissen mit eigenen Artikeln, Quellen und Skizzen.
 - [x] Befunde aus dem USB-Lauf: Neuladen ohne Abmeldung, Meldungen verdecken keine Aktionen, Speicheranzeige nur beim Speichern, Filter mit Überschriften, Farbschema-Vorschau, Vorschläge für gespeicherte Anlagen, Postversand, Textwerkzeug und Kategorien im Wissen, Sprunglink, Taste `/` abschaltbar
+- [x] Warnung im Tab-Titel, im Hintergrund drei Minuten vor der Sperre
+- [x] Anschreiben: KI-Knöpfe in den passenden Schritten, Schritte anklickbar, Vorschau bleibt sichtbar
+- [x] Übersicht zeigt Filter erst ab sechs Bewerbungen, pdf-lib lädt erst bei Bedarf
 - [x] Briefkopf mittig in zwei Zeilen, Countdown vor der automatischen Sperre, direkter Update-Download mit kürzerer Anleitung
 - [x] Volles Impeccable-Review: Karten und Formulare füllen die Breite, Karten der Übersicht ganz klickbar mit Stand und nächstem Schritt, Fokusringe in Akkordeon und sortierter Spalte, Reflow bis 320 px, fünf weitere Kataloge, Artikel zu Einstellungstests
 

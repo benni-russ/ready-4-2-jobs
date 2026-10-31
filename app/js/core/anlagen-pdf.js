@@ -210,6 +210,7 @@
 
     // o: { ids (in Reihenfolge), stufe, deckblatt, titel, name, seite }
     erstellen: async function (o) {
+      await K.pdf.bibliothek();
       var t = K.tresor.daten();
       var hinweise = [];
       var teile = [];
@@ -249,6 +250,7 @@
 
     // Alles in einer PDF (SPEC §6.7): teile sind fertige PDFs in Reihenfolge.
     zusammenfuegen: async function (teile, titel, autor) {
+      await K.pdf.bibliothek();
       var ziel = await lib().PDFDocument.create();
       metadaten(ziel, titel, autor);
       for (var i = 0; i < teile.length; i++) await seitenAnhaengen(ziel, teile[i]);

@@ -13,7 +13,19 @@
           data-state=${nr < props.aktuell ? "done" : undefined}
           aria-current=${nr === props.aktuell ? "step" : undefined}
         >
-          ${kompakt ? html`<span>${text}</span>` : text}
+          ${props.beiWahl
+            ? html`<button
+                type="button"
+                class="rj-stepper__knopf"
+                onClick=${function () {
+                  props.beiWahl(nr);
+                }}
+              >
+                ${kompakt ? html`<span>${text}</span>` : text}
+              </button>`
+            : kompakt
+            ? html`<span>${text}</span>`
+            : text}
         </li>`;
       })}
     </ol>`;

@@ -79,7 +79,7 @@
         },
         zelle: function (z) {
           var text = K.t("checklisten.stand", z.stand);
-          return html`<${UI.ProgressBar} label=${z.firma} text=${text} wert=${z.stand.erledigt} max=${z.stand.gesamt} />`;
+          return html`<${UI.ProgressBar} label=${z.firma} labelVersteckt=${true} text=${text} wert=${z.stand.erledigt} max=${z.stand.gesamt} />`;
         },
       },
     ];

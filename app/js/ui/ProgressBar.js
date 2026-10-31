@@ -8,7 +8,7 @@
     var prozent = props.max ? (props.wert / props.max) * 100 : 0;
     return html`<div class=${"rj-progress" + (fertig ? " rj-progress--done" : "")}>
       <div class="rj-progress__head">
-        <span>${props.label}</span>
+        ${!props.labelVersteckt && html`<span>${props.label}</span>`}
         <strong>${props.text}</strong>
       </div>
       <div class="rj-progress__track" role="progressbar" aria-label=${props.label} aria-valuenow=${props.wert} aria-valuemin="0" aria-valuemax=${props.max}>

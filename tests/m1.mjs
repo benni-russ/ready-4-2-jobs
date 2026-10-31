@@ -168,7 +168,7 @@ for (const channel of kanaele()) {
 
   // Wiederherstellungsschlüssel
   await p.getByRole("button", { name: "Jetzt sperren" }).click();
-  await p.getByRole("link", { name: "Wiederherstellungsschlüssel verwenden" }).click();
+  await p.getByRole("link", { name: "Passwort vergessen?" }).click();
   await p.getByLabel(/^Wiederherstellungsschlüssel/).fill("AAAAAA".repeat(8));
   await pwFelder(p).nth(0).fill(PW);
   await pwFelder(p).nth(1).fill(PW);

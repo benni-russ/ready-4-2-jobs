@@ -163,6 +163,12 @@ for (const channel of kanaele()) {
     K.bewerbungen.neu({ firma: "Beispiel GmbH", titel: "Sachbearbeitung", ausrichtungId: K.tresor.daten().ausrichtungen[0].id, sprache: "de", anrede: "sie" });
   });
   await hin(p, "#/");
+  await p.locator(".rj-appcard").first().waitFor();
+  ok("Wenige Einträge ohne Filter", (await p.getByLabel("Firma oder Stelle suchen").count()) === 0 && (await p.locator(".rj-seg button").count()) === 2);
+  await p.evaluate(() => { window.R42J_SEITEN.UEBERSICHT_FILTER_AB = 1; });
+  await hin(p, "#/einstellungen");
+  await hin(p, "#/");
+  await p.getByLabel("Firma oder Stelle suchen").waitFor();
   await p.locator("main").getByRole("combobox").first().click();
   ok("Status-Filter mit Icons", (await p.locator(".rj-dropdown [role=option] svg").count()) >= 5);
   await p.keyboard.press("Escape");
@@ -286,7 +292,21 @@ for (const channel of kanaele()) {
   ok("Kürzel wird nicht mehr genannt", (await p.locator(".rj-searchbar__tasten kbd").count()) === 1);
   await p.evaluate(() => window.R42J_CORE.tresor.aendern((d) => { d.einstellungen.suchTaste = true; }));
 
+  // Anschreiben: Schritte anklickbar, KI-Knöpfe im passenden Schritt
+  const anschreibenId = await p.evaluate(() => window.R42J_CORE.tresor.daten().bewerbungen[0].id);
+  await hin(p, "#/bewerbungen/" + anschreibenId + "/anschreiben");
+  await p.locator(".rj-stepper").getByRole("button", { name: "Inhalt" }).click();
+  await p.getByRole("button", { name: "Schreiben mit KI" }).waitFor();
+  ok("Schritt per Klick, KI-Entwurf beim Inhalt", (await p.getByRole("button", { name: "Korrigieren mit KI" }).count()) === 0);
+  ok("Text gilt als Vorschlag", (await p.getByText("Die Texte sind Vorschläge.").count()) === 1);
+  if (process.env.R42J_AUSGABE) await p.screenshot({ path: process.env.R42J_AUSGABE + "/anschreiben-inhalt.png" });
+  await p.locator(".rj-stepper").getByRole("button", { name: "Prüfen" }).click();
+  await p.getByRole("button", { name: "Korrigieren mit KI" }).waitFor();
+  ok("KI-Korrektur beim Prüfen", (await p.getByRole("button", { name: "Schreiben mit KI" }).count()) === 0);
+
   // Übersicht und Einstellungen
+  await hin(p, "#/");
+  await p.getByLabel("Firma oder Stelle suchen").waitFor();
   const titel = await p.locator(".rj-filter__titel").allInnerTexts();
   ok("Filter tragen Überschriften", ["Status", "Sortieren", "Ansicht"].every((t) => titel.includes(t)), titel);
   ok("Filter und Sortierung mit Icon", (await p.locator(".rj-filter__titel svg").count()) >= 4);
@@ -457,13 +477,29 @@ for (const channel of kanaele()) {
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");
   // Countdown vor der automatischen Sperre
+  // Im Hintergrund warnt der Tab schon drei Minuten vorher, ohne Countdown im Fenster.
+  await p.evaluate(() => {
+    Object.defineProperty(document, "hidden", { configurable: true, get: () => true });
+    window.R42J_CORE.sperreVerlaengern();
+    window.R42J_CORE.tresor.daten().einstellungen.sperreMinuten = 2.5;
+  });
+  await p.waitForFunction(() => document.title === "R42J sperrt sich gleich");
+  ok("Hintergrund-Tab warnt früher", (await p.locator(".rj-sperrcountdown").count()) === 0);
+  await p.evaluate(() => {
+    delete document.hidden;
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  ok("Zurück im Tab endet die frühe Warnung", (await p.title()).includes("Ready 4 2 Jobs"), await p.title());
   await p.evaluate(() => { window.R42J_CORE.tresor.daten().einstellungen.sperreMinuten = 1.05; });
   const weiter = p.getByRole("button", { name: "Weiterarbeiten" });
   await weiter.waitFor();
+  ok("Tab-Titel warnt", (await p.title()) === "R42J sperrt sich gleich", await p.title());
   ok("Countdown zählt", /^R42J sperrt sich in 0:\d\d|^R42J sperrt sich in 1:00/.test(await p.locator(".rj-sperrcountdown strong").innerText()));
   ok("Countdown wird nur einmal angesagt", (await p.locator('.rj-sperrcountdown [role="alert"]').count()) === 1 && (await p.locator('.rj-sperrcountdown [role="timer"]').getAttribute("aria-live")) === "off");
   await weiter.evaluate((k) => k.click());
   ok("Weiterarbeiten bricht den Countdown ab", (await weiter.count()) === 0 && (await p.evaluate(() => window.R42J_CORE.tresor.offen())));
+  await p.waitForFunction(() => document.title.includes("Ready 4 2 Jobs"));
+  ok("Tab-Titel kehrt zurück", true);
   await weiter.waitFor();
   await p.mouse.move(300, 300);
   await p.mouse.move(320, 320);
