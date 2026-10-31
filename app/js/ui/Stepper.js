@@ -4,7 +4,7 @@
   var html = UI.html;
 
   UI.Stepper = function (props) {
-    var kompakt = props.schritte.length > 6;
+    var kompakt = props.kompakt || props.schritte.length > 6;
     return html`<ol class=${"rj-stepper rj-noprint" + (kompakt ? " rj-stepper--kompakt" : "")}>
       ${props.schritte.map(function (text, i) {
         var nr = i + 1;

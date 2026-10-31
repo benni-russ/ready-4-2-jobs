@@ -112,7 +112,7 @@
   function ueberschrift(text, akzent) {
     return [
       { text: text, style: "abschnitt", color: akzent },
-      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 481, y2: 0, lineWidth: 0.75, lineColor: LINIE }], margin: [0, 2, 0, 5] },
+      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 467, y2: 0, lineWidth: 0.75, lineColor: LINIE }], margin: [0, 2, 0, 5] },
     ];
   }
 
@@ -171,7 +171,7 @@
 
     return {
       pageSize: "A4",
-      pageMargins: [57, 50, 57, 50],
+      pageMargins: [71, 50, 57, 50],
       language: d.sprache === "de" ? "de-DE" : "en-GB",
       info: { title: t.titel + " " + name, author: name, subject: t.titel, creator: "R42J", keywords: d.kompetenzen.join(", ") },
       defaultStyle: { font: K.pdf.FAMILIE, fontSize: 10.5, lineHeight: 1.2, color: TINTE },

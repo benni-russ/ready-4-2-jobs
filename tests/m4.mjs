@@ -198,15 +198,19 @@ for (const channel of kanaele()) {
   ok("Vorschau: Anrede", brief.includes("Sehr geehrte Frau Beispiel"), brief);
   ok("Vorschau: Erfolg statt Sammelzeile", brief.includes("40 Stellen in 6 Monaten besetzt") && !brief.includes("Stärken zählen"), brief);
 
+  await p.getByRole("button", { name: "Weiter", exact: true }).click();
+  await p.getByRole("heading", { name: "Inhalt" }).waitFor();
   const v0 = await p.locator("textarea").first().inputValue();
   await p.getByRole("button", { name: "Anders formulieren" }).first().click();
   await p.waitForTimeout(100);
   ok("Andere Formulierung wechselt", (await p.locator("textarea").first().inputValue()) !== v0);
 
+  await p.getByRole("button", { name: "Zurück", exact: true }).click();
   await p.getByRole("switch", { name: "Eintrittstermin nennen" }).click();
   await p.waitForTimeout(100);
   ok("Rahmen in Vorschau", (await p.locator(".rj-letter").innerText()).includes("01.01.2027"));
 
+  for (let i = 0; i < 3; i++) await p.getByRole("button", { name: "Weiter", exact: true }).click();
   await p.getByRole("button", { name: "Anschreiben erstellen" }).click();
   await dokument("anschreiben");
   const pdfAus = async (art, name) => {

@@ -123,8 +123,8 @@
             icon="check"
             onClick=${function () {
               uebernehmen(b, r.abschnitte);
-              ergebnis[1](null);
               K.meldung(K.t("anschreiben.kiUebernommen"));
+              props.beiFertig();
             }}
           >
             ${K.t("import.uebernehmen")}
@@ -219,7 +219,7 @@
     var liste = K.tresor.daten().bausteine;
     if (!liste.length) return null;
     return html`<details>
-      <summary>${K.t("anschreiben.eigeneTitel", { n: liste.length })}</summary>
+      <summary>${K.t("anschreiben.eigeneTitel", { n: liste.length })}<${UI.Icon} name="chevron-down" /></summary>
       <div class="rj-stack">
         ${liste.map(function (x) {
           return html`<${UI.FileItem} key=${x.id} icon="star" name=${K.t("anschreiben.abschnitt." + x.abschnitt)} meta=${x.text}>
@@ -243,6 +243,8 @@
     var pruefung = hooks.useState(null);
     var laedt = hooks.useState(false);
     var fehler = hooks.useState(null);
+    var schritt = hooks.useState(1);
+    var ki = hooks.useState(null);
     var stand = JSON.stringify([b.anschreiben, b.dokumente.mitUnterschrift, b.firma, b.ansprechpartner, b.stelle.titel, b.stelle.referenz, b.keywords.treffer]);
 
     // Das echte PDF entscheidet, ob der Text auf eine Seite passt.
@@ -278,19 +280,36 @@
       laedt[1](false);
     }
 
+    function wechseln(nr) {
+      schritt[1](nr);
+      window.scrollTo(0, 0);
+    }
+
     var r = pruefung[0];
-    return html`<div class="rj-editor">
+    var nr = schritt[0];
+    return html`<div class="rj-aktionen">
+        <${UI.Button}
+          icon="sparkles"
+          onClick=${function () {
+            ki[1]("anschreiben");
+          }}
+        >
+          ${K.t("anschreiben.kiKnopf")}
+        <//>
+        <${UI.Button}
+          icon="sparkles"
+          onClick=${function () {
+            ki[1]("korrektur");
+          }}
+        >
+          ${K.t("anschreiben.korrekturKnopf")}
+        <//>
+      </div>
+      <${UI.Stepper} kompakt=${true} aktuell=${nr} schritte=${[K.t("anschreiben.rahmen"), K.t("anschreiben.schrittInhalt"), K.t("anschreiben.unterschrift"), K.t("anschreiben.schrittPruefen")]} />
+      <div class="rj-editor">
       <div class="rj-stack">
-        <section class="rj-card rj-stack">
-          <p class="rj-muted">${K.t("anschreiben.platzhalterHinweis")}</p>
-          <${S.WissenLink} artikel="anschreiben-aufbau" />
-          ${A.filter(function (a) {
-            return a !== "rahmen";
-          }).map(function (a) {
-            return html`<${Abschnitt} bewerbung=${b} abschnitt=${a} key=${a} />`;
-          })}
-        </section>
-        <section class="rj-card rj-stack">
+        ${nr === 1 &&
+        html`<section class="rj-card rj-stack">
           <h2 class="h3">${K.t("anschreiben.rahmen")}</h2>
           <p class="rj-muted">${K.t("anschreiben.rahmenHinweis")}</p>
           <${S.WissenLink} artikel="gehaltsverhandlung" />
@@ -298,8 +317,21 @@
           <${UI.Switch} label=${K.t("anschreiben.rahmenKuendigung")} wert=${b.anschreiben.rahmen.kuendigungsfrist} beiAenderung=${schalter(b, "kuendigungsfrist")} />
           <${UI.Switch} label=${K.t("anschreiben.rahmenGehalt")} wert=${b.anschreiben.rahmen.gehalt} beiAenderung=${schalter(b, "gehalt")} />
           <${Abschnitt} bewerbung=${b} abschnitt="rahmen" />
+        </section>`}
+        ${nr === 2 &&
+        html`<section class="rj-card rj-stack">
+          <h2 class="h3">${K.t("anschreiben.schrittInhalt")}</h2>
+          <p class="rj-muted">${K.t("anschreiben.platzhalterHinweis")}</p>
+          <${S.WissenLink} artikel="anschreiben-aufbau" />
+          ${A.filter(function (x) {
+            return x !== "rahmen";
+          }).map(function (x) {
+            return html`<${Abschnitt} bewerbung=${b} abschnitt=${x} key=${x} />`;
+          })}
         </section>
-        <section class="rj-card rj-stack">
+        <div class="rj-accordion"><${EigeneBausteine} /></div>`}
+        ${nr === 3 &&
+        html`<section class="rj-card rj-stack">
           <h2 class="h3">${K.t("anschreiben.unterschrift")}</h2>
           <${UI.Switch}
             label=${K.t("anschreiben.unterschriftSchalter")}
@@ -312,23 +344,34 @@
           />
           ${b.dokumente.mitUnterschrift && html`<${UI.Alert} art="warning">${K.t("anschreiben.unterschriftWarnung")}<//>`}
           ${b.dokumente.mitUnterschrift && !p.unterschrift && html`<${UI.Alert} art="info">${K.t("anschreiben.unterschriftFehlt")}<//>`}
-        </section>
-        <div class="rj-accordion">
-          <details>
-            <summary>${K.t("anschreiben.kiTitel")}</summary>
-            <div class="rj-stack">
-              <p>${K.t("anschreiben.kiText")}</p>
-              <${KiWorkflow} bewerbung=${b} art="anschreiben" />
-            </div>
-          </details>
-          <details>
-            <summary>${K.t("anschreiben.korrekturTitel")}</summary>
-            <div class="rj-stack">
-              <p>${K.t("anschreiben.korrekturText")}</p>
-              <${KiWorkflow} bewerbung=${b} art="korrektur" key=${stand} />
-            </div>
-          </details>
-          <${EigeneBausteine} />
+        </section>`}
+        ${nr === 4 &&
+        html`<section class="rj-card rj-stack">
+          <h2 class="h3">${K.t("anschreiben.schrittPruefen")}</h2>
+          <p>${K.t("anschreiben.pruefenText")}</p>
+          <${S.DokumentZeile} bewerbung=${b} art="anschreiben" />
+        </section>`}
+        <div class="rj-row" style="justify-content:space-between">
+          ${nr > 1
+            ? html`<${UI.Button}
+                icon="chevron-left"
+                onClick=${function () {
+                  wechseln(nr - 1);
+                }}
+              >
+                ${K.t("aktion.zurueck")}
+              <//>`
+            : html`<span></span>`}
+          ${nr < 4
+            ? html`<${UI.Button}
+                variante="primary"
+                onClick=${function () {
+                  wechseln(nr + 1);
+                }}
+              >
+                ${K.t("aktion.weiter")}
+              <//>`
+            : html`<${UI.Button} variante="primary" icon="file-text" laedt=${laedt[0]} disabled=${laedt[0]} onClick=${erstellen}>${K.t("anschreiben.erstellen")}<//>`}
         </div>
       </div>
       <div class="rj-stack">
@@ -343,11 +386,24 @@
           return html`<${UI.Alert} art="warning" key=${h.text}>${K.t(h.text, h.werte)}<//>`;
         })}
         <${Vorschau} bewerbung=${b} />
-        <div class="rj-row">
-          <${UI.Button} variante="primary" icon="file-text" laedt=${laedt[0]} disabled=${laedt[0]} onClick=${erstellen}>${K.t("anschreiben.erstellen")}<//>
-        </div>
-        <${S.DokumentZeile} bewerbung=${b} art="anschreiben" />
       </div>
-    </div>`;
+    </div>
+    ${ki[0] &&
+    html`<${UI.Dialog}
+      titel=${K.t(ki[0] === "korrektur" ? "anschreiben.korrekturTitel" : "anschreiben.kiTitel")}
+      breit=${true}
+      beiSchliessen=${function () {
+        ki[1](null);
+      }}
+    >
+      <p>${K.t(ki[0] === "korrektur" ? "anschreiben.korrekturText" : "anschreiben.kiText")}</p>
+      <${KiWorkflow}
+        bewerbung=${b}
+        art=${ki[0]}
+        beiFertig=${function () {
+          ki[1](null);
+        }}
+      />
+    <//>`}`;
   };
 })();
