@@ -406,6 +406,87 @@ async function lageTesten(p) {
 }
 
 // Funde aus dem abschließenden Browserlauf: Fokus beim Verschwinden, früher Klick, lange Firmennamen.
+// Breite Fenster: Inhalt und Lernkarte stehen mittig, Tab-Leisten scrollen nicht senkrecht.
+async function mitteTesten(p) {
+  await p.evaluate(() => {
+    const K = window.R42J_CORE;
+    K.vergleich.angebotSpeichern(K.tresor.daten().bewerbungen[0].id, {});
+  });
+  const id = await p.evaluate(() => window.R42J_CORE.tresor.daten().bewerbungen[0].id);
+  const hin = async (hash) => {
+    await p.evaluate((h) => { location.hash = h; }, hash);
+    await p.waitForTimeout(80);
+    await p.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect.getTiming().iterations === Infinity));
+  };
+  const TABS = ["#/vorbereitung", "#/stammdaten/persoenlich", "#/bewerbungen/" + id + "/stelle", "#/vergleich"];
+  for (const [breite, spalte] of [[1280, "ausgeklappt"], [1920, "ausgeklappt"], [2560, "ausgeklappt"], [375, "schmal"]]) {
+    await p.setViewportSize({ width: breite, height: 800 });
+    for (const hash of TABS) {
+      await hin(hash);
+      await p.locator(".rj-tabs").waitFor();
+      const t = await p.locator(".rj-tabs").evaluate((e) => ({ s: e.scrollHeight, c: e.clientHeight, y: getComputedStyle(e).overflowY }));
+      ok(`Tabs ohne senkrechten Überlauf ${breite} px ${hash}`, t.s <= t.c, t);
+      await p.locator('.rj-tabs [aria-selected="true"]').evaluate((e) => e.scrollIntoView({ inline: "nearest", block: "nearest" }));
+      const u = await p.locator('.rj-tabs [aria-selected="true"]').evaluate((e) => {
+        const l = e.parentElement.getBoundingClientRect(), k = e.getBoundingClientRect();
+        return { knopf: k.bottom, leiste: l.bottom, breit: getComputedStyle(e).borderBottomWidth };
+      });
+      ok(`Aktive Unterstreichung ganz sichtbar ${breite} px ${hash}`, u.knopf <= u.leiste + 0.5 && u.breit === "3px", u);
+    }
+    if (spalte === "schmal") {
+      await hin("#/bewerbungen/" + id + "/stelle");
+      const w = await p.locator(".rj-tabs").evaluate((e) => { e.scrollLeft = 80; return { x: e.scrollLeft, s: e.scrollWidth, c: e.clientWidth }; });
+      ok("Tabs scrollen im schmalen Fenster waagerecht", w.s > w.c && w.x > 0, w);
+      continue;
+    }
+    await hin("#/stammdaten/persoenlich");
+    const m = await p.evaluate(() => {
+      const f = document.querySelector(".rj-main").getBoundingClientRect(), c = document.querySelector(".rj-content").getBoundingClientRect();
+      const kopf = document.querySelector(".rj-topbar").firstElementChild.getBoundingClientRect();
+      const stil = getComputedStyle(document.querySelector(".rj-content"));
+      return { links: c.left - f.left, rechts: f.right - c.right, breite: c.width, kopfLinks: kopf.left, textLinks: c.left + parseFloat(stil.paddingLeft) };
+    });
+    ok(`Inhalt mittig ${breite} px`, Math.abs(m.links - m.rechts) <= 1, m);
+    ok(`Inhalt behält die Breite ${breite} px`, m.breite <= 1120 + 0.5, m);
+    ok(`Kopfzeile fluchtet mit dem Inhalt ${breite} px`, Math.abs(m.kopfLinks - m.textLinks) <= 1, m);
+    await hin("#/vorbereitung/lernen");
+    await p.getByRole("button", { name: "Interviewfragen lernen" }).click();
+    await p.locator(".rj-flash").waitFor();
+    const k = await p.evaluate(() => {
+      const c = document.querySelector(".rj-content"), f = document.querySelector(".rj-flash").getBoundingClientRect();
+      const r = c.getBoundingClientRect(), pad = parseFloat(getComputedStyle(c).paddingLeft);
+      return { links: f.left - (r.left + pad), rechts: r.right - pad - f.right, breite: f.width };
+    });
+    ok(`Lernkarte mittig ${breite} px`, Math.abs(k.links - k.rechts) <= 1 && k.breite <= 560.5, k);
+    await p.screenshot({ path: `${SP}/mitte-${breite}-lernkarte.png` });
+    await knopf(p, "Sitzung beenden").click();
+    await p.getByRole("button", { name: "Interviewfragen lernen" }).waitFor({ state: "attached" }).catch(() => {});
+    await hin("#/uebersicht");
+    await p.screenshot({ path: `${SP}/mitte-${breite}-uebersicht.png` });
+    await hin("#/vergleich");
+    await p.screenshot({ path: `${SP}/mitte-${breite}-vergleich.png` });
+  }
+  // Der Fokusring der Tab-Knöpfe liegt innen, damit die scrollende Leiste ihn nicht abschneidet.
+  await p.setViewportSize({ width: 1280, height: 900 });
+  await hin("#/vorbereitung");
+  await p.locator('.rj-tabs [aria-selected="true"]').focus();
+  await p.keyboard.press("ArrowRight");
+  await p.keyboard.press("ArrowLeft");
+  const ring = await p.evaluate(() => { const s = getComputedStyle(document.activeElement); return { rolle: document.activeElement.getAttribute("role"), breite: s.outlineWidth, abstand: s.outlineOffset }; });
+  ok("Fokusring der Tabs liegt innen", ring.rolle === "tab" && ring.breite === "3px" && ring.abstand === "-3px", ring);
+  await p.screenshot({ path: `${SP}/mitte-tabs-fokus.png`, clip: { x: 248, y: 0, width: 800, height: 260 } });
+  // Auf A4 ist der Inhalt schmaler als seine Höchstbreite, die Mitte verschiebt dort nichts.
+  await p.setViewportSize({ width: 794, height: 1123 });
+  await p.emulateMedia({ media: "print" });
+  const druck = await p.evaluate(() => {
+    const f = document.querySelector(".rj-main").getBoundingClientRect(), c = document.querySelector(".rj-content").getBoundingClientRect();
+    return { links: c.left - f.left, rechts: f.right - c.right };
+  });
+  ok("Druck: Inhalt bleibt bündig", druck.links === 0 && druck.rechts === 0, druck);
+  await p.emulateMedia({ media: "screen" });
+  await p.setViewportSize({ width: 1280, height: 900 });
+}
+
 async function abschlussTesten(p, logs) {
   const vorher = logs.length;
   await p.evaluate(() => { location.hash = "#/komponenten"; });
@@ -501,6 +582,7 @@ for (const channel of kanaele()) {
     await monatTesten(p);
     await dropdownTesten(p);
     await lageTesten(p);
+    await mitteTesten(p);
     await abschlussTesten(p, logs);
   } catch (e) {
     await p.screenshot({ path: `${SP}/formulare-abbruch.png` }).catch(() => {});
