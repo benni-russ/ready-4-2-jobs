@@ -155,6 +155,20 @@
       return ergebnis;
     },
 
+    // Vergibt einen freien Dateinamen, damit nichts Vorhandenes überschrieben wird.
+    speichern: async function (katalog, wunschname) {
+      var griff = await ordner();
+      var belegt = {};
+      (await K.fs.dateien(griff)).forEach(function (d) {
+        belegt[d.name.toLowerCase()] = true;
+      });
+      var basis = dateiname(wunschname).slice(0, -ENDUNG.length);
+      var name = basis + ENDUNG;
+      for (var nr = 2; belegt[name.toLowerCase()]; nr++) name = basis + "-" + nr + ENDUNG;
+      await K.fs.schreibenAtomar(griff, name, new TextEncoder().encode(JSON.stringify(katalog, null, 2)));
+      return name;
+    },
+
     entfernen: async function (datei) {
       await K.fs.loeschen(await ordner(), datei);
     },

@@ -2,5 +2,13 @@
   "pdfmake.min.js": {
     "anzahl": 2,
     "grund": "Zwei Mal der Polyfill new Function(\"return this\") für globalThis. Er läuft nur, wenn globalThis fehlt, also nie in Chromium."
+  },
+  "pdf.min.js": {
+    "anzahl": 3,
+    "grund": "Die CSP erlaubt kein unsafe-eval, und R42J ruft pdf.js mit isEvalSupported:false auf. Die Stellen laufen also nie."
+  },
+  "pdf.worker.min.js": {
+    "anzahl": 2,
+    "grund": "Die CSP erlaubt kein unsafe-eval, und R42J ruft pdf.js mit isEvalSupported:false auf. Die Stellen laufen also nie."
   }
 }

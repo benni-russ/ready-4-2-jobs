@@ -39,10 +39,16 @@
         titel: datei.name.replace(/\.[^.]+$/, ""),
         tags: [],
       };
+      var text = "";
       if (mime === "application/pdf") {
         var seiten = await seitenZaehlen(bytes);
         if (seiten) eintrag.seiten = seiten;
+        text = await K.anlagen.pdfText(bytes);
       }
+      var vorschlag = K.anlagen.vorschlag(datei.name, text);
+      eintrag.kategorie = vorschlag.kategorie;
+      eintrag.tags = vorschlag.stichwoerter;
+      if (vorschlag.datum) eintrag.datum = vorschlag.datum;
       await K.tresor.anlageSchreiben(eintrag.id, bytes);
       K.stammdaten.speichern("anlagen", eintrag);
       await K.tresor.speichernJetzt();

@@ -96,13 +96,10 @@
     });
   }
 
-  // eintraege: [{ id, angebot }]. Liefert die Rangfolge, ohne Wertung am Ende.
-  function wertung(eintraege, kriterien, feiertagsWochen) {
-    var aktiv = kriterien.filter(function (k) {
-      return k.gewicht > 0;
-    });
+  // Punkte je Kriterium und Angebot, 0 bis 10. Fehlt ein Wert, steht dort null.
+  function teilpunkte(eintraege, kriterien, feiertagsWochen) {
     var teilwerte = {};
-    aktiv.forEach(function (k) {
+    kriterien.forEach(function (k) {
       teilwerte[k.id] =
         k.typ === "auto"
           ? normieren(
@@ -116,6 +113,15 @@
               return w === null ? NEUTRAL : w;
             });
     });
+    return teilwerte;
+  }
+
+  // eintraege: [{ id, angebot }]. Liefert die Rangfolge, ohne Wertung am Ende.
+  function wertung(eintraege, kriterien, feiertagsWochen) {
+    var aktiv = kriterien.filter(function (k) {
+      return k.gewicht > 0;
+    });
+    var teilwerte = teilpunkte(eintraege, aktiv, feiertagsWochen);
     var liste = eintraege.map(function (e, i) {
       var summe = 0;
       var gewichte = 0;
@@ -180,6 +186,7 @@
     stundenlohn: stundenlohn,
     normieren: normieren,
     beste: beste,
+    teilpunkte: teilpunkte,
     wertung: wertung,
     zahlLesen: zahlLesen,
 

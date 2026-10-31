@@ -16,7 +16,7 @@
 
   S.statusOptionen = function () {
     return Object.keys(window.R42J.statuses).map(function (s) {
-      return { wert: s, label: UI.statusText(s) };
+      return { wert: s, label: UI.statusText(s), icon: window.R42J.statuses[s].icon };
     });
   };
 

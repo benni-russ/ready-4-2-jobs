@@ -78,6 +78,7 @@
     var vorschau = hooks.useState(null);
     var bearbeiten = hooks.useState(null);
     var loeschen = hooks.useState(null);
+    var vorgeschlagen = hooks.useState([]);
     var id = props.teile[0];
 
     hooks.useEffect(
@@ -93,18 +94,39 @@
     async function hochladen(dateien) {
       laden[1](true);
       fehler[1]([]);
+      var neu = [];
       var probleme = [];
       for (var i = 0; i < dateien.length; i++) {
         try {
-          await K.anlagen.hinzufuegen(dateien[i]);
+          neu.push(await K.anlagen.hinzufuegen(dateien[i]));
         } catch (e) {
           probleme.push(dateien[i].name + ": " + K.fehlerText(e));
         }
       }
       fehler[1](probleme);
+      vorgeschlagen[1](neu);
       laden[1](false);
       var fertig = dateien.length - probleme.length;
       if (fertig) K.meldung(K.t("anlagen.hinzugefuegt", { n: fertig }));
+    }
+
+    function Vorschlagshinweis() {
+      var liste = vorgeschlagen[0];
+      if (!liste.length) return null;
+      if (liste.length > 1) return html`<${UI.Alert}>${K.t("anlagen.vorschlagMehrere", { n: liste.length })}<//>`;
+      return html`<${UI.Alert}>
+        <span>${K.t("anlagen.vorschlagEins", { name: liste[0].titel })}</span>
+        <div class="rj-row">
+          <${UI.Button}
+            icon="pencil"
+            onClick=${function () {
+              bearbeiten[1](liste[0]);
+              vorgeschlagen[1]([]);
+            }}
+            >${K.t("anlagen.vorschlagPruefen")}<//
+          >
+        </div>
+      <//>`;
     }
 
     async function entfernen() {
@@ -133,6 +155,7 @@
       </div>
       <${UI.FileDrop} hinweis=${K.t("drop.hinweis")} accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" beiDateien=${hochladen} />
       ${laden[0] && html`<p class="rj-muted" role="status"><span class="rj-spinner"></span> ${K.t("anlagen.verschluesselt")}</p>`}
+      <${Vorschlagshinweis} />
       ${fehler[0].length > 0 &&
       html`<${UI.Alert} art="danger">
         ${fehler[0].map(function (f, i) {

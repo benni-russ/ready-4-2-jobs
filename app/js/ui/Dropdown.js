@@ -255,7 +255,7 @@
                     waehlen(o, true);
                   }}
                 >
-                  <span>${o.label} ${o.hinweis && html`<small>${o.hinweis}</small>`}</span>
+                  <span class="rj-option-icon">${o.icon && html`<${UI.Icon} name=${o.icon} />`}<span>${o.label} ${o.hinweis && html`<small>${o.hinweis}</small>`}</span></span>
                   ${an && html`<${UI.Icon} name="check" />`}
                 </li>`;
               })}
@@ -289,7 +289,9 @@
           else tasteZu(e);
         }}
       >
-        <span class=${"rj-dropdown__wert" + (gewaehlt ? "" : " is-leer")}>${gewaehlt ? gewaehlt.label : props.platzhalter || K.t("dropdown.platzhalter")}</span>
+        <span class=${"rj-dropdown__wert" + (gewaehlt ? "" : " is-leer")}>
+          <span class="rj-option-icon">${gewaehlt && gewaehlt.icon && html`<${UI.Icon} name=${gewaehlt.icon} />`}${gewaehlt ? gewaehlt.label : props.platzhalter || K.t("dropdown.platzhalter")}</span>
+        </span>
         <${UI.Icon} name="chevron-down" />
       </button>
       ${offen && liste_()}

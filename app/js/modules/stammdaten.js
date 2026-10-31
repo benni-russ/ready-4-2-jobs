@@ -538,7 +538,10 @@
       return html`<${S.StammdatenListe} key=${def.liste} def=${def} oeffnen=${id} pfad=${pfad} />`;
     }
 
-    var kompetenz = Object.assign({}, KOMPETENZ, { spalten: kompetenzSpalten() });
+    var kompetenz = Object.assign({}, KOMPETENZ, {
+      spalten: kompetenzSpalten(),
+      filter: { feld: "kategorie", label: K.t("kompetenz.kategorie"), alle: K.t("stammdaten.alleKategorien"), optionen: optionen(KATEGORIEN, "kompetenz.kategorie.") },
+    });
     var offen = K.kiInterview.offen().length;
 
     return html`
