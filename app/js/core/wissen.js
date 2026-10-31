@@ -19,8 +19,10 @@
     "arbeitsvertrag-pruefen.en.md": "vtm6n0"
   };
   var EXTERN = /^https:\/\//i;
-  // Bilder und Einbettungen würden Anfragen auslösen, Artikel bleiben reiner Text.
-  var VERBOTEN = ["img", "picture", "video", "audio", "source", "iframe", "svg", "math", "style", "form", "input", "button"];
+  // Bilder eigener Artikel stehen als Bildreferenz im Dateiende. Andere Bildquellen würden Anfragen auslösen und entfallen.
+  var BILD_DATEN = /^data:image\/(?:png|jpeg);base64,[a-z0-9+/=]+$/i;
+  var BILD_REFERENZ = /^\[(bild-\d+)\]: *(data:image\/(?:png|jpeg);base64,[A-Za-z0-9+/=]+) *$/gm;
+  var VERBOTEN = ["picture", "video", "audio", "source", "iframe", "svg", "math", "style", "form", "input", "button"];
 
   // Roher HTML-Code im Markdown entfällt: Artikel brauchen ihn nicht, und DOMPurify muss ihn so gar nicht erst sehen.
   var markdown = new window.marked.Marked({
@@ -48,9 +50,32 @@
       });
   }
 
+  function bilderTrennen(text) {
+    var bilder = {};
+    var rest = text.replace(BILD_REFERENZ, function (ganz, id, daten) {
+      bilder[id] = daten;
+      return "";
+    });
+    return { text: rest.trimEnd() + "\n", bilder: bilder };
+  }
+
+  // Nur was im Text noch vorkommt, bleibt in der Datei.
+  function mitBildern(text, bilder) {
+    var zeilen = Object.keys(bilder || {})
+      .filter(function (id) {
+        return text.indexOf("][" + id + "]") !== -1;
+      })
+      .map(function (id) {
+        return "[" + id + "]: " + bilder[id];
+      });
+    return zeilen.length ? text.trimEnd() + "\n\n" + zeilen.join("\n") + "\n" : text;
+  }
+
   function artikelLesen(name, text, eigen) {
     var teile = DATEINAME.exec(name);
     var f = K.frontmatter(text);
+    var getrennt = bilderTrennen(f.rest);
+    f.rest = getrennt.text;
     var kopf = ERSTE_UEBERSCHRIFT.exec(f.rest);
     return {
       kennung: teile[1],
@@ -60,7 +85,8 @@
       kategorie: f.felder.category || K.t("wissen.ohneKategorie"),
       sprache: (f.felder.lang || teile[2] || "").toLowerCase(),
       quellen: quellenLesen(f.felder.sources),
-      // Skizzen gibt es nur zu mitgelieferten Artikeln, eigene bleiben reiner Text.
+      bilder: eigen ? getrennt.bilder : {},
+      // Skizzen gibt es nur zu mitgelieferten Artikeln.
       bild: !eigen && BILDNAME.test(f.felder.image || "") ? f.felder.image : "",
       bildText: f.felder["image-alt"] || "",
       // Der Titel steht schon im Seitenkopf.
@@ -167,7 +193,7 @@
         })
         .join(" ;; ");
       var inhalt =
-        "---\ntitle: " + zeile(artikel.titel) + "\ncategory: " + zeile(artikel.kategorie || K.t("wissen.ohneKategorie")) + "\nlang: " + K.sprache() + "\n" + (quellen ? "sources: " + quellen + "\n" : "") + "---\n\n" + artikel.text.trim() + "\n";
+        "---\ntitle: " + zeile(artikel.titel) + "\ncategory: " + zeile(artikel.kategorie || K.t("wissen.ohneKategorie")) + "\nlang: " + K.sprache() + "\n" + (quellen ? "sources: " + quellen + "\n" : "") + "---\n\n" + mitBildern(artikel.text.trim() + "\n", artikel.bilder);
       var bytes = new TextEncoder().encode(inhalt);
       if (bytes.length > MAX_BYTES) throw K.Fehler("wissen.fehlerGross");
       await K.fs.schreibenAtomar(griff, name, bytes);
@@ -179,8 +205,8 @@
     },
 
     // Artikel sind fremder Text: Erst bereinigen, dann gelten nur App-Links und HTTPS.
-    alsHtml: function (md) {
-      var inhalt = window.DOMPurify.sanitize(markdown.parse(md, { async: false }), {
+    alsHtml: function (md, bilder) {
+      var inhalt = window.DOMPurify.sanitize(markdown.parse(mitBildern(md, bilder), { async: false }), {
         FORBID_TAGS: VERBOTEN,
         FORBID_ATTR: ["style", "class", "id"],
         RETURN_DOM_FRAGMENT: true,
@@ -192,6 +218,9 @@
           a.setAttribute("target", "_blank");
           a.setAttribute("rel", "noopener noreferrer");
         } else if (!INTERN.test(ziel)) a.removeAttribute("href");
+      });
+      inhalt.querySelectorAll("img").forEach(function (b) {
+        if (!BILD_DATEN.test(b.getAttribute("src") || "")) b.remove();
       });
       var huelle = document.createElement("div");
       huelle.appendChild(inhalt);

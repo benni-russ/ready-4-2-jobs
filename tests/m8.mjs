@@ -201,8 +201,7 @@ for (const channel of kanaele()) {
   const altkopie = await p.evaluate(() => window.R42J_WISSEN.find((a) => a.datei === "star-methode.de.md").md.replace(/sources:.*\n|image.*\n/g, ""));
   await inWissen(p, "star-methode.de.md", altkopie);
   await p.reload();
-  await p.waitForFunction(() => window.R42J_CORE.ablauf.get().phase === "profile");
-  await einloggen(p);
+  await p.waitForSelector(".rj-shell");
   await hin(p, "#/wissen");
   await p.getByRole("heading", { name: "Wissen", exact: true }).waitFor();
   await p.getByRole("link", { name: "Mein Testartikel" }).waitFor();
@@ -250,7 +249,10 @@ for (const channel of kanaele()) {
   // Eigener Artikel im Editor
   await hin(p, "#/wissen/neu");
   await p.getByLabel("Titel").fill("Mein Merkzettel");
-  await p.getByLabel("Text", { exact: false }).first().fill("## Wichtig\n\n**Fett** gedruckt");
+  await p.getByLabel("Kategorie").click();
+  await p.getByRole("option", { name: "Neue Kategorie anlegen …" }).click();
+  await p.getByLabel("Name der neuen Kategorie").fill("Eigene Notizen");
+  await p.locator(".rj-texteditor textarea").fill("## Wichtig\n\n**Fett** gedruckt");
   await p.locator(".rj-wissen-editor .rj-prose strong").waitFor();
   ok("Vorschau zeigt Markdown", true);
   await p.getByLabel("Quellen").fill("kaputte Zeile");

@@ -10,7 +10,23 @@
 
   function Bearbeiten(props) {
     var entwurf = hooks.useState(props.anlage);
+    var sucht = hooks.useState(false);
     var e = entwurf[0];
+
+    // Füllt nur aus: Gespeichert wird erst über den Dialog. Eigene Stichwörter bleiben stehen.
+    async function vorschlagen() {
+      sucht[1](true);
+      try {
+        var v = await K.anlagen.vorschlagFuer(e);
+        var n = Object.assign({}, e, { kategorie: v.kategorie || e.kategorie, tags: (e.tags || []).concat(v.stichwoerter.filter(function (t) { return (e.tags || []).indexOf(t) === -1; })) });
+        if (v.datum) n.datum = v.datum;
+        entwurf[1](n);
+        K.meldung(K.t("anlagen.vorschlagFertig"), "info");
+      } catch (x) {
+        K.meldung(K.fehlerText(x), "danger");
+      }
+      sucht[1](false);
+    }
 
     function setze(feld, wert) {
       var n = Object.assign({}, e);
@@ -30,6 +46,10 @@
       }}
       beiSchliessen=${props.beiSchliessen}
     >
+      <div class="rj-row" style="justify-content:space-between">
+        <span class="rj-muted">${K.t("anlagen.vorschlagText")}</span>
+        <${UI.Button} icon="sparkles" laedt=${sucht[0]} disabled=${sucht[0]} onClick=${vorschlagen}>${K.t("anlagen.vorschlaege")}<//>
+      </div>
       <${UI.TextField}
         label=${K.t("anlagen.titel")}
         placeholder=${K.t("anlagen.titelPlatzhalter")}

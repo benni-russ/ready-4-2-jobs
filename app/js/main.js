@@ -48,7 +48,7 @@
     if (a.phase === "schluessel") seite = html`<${S.SchluesselEntsperren} key=${schluessel} eintrag=${a.eintrag} />`;
     if (a.phase === "onboarding") seite = html`<${S.Onboarding} key=${a.schritt} name=${a.name} schritt=${a.schritt} />`;
     if (a.phase === "schluesselNeu") seite = html`<${S.SchluesselNeu} />`;
-    if (a.phase === "sperrt") seite = html`<${UI.Bildschirm} icon="lock" titel=${K.t("sperre.sperrt")} />`;
+    if (a.phase === "sperrt") seite = html`<${UI.Bildschirm} titel=${K.t("sperre.sperrt")} />`;
     if (a.phase === "app") seite = html`<${App} />`;
     return html`${seite}<${UI.Toaster} />`;
   }

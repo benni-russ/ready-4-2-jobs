@@ -164,7 +164,11 @@ h1, h2, h3, p { margin: 0; }
 .rj-toast__body { flex: 1; }
 .rj-toast--success > .rj-icon { color: var(--success); } .rj-toast--danger > .rj-icon { color: var(--danger); } .rj-toast--info > .rj-icon { color: var(--info); }
 .rj-toast .rj-iconbtn { width: 36px; height: 36px; margin: -6px -8px -6px 0; }
-.rj-toaster { position: fixed; right: var(--space-6); bottom: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); z-index: var(--z-toast); }
+.rj-toaster { position: fixed; right: var(--space-6); bottom: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); z-index: var(--z-toast); pointer-events: none; }
+.rj-toast { pointer-events: auto; }
+/* Meldungen dürfen nie auf einer Aktion liegen: Über der klebenden Leiste bleiben sie frei, im Dialog stehen sie über dem Titel. */
+html:has(.rj-editbar--klebt) .rj-toaster { bottom: 6rem; }
+html:has(.rj-overlay) .rj-toaster { top: var(--space-3); bottom: auto; left: 50%; right: auto; transform: translateX(-50%); }
 
 .rj-status { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 10px 0 8px; border-radius: var(--radius-pill); font: 700 .8125rem/1.125rem var(--font-sans); white-space: nowrap; }
 .rj-status .rj-icon { width: 16px; height: 16px; }
@@ -365,6 +369,12 @@ h1, h2, h3, p { margin: 0; }
 .rj-filterbar { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-end; }
 .rj-filterbar .rj-input-wrap { flex: 1 1 260px; }
 .rj-filterbar .rj-select-wrap, .rj-filterbar .rj-dropdown { flex: 0 1 200px; }
+.rj-filter { display: flex; flex-direction: column; gap: var(--space-1); flex: 0 1 200px; min-width: 0; }
+.rj-filter:has(.rj-seg) { flex: 0 0 auto; }
+.rj-filter .rj-dropdown { flex: none; width: 100%; }
+.rj-filter__titel { display: flex; align-items: center; gap: var(--space-1); font: 700 .8125rem/1.25rem var(--font-sans); color: var(--ink-muted); }
+.rj-filter__titel svg { width: 14px; height: 14px; }
+.rj-seg button svg { width: 16px; height: 16px; vertical-align: -3px; }
 
 /* ---------- Vergleich & Statistik ---------- */
 .rj-scorelist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
@@ -417,8 +427,6 @@ h1, h2, h3, p { margin: 0; }
 /* ---------- Sicherheit & Profil ---------- */
 .rj-lock { min-height: 100%; display: grid; place-items: center; padding: var(--space-8) var(--space-4); background: var(--surface); }
 .rj-lock__card { width: min(420px, 100%); display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-8); background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); }
-.rj-lock__icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
-.rj-lock__icon .rj-icon { width: 28px; height: 28px; }
 
 .rj-recovery { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
 .rj-recovery code { display: grid; place-items: center; min-height: 48px; border: 2px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface-raised); font: 700 1.125rem/1 var(--font-sans); letter-spacing: .12em; font-variant-numeric: tabular-nums; }
@@ -648,9 +656,10 @@ html:has(.rj-editbar--klebt) { scroll-padding-bottom: 8rem; }
   .rj-readlist { grid-template-columns: minmax(0, 1fr); }
 }
 
-.rj-wissen-bild { margin: 0; max-width: var(--size-prose); }
+.rj-wissen-artikel.rj-prose { max-width: var(--size-article); }
+.rj-wissen-bild { margin: 0; max-width: var(--size-article); }
 .rj-wissen-bild img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius-md); background: #fff; }
-.rj-wissen-quellen { max-width: var(--size-prose); margin-top: var(--space-8); padding-top: var(--space-4); border-top: 1px solid var(--line); }
+.rj-wissen-quellen { max-width: var(--size-article); margin-top: var(--space-8); padding-top: var(--space-4); border-top: 1px solid var(--line); }
 .rj-wissen-quellen ol { margin: var(--space-3) 0 0; padding-left: 1.25em; }
 .rj-wissen-quellen li { margin-bottom: var(--space-2); }
 .rj-wissen-editor { align-items: start; }
@@ -668,4 +677,36 @@ html:has(.rj-editbar--klebt) { scroll-padding-bottom: 8rem; }
   .rj-content { max-width: var(--size-content-wide); }
   .rj-dialog--wide { width: min(1560px, 100%); }
   .rj-filepreview { height: 80vh; }
+}
+
+/* Sprunglink: erstes Tab-Ziel, sonst unsichtbar. */
+.rj-skiplink { position: fixed; top: var(--space-2); left: var(--space-2); z-index: var(--z-toast); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--accent); color: var(--on-accent); font-weight: 700; transform: translateY(-200%); }
+.rj-skiplink:focus { transform: none; }
+
+/* Farbschema mit Vorschau */
+.rj-schemes { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.rj-schemes legend { padding: 0; margin-bottom: var(--space-2); }
+.rj-schemes__liste { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-2); }
+.rj-scheme { position: relative; display: flex; align-items: center; gap: var(--space-2); min-height: 44px; padding: var(--space-2) var(--space-3); border: 2px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface-raised); cursor: pointer; font-weight: 600; }
+.rj-scheme input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.rj-scheme:hover { background: var(--surface-sunken); }
+.rj-scheme:has(input:checked) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.rj-scheme:has(input:focus-visible) { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
+.rj-scheme__farbe { width: 24px; height: 24px; flex: none; border-radius: 50%; background: var(--accent); box-shadow: inset 0 0 0 1px var(--line-strong); }
+
+/* Textwerkzeug */
+.rj-texteditor { display: flex; flex-direction: column; gap: var(--space-2); }
+.rj-texttools { display: flex; flex-wrap: wrap; gap: 2px; padding: var(--space-1); border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); position: sticky; top: var(--space-2); z-index: 1; }
+.rj-texttools__trenner { width: 1px; margin: var(--space-2) var(--space-1); background: var(--line); }
+
+/* Bilder in eigenen Wissensartikeln */
+.rj-prose img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
+
+/* Formulare: höchstens drei Spalten, wo die Feldzahl sonst eine Waise ließe. Eine einzelne Auswahl füllt keine ganze Karte. */
+.rj-grid-2--drei { grid-template-columns: repeat(auto-fit, minmax(max(240px, 30%), 1fr)); }
+.rj-card > .rj-field:has(> .rj-dropdown) { max-width: 420px; }
+
+@media (max-width: 600px) {
+  .rj-filter { flex: 1 1 100%; }
+  .rj-card > .rj-field:has(> .rj-dropdown) { max-width: none; }
 }

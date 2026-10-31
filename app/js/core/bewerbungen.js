@@ -88,7 +88,7 @@
         ansprechpartner: {},
         stelle: { titel: w.titel, quelle: w.quelle || "", link: w.link || "", anzeigeText: w.anzeigeText || "" },
         keywords: K.keywords.analysieren(w.anzeigeText || ""),
-        dokumente: { mitFoto: w.sprache === "de", mitUnterschrift: false, komprimierung: "mittel", anlagenAuswahl: [], deckblatt: true, allesInEinem: false },
+        dokumente: { mitFoto: w.sprache === "de", mitUnterschrift: false, postversand: false, komprimierung: "mittel", anlagenAuswahl: [], deckblatt: true, allesInEinem: false },
         anschreiben: K.anschreiben.neu(w.sprache, w.anrede),
         emails: [],
         status: [{ status: "vorbereitung", datum: jetzt() }],

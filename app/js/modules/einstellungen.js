@@ -44,7 +44,7 @@
             }}
           />
         <//>
-        <${UI.Select}
+        <${UI.FarbschemaWahl}
           label=${K.t("einstellungen.farbschema")}
           wert=${z.farbschema}
           optionen=${FARBSCHEMATA.map(function (f) {
@@ -79,6 +79,19 @@
         <${S.DarstellungFelder} />
       </section>
       <${S.TresorEinstellungen} />
+      <section class="rj-card rj-stack">
+        <h2 class="h3">${K.t("einstellungen.tastatur")}</h2>
+        <${UI.Switch}
+          label=${K.t("einstellungen.suchTaste")}
+          wert=${K.tresor.daten().einstellungen.suchTaste}
+          beiAenderung=${function (w) {
+            K.tresor.aendern(function (t) {
+              t.einstellungen.suchTaste = w;
+            });
+          }}
+        />
+        <p class="rj-hint">${K.t("einstellungen.suchTasteHinweis")}</p>
+      </section>
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("einstellungen.komponenten")}</h2>
         <p class="rj-muted">${K.t("einstellungen.komponentenText")}</p>

@@ -244,6 +244,153 @@ for (const channel of kanaele()) {
   const eigen = await p.evaluate(() => window.R42J_CORE.fragen.eigene().map((k) => k.datei));
   ok("Katalog liegt in daten/fragen", eigen.includes("Grundlagen-Buchhaltung.json"), eigen);
 
+  // Meldungen liegen nie auf einer Aktion.
+  await hin(p, "#/stammdaten/persoenlich");
+  await knopf(p, "Bearbeiten").click();
+  await p.evaluate(() => window.R42J_CORE.meldung("Probe"));
+  await p.locator(".rj-toast").first().waitFor();
+  const verdeckt = () => p.evaluate(() => [...document.querySelectorAll(".rj-editbar__aktionen button, .rj-dialog__foot button")].filter((k) => {
+    const x = k.getBoundingClientRect();
+    return document.elementFromPoint(x.left + x.width / 2, x.top + x.height / 2)?.closest(".rj-toast");
+  }).length);
+  ok("Meldung lässt Speichern frei", (await verdeckt()) === 0);
+  await knopf(p, "Abbrechen").click();
+  await p.waitForFunction(() => !document.querySelector(".rj-toast"), null, { timeout: 15000 });
+
+  // Speicheranzeige nur bei echtem Speichern.
+  const stand = () => p.evaluate(() => window.R42J_CORE.speicherStand.get().stand);
+  await p.evaluate(() => window.R42J_CORE.tresor.speichernJetzt());
+  await p.waitForFunction(() => window.R42J_CORE.speicherStand.get().stand === "leerlauf", null, { timeout: 8000 });
+  await p.evaluate(() => window.R42J_CORE.tresor.aendern(() => {}));
+  ok("Ohne Änderung kein Speichern", (await stand()) === "leerlauf", await stand());
+  await p.evaluate(() => window.R42J_CORE.tresor.aendern((d) => { d.einstellungen.sperreMinuten = 16; }));
+  ok("Änderung zeigt Speichern", (await stand()) === "speichert");
+  await p.waitForFunction(() => window.R42J_CORE.speicherStand.get().stand === "gespeichert", null, { timeout: 6000 });
+  await p.waitForFunction(() => window.R42J_CORE.speicherStand.get().stand === "leerlauf", null, { timeout: 6000 });
+  ok("Gespeichert verschwindet wieder", true);
+
+  // Sprunglink und Taste /
+  await hin(p, "#/uebersicht");
+  await p.getByRole("heading", { name: "Übersicht", exact: true }).first().waitFor();
+  ok("Sprunglink ist erstes Ziel", await p.evaluate(() => document.querySelector("a[href], button, input").className.includes("rj-skiplink")));
+  await p.locator(".rj-skiplink").focus();
+  await p.keyboard.press("Enter");
+  ok("Sprunglink führt zum Inhalt", (await p.evaluate(() => document.activeElement.tagName)) === "MAIN");
+  await hin(p, "#/einstellungen");
+  await p.getByRole("switch", { name: /Taste \// }).click();
+  await hin(p, "#/uebersicht");
+  await p.getByRole("heading", { name: "Übersicht", exact: true }).first().waitFor();
+  await p.locator("main").focus();
+  await p.keyboard.press("/");
+  ok("Taste / lässt sich abschalten", (await p.evaluate(() => document.activeElement.tagName)) !== "INPUT");
+  ok("Kürzel wird nicht mehr genannt", (await p.locator(".rj-searchbar__tasten kbd").count()) === 1);
+  await p.evaluate(() => window.R42J_CORE.tresor.aendern((d) => { d.einstellungen.suchTaste = true; }));
+
+  // Übersicht und Einstellungen
+  const titel = await p.locator(".rj-filter__titel").allInnerTexts();
+  ok("Filter tragen Überschriften", ["Status", "Sortieren", "Ansicht"].every((t) => titel.includes(t)), titel);
+  ok("Filter und Sortierung mit Icon", (await p.locator(".rj-filter__titel svg").count()) >= 4);
+  ok("Ansicht mit Icons", (await p.locator(".rj-seg button svg").count()) >= 2);
+  await hin(p, "#/einstellungen");
+  const farbe = p.getByRole("radio", { name: "Petrol" });
+  await farbe.check({ force: true });
+  ok("Farbschema mit Vorschau", (await p.locator(".rj-scheme__farbe").count()) > 3 && (await p.evaluate(() => window.R42J_CORE.store.get().farbschema)) === "petrol");
+
+  // Migration
+  const mig = await p.evaluate(() => {
+    const K = window.R42J_CORE;
+    return K.migrieren({ schema: 1, einstellungen: {}, bewerbungen: [{ dokumente: { mitFoto: true } }] });
+  });
+  ok("Migration ergänzt die neuen Felder", mig.schema === 2 && mig.einstellungen.suchTaste === true && mig.bewerbungen[0].dokumente.postversand === false, mig);
+
+  // Wissen: Kategorie und Textwerkzeug
+  await hin(p, "#/wissen/neu");
+  await p.getByLabel("Titel").fill("Mein Bildartikel");
+  const text = p.locator(".rj-texteditor textarea");
+  await text.fill("Wort");
+  await text.selectText();
+  await p.getByRole("button", { name: "Fett" }).click();
+  ok("Werkzeug setzt Fett", (await text.inputValue()) === "**Wort**", await text.inputValue());
+  await text.press("Control+z");
+  ok("Strg+Z nimmt es zurück", (await text.inputValue()) === "Wort", await text.inputValue());
+  await text.selectText();
+  await p.getByRole("button", { name: "Link einfügen" }).click();
+  const dl = p.getByRole("dialog");
+  await dl.getByLabel("Adresse").fill("http://beispiel.invalid");
+  await knopf(dl, "Einfügen").click();
+  await dl.getByText("muss mit https://").waitFor();
+  await dl.getByLabel("Adresse").fill("https://beispiel.invalid");
+  await knopf(dl, "Einfügen").click();
+  await dl.waitFor({ state: "detached" });
+  ok("Link eingesetzt", (await text.inputValue()) === "[Wort](https://beispiel.invalid)", await text.inputValue());
+  await text.press("Control+End");
+  await p.getByRole("button", { name: "Bild einfügen" }).click();
+  await p.locator('input[type="file"][accept^="image"]').setInputFiles({ name: "skizze.png", mimeType: "image/png", buffer: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64") });
+  await dl.getByLabel("Was zeigt das Bild?").fill("Ein Punkt");
+  await knopf(dl, "Einfügen").click();
+  await dl.waitFor({ state: "detached" });
+  await p.locator('.rj-prose img[alt="Ein Punkt"]').waitFor();
+  ok("Bild in der Vorschau", true);
+  await knopf(p, "Speichern").click();
+  ok("Kategorie ist Pflicht", await p.getByText("Wähle eine Kategorie").first().isVisible());
+  await p.getByLabel("Kategorie").click();
+  await p.getByRole("option", { name: "Neue Kategorie anlegen …" }).click();
+  await p.getByLabel("Name der neuen Kategorie").fill("Eigenes");
+  await knopf(p, "Speichern").click();
+  await p.locator('article img[alt="Ein Punkt"]').waitFor();
+  ok("Artikel zeigt Bild nach dem Speichern", true);
+  const html = await p.evaluate(() => window.R42J_CORE.wissen.alsHtml("![a](https://beispiel.invalid/x.png)\n\n![b](data:image/svg+xml;base64,PHN2Zy8+)\n\n<img src=x onerror=alert(1)>"));
+  ok("Fremde Bilder entfallen", !html.includes("<img"), html);
+
+  // Anlagen und Postversand
+  const v = await p.evaluate(() => window.R42J_CORE.anlagen.vorschlagFuer({ id: "x", mime: "image/png", dateiname: "Arbeitszeugnis_2021.png" }));
+  ok("Vorschlag für gespeicherte Anlage", v.kategorie === "zeugnis-arbeit" && v.stichwoerter.includes("2021"), v);
+  const post = await p.evaluate(() => {
+    const d = { absender: "A", empfaenger: ["Firma", "Str. 1", "12345 Ort"], ruecksende: "A · B · C", postversand: true, ort: "Ort", datum: "1.1.", betreff: "B", anrede: "H", absaetze: ["T"], gruss: "G", name: "N", anlagen: [] };
+    const inhalt = window.R42J_CORE.anschreibenVorlage(d).content;
+    const f = inhalt.find((x) => x.text === "Firma\nStr. 1\n12345 Ort");
+    return { y: f.absolutePosition.y, marken: inhalt.find((x) => x.canvas).canvas.length, ruecksende: inhalt.some((x) => x.text === "A · B · C") };
+  });
+  ok("Postversand: Anschrift im Sichtfenster", Math.abs(post.y - (62.7 * 72) / 25.4) < 0.1, post);
+  ok("Postversand: Marken und Rücksendeangabe", post.marken === 3 && post.ruecksende, post);
+
+  // Neuladen bleibt angemeldet, Sperren nicht. Der Schlüssel liegt nie im Klartext.
+  await p.evaluate(() => window.R42J_CORE.tresor.speichernJetzt());
+  await hin(p, "#/einstellungen");
+  await p.reload();
+  await p.waitForSelector(".rj-shell");
+  ok("Neuladen bleibt angemeldet", await p.evaluate(() => window.R42J_CORE.tresor.offen()));
+  const sitzung = await p.evaluate(() => {
+    const s = JSON.parse(sessionStorage.getItem("r42j.sitzung"));
+    return { laenge: s.verpackt.length, felder: Object.keys(s).sort().join() };
+  });
+  ok("Sitzung hält nur Verpacktes", sitzung.felder === "id,verpackt,zuletzt" && sitzung.laenge > 44, sitzung);
+  await p.evaluate(() => { const s = JSON.parse(sessionStorage.getItem("r42j.sitzung")); s.zuletzt -= 31 * 1000; sessionStorage.setItem("r42j.sitzung", JSON.stringify(s)); });
+  ok("Gemerkte Sitzung bleibt nur kurz gültig", await p.evaluate(async () => (await window.R42J_CORE.sitzung.fortsetzen()) === null));
+  await p.reload();
+  await p.getByRole("button", { name: /Testperson Muster/ }).waitFor();
+  await p.getByRole("button", { name: /Testperson Muster/ }).click();
+  await p.getByLabel("Passwort", { exact: true }).fill(PW);
+  await p.getByRole("button", { name: "Entsperren" }).click();
+  await p.waitForSelector(".rj-shell");
+  // Wie ein wiederhergestellter Tab: sessionStorage ist noch da, aber es war kein Neuladen.
+  await p.evaluate(() => window.R42J_CORE.tresor.speichernJetzt());
+  await p.goto("about:blank");
+  await p.goto(URLAPP);
+  await p.getByRole("button", { name: /Testperson Muster/ }).waitFor();
+  ok("Ohne Neuladen fragt R42J nach dem Passwort", !(await p.evaluate(() => window.R42J_CORE.tresor.offen())));
+  ok("Ohne Neuladen ist die Sitzung gelöscht", (await p.evaluate(() => sessionStorage.getItem("r42j.sitzung"))) === null);
+  await p.getByRole("button", { name: /Testperson Muster/ }).click();
+  await p.getByLabel("Passwort", { exact: true }).fill(PW);
+  await p.getByRole("button", { name: "Entsperren" }).click();
+  await p.waitForSelector(".rj-shell");
+  await p.evaluate(() => window.R42J_CORE.jetztSperren());
+  await p.waitForFunction(() => !window.R42J_CORE.tresor.offen());
+  ok("Sperren löscht die Sitzung", (await p.evaluate(() => sessionStorage.getItem("r42j.sitzung"))) === null);
+  await p.reload();
+  await p.getByRole("button", { name: /Testperson Muster/ }).waitFor();
+  ok("Nach dem Sperren fragt R42J wieder", !(await p.evaluate(() => window.R42J_CORE.tresor.offen())));
+
   ok("Keine Fehler in der Konsole", logs.length === 0, logs);
   await b.close();
 }

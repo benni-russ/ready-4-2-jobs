@@ -55,6 +55,12 @@
       return eintrag;
     },
 
+    // Für schon gespeicherte Anlagen: dieselbe Prüfung wie beim Hochladen, geändert wird nichts.
+    vorschlagFuer: async function (a) {
+      var text = a.mime === "application/pdf" ? await K.anlagen.pdfText(await K.tresor.anlageLesen(a.id)) : "";
+      return K.anlagen.vorschlag(a.dateiname, text);
+    },
+
     // Umgekehrte Reihenfolge wie beim Anlegen: Eine verwaiste Datei stört nicht, ein toter Verweis schon.
     loeschen: async function (id) {
       K.stammdaten.loeschen("anlagen", id);

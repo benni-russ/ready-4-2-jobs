@@ -175,8 +175,9 @@ for (const channel of kanaele()) {
   await p.getByRole("button", { name: "Speichern", exact: true }).click();
   await p.getByRole("button", { name: "Anzeige mit einer KI auswerten" }).click();
   await p.getByRole("textbox", { name: /Antwort/ }).first().fill('{"keywords":["Workday"],"anforderungen":["Erfahrung"],"branche":"Handel"}');
-  await p.getByRole("button", { name: /prüfen/i }).first().click();
-  await p.getByRole("button", { name: "Übernehmen" }).click();
+  await knopf(p, "Prüfen und übernehmen").click();
+  await knopf(p, "Übernehmen").click();
+  await p.locator(".rj-overlay").waitFor({ state: "detached" });
   z = await zustand();
   ok("KI-Keywords übernommen", z.keywords.manuell.includes("Workday") || z.keywords.fehlend.includes("Workday"), z.keywords);
   ok("KI füllt leere Felder", z.firma.branche === "Handel", z.firma.branche);

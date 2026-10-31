@@ -15,7 +15,7 @@
           props.beiAbsenden();
         }}
       >
-        ${props.icon ? html`<span class="rj-lock__icon"><${UI.Icon} name=${props.icon} /></span>` : html`<${UI.Logo} size=${40} />`}
+        <${UI.Logo} size=${40} />
         <h1 class="display">${props.titel}</h1>
         ${props.text && html`<p class="rj-muted">${props.text}</p>`}
         ${props.children}

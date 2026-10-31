@@ -112,7 +112,7 @@ Beim Start werden fehlende Ordner angelegt. Mitgelieferte Artikel werden direkt 
 ### 4.2 Passwort & Sperre
 - Mindestens 12 Zeichen, Stärke-Anzeige (zxcvbn-ähnliche Heuristik, lokal, ohne große Wörterliste).
 - **Auto-Sperre** nach Inaktivität (Standard 10 min, einstellbar 5–60), außerdem beim Schließen des Tabs. Sperre löscht DEK aus dem Speicher.
-- Kein „Passwort merken“.
+- Kein „Passwort merken“. Der Tresor bleibt nur bei einem echten Neuladen desselben Tabs offen: Der DEK liegt dafür verpackt im `sessionStorage`, die Hülle ist ein nicht extrahierbarer Schlüssel in IndexedDB (`core/sitzung.js`). Das gilt höchstens 30 Sekunden nach dem Neuladen und nur, wenn der Browser den Aufruf als `reload` meldet. Jeder andere Aufruf, auch ein wiederhergestellter Tab, und jede Sperre löschen beides.
 
 ### 4.3 Wiederherstellungsschlüssel
 - Wird im Onboarding erzeugt und auf einem **Druckblatt** angezeigt (Button „Drucken“ → `window.print()` mit Druck-CSS). Inhalt: Profilname, Datum, Schlüssel, Kurzanleitung.
@@ -199,7 +199,7 @@ Bewerbung {
   stelle { titel, referenz?, quelle (Portal), link?, anzeigeText (Kopie), anzeigeMd? },
   keywords { extrahiert: string[], treffer: KompetenzId[], fehlend: string[], manuell: string[], gewichte: Record<string, number> },
   dokumente { lebenslauf: Snapshot, anschreiben: Snapshot, anlagenPdf?: Snapshot, gesamtPdf?: Snapshot,
-              mitFoto: boolean, mitUnterschrift: boolean, komprimierung: "original"|"mittel"|"klein",
+              mitFoto: boolean, mitUnterschrift: boolean, postversand: boolean, komprimierung: "original"|"mittel"|"klein",
               anlagenAuswahl: AnlageId[], anlagenVorausgewaehlt: boolean, deckblatt: boolean, allesInEinem: boolean },
   anschreiben { abschnitte: Record<string, string>, varianten: Record<string, string>,
                 rahmen { eintritt, gehalt, kuendigungsfrist } },
@@ -307,6 +307,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Platzhalter z. B. `{{firma}}`, `{{stelle}}`, `{{quelle}}`, `{{ansprechpartner_anrede}}`, `{{kompetenz_1}}`, `{{erfolg_1}}`, `{{eintritt}}`.
 - Editor mit Live-Vorschau, Rechtschreibprüfung des Browsers (`spellcheck`, `lang` passend).
 - Optional: Unterschrift (Standard aus; beim Aktivieren Hinweis auf Missbrauchsrisiko).
+- Optional: Postversand (Standard aus) für DL-Fensterumschläge nach DIN 5008 Form B: Anschrift ab 62,7 mm, Rücksendeangabe darüber, Falzmarken bei 105 und 210 mm, Lochmarke bei 148,5 mm. Hinweis bei fehlender oder zu langer Anschrift (mehr als 6 Zeilen).
 - Max. 1 Seite, Warnung bei Überlänge.
 - Dateiname: `vorname-nachname-anschreiben-firma.pdf`.
 
@@ -368,6 +369,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Mitgelieferte Artikel aus `wissen-default/`, eigene Markdown-Artikel aus `daten/wissen/` (Ordner-Handle), gerendert mit marked + DOMPurify. Eigene entstehen im Editor (mit Vorschau) oder aus einer `.md`-Datei und lassen sich bearbeiten und löschen. Sie liegen unverschlüsselt, der Editor sagt das.
 - Mitgeliefert (DE/EN): Foto ja/nein · ATS erklärt · STAR-Methode · Anschreiben-Aufbau · Gehaltsverhandlung · Kündigungsfristen · Arbeitsvertrag prüfen · Vorstellungsgespräch · LinkedIn-/XING-Profil · Seriöse E-Mail-Adresse · Probezeit.
 - Suche + Kategorien über Frontmatter (`title`, `category`, `lang`), Quellen über `sources: Titel | https://… ;; Titel | https://…`, Skizzen mitgelieferter Artikel über `image` und `image-alt` (`app/img/wissen/<name>.<sprache>.svg`, erzeugt von `tools/wissen-skizzen.mjs`). Die Kennung ist der Dateiname ohne Sprache und Endung; je Kennung gilt die Fassung der Oberflächensprache, sonst die vorhandene. Artikel sind fremder Text: Bilder und Einbettungen fallen weg, Links bleiben nur als App-Link (`#/…`) oder HTTPS.
+- Der Editor hat ein Textwerkzeug für Überschriften, Fett, Kursiv, Listen, Links und Bilder und schreibt Markdown ins Textfeld. Die Kategorie wird gewählt oder neu angelegt, nie frei getippt. Bilder eigener Artikel werden verkleinert und stehen als `data:image/(png|jpeg)`-Referenz (`[bild-1]: …`) am Dateiende; jede andere Bildquelle entfällt beim Anzeigen.
 - Links aus der App kontextbezogen in passende Artikel (z. B. Foto-Schalter → „Foto ja/nein“).
 
 ### 6.14 Statistik
@@ -375,7 +377,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Einfache SVG-Diagramme ohne externe Bibliothek; jede Zahl mit Basis („12 von 80“).
 
 ### 6.15 Einstellungen
-- Sprache, Theme, Farbschema (Voreinstellungen), Schriftgröße, Seitenleiste eingeklappt (auch per Strg/Cmd + B), Sperrzeit, Rückfrage-Frist, Feiertagspauschale (`feiertagsWochen`, Std. 2), Backup (Ziel 2, jetzt sichern, wiederherstellen), Passwort ändern, Wiederherstellungsschlüssel neu, Update-Prüfung, Profil exportieren/löschen, Export-Ordner leeren.
+- Sprache, Theme, Farbschema (Auswahl mit Farbvorschau), Schriftgröße, Suche mit der Taste `/` (`suchTaste`, abschaltbar nach WCAG 2.1.4), Seitenleiste eingeklappt (auch per Strg/Cmd + B), Sperrzeit, Rückfrage-Frist, Feiertagspauschale (`feiertagsWochen`, Std. 2), Backup (Ziel 2, jetzt sichern, wiederherstellen), Passwort ändern, Wiederherstellungsschlüssel neu, Update-Prüfung, Profil exportieren/löschen, Export-Ordner leeren.
 
 ### 6.16 Updates
 - Opt-in: beim Start max. 1×/Tag `GET https://api.github.com/repos/benni-russ/ready-4-2-jobs/releases/latest` → Vergleich mit `app/version.js` → Hinweis mit Link zum Release.

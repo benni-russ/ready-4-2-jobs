@@ -28,6 +28,7 @@
         alle.push(t);
       });
     });
+    var mitTaste = K.tresor.daten().einstellungen.suchTaste;
     var markierter = Math.min(aktiv[0], Math.max(alle.length - 1, 0));
 
     function schliessen() {
@@ -71,7 +72,7 @@
           aria-controls=${id}
           aria-activedescendant=${alle.length ? id + "-" + markierter : undefined}
           aria-autocomplete="list"
-          aria-keyshortcuts="Control+K Meta+K /"
+          aria-keyshortcuts=${mitTaste ? "Control+K Meta+K /" : "Control+K Meta+K"}
           autocomplete="off"
           spellcheck="false"
           placeholder=${K.t(window.innerWidth <= 600 ? "suche.kurz" : "suche.platzhalter")}
@@ -88,7 +89,7 @@
         />
         <span class="rj-searchbar__tasten" aria-hidden="true">
           <kbd class="rj-kbd">${K.t(MAC ? "suche.tasteMac" : "suche.tasteKurz")}</kbd>
-          <kbd class="rj-kbd">/</kbd>
+          ${mitTaste && html`<kbd class="rj-kbd">/</kbd>`}
         </span>
       </div>
       ${offen[0] &&

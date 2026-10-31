@@ -299,14 +299,14 @@
           <${UI.TextField} label=${K.t("stelle.quelle")} placeholder=${K.t("stelle.quellePlatzhalter")} hinweis=${K.t("stelle.quelleHinweis")} ...${feld("stelle", "quelle")} />
           <${UI.TextField} label=${K.t("stelle.link")} placeholder=${K.t("stelle.linkPlatzhalter")} ...${feld("stelle", "link")} />
         </div>
-        <${UI.Select}
-          label=${K.t("bewerbung.ausrichtung")}
-          optionen=${d.ausrichtungen.map(function (a) {
-            return { wert: a.id, label: a.name };
-          })}
-          ...${feld(null, "ausrichtungId")}
-        />
         <div class="rj-grid-2">
+          <${UI.Select}
+            label=${K.t("bewerbung.ausrichtung")}
+            optionen=${d.ausrichtungen.map(function (a) {
+              return { wert: a.id, label: a.name };
+            })}
+            ...${feld(null, "ausrichtungId")}
+          />
           <div class="rj-field">
             <span class="rj-label">${K.t("bewerbung.sprache")}</span>
             <${UI.SegmentedControl}
@@ -330,12 +330,12 @@
 
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("stelle.firma")}</h2>
-        <${UI.TextField} label=${K.t("bewerbung.firma")} placeholder=${K.t("bewerbung.firmaPlatzhalter")} pflicht=${true} ...${feld("firma", "name")} />
-        <${UI.Textarea} label=${K.t("stelle.adresse")} placeholder=${K.t("stelle.adressePlatzhalter")} hinweis=${K.t("stelle.adresseHinweis")} rows="3" ...${feld("firma", "adresse")} />
         <div class="rj-grid-2">
+          <${UI.TextField} label=${K.t("bewerbung.firma")} placeholder=${K.t("bewerbung.firmaPlatzhalter")} pflicht=${true} ...${feld("firma", "name")} />
           <${UI.TextField} label=${K.t("stelle.website")} placeholder=${K.t("stelle.websitePlatzhalter")} ...${feld("firma", "website")} />
           <${UI.TextField} label=${K.t("stelle.branche")} placeholder=${K.t("stelle.branchePlatzhalter")} ...${feld("firma", "branche")} />
         </div>
+        <${UI.Textarea} label=${K.t("stelle.adresse")} placeholder=${K.t("stelle.adressePlatzhalter")} hinweis=${K.t("stelle.adresseHinweis")} rows="3" ...${feld("firma", "adresse")} />
       </section>
 
       <section class="rj-card rj-stack">

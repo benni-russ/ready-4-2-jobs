@@ -4,14 +4,20 @@
   var html = UI.html;
 
   // Ohne sichtbares Label für die FilterBar, die Option zeigt den aktiven Filter.
+  // Mit icon steht die Beschriftung sichtbar über der Auswahl.
   UI.FilterSelect = function (props) {
-    return html`<${UI.Dropdown}
+    var auswahl = html`<${UI.Dropdown}
       aria-label=${props.label}
       wert=${props.wert}
       optionen=${props.optionen}
       suche=${props.suche}
       beiAenderung=${props.beiAenderung}
     />`;
+    if (!props.icon) return auswahl;
+    return html`<div class="rj-filter">
+      <span class="rj-filter__titel" aria-hidden="true"><${UI.Icon} name=${props.icon} />${props.label}</span>
+      ${auswahl}
+    </div>`;
   };
 
   UI.Select = function (props) {

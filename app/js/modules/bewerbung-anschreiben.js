@@ -248,7 +248,7 @@
     var fehler = hooks.useState(null);
     var schritt = hooks.useState(letzterSchritt[b.id] || 1);
     var ki = hooks.useState(null);
-    var stand = JSON.stringify([b.anschreiben, b.dokumente.mitUnterschrift, b.firma, b.ansprechpartner, b.stelle.titel, b.stelle.referenz, b.keywords.treffer]);
+    var stand = JSON.stringify([b.anschreiben, b.dokumente.mitUnterschrift, b.dokumente.postversand, b.firma, b.ansprechpartner, b.stelle.titel, b.stelle.referenz, b.keywords.treffer]);
 
     // Das echte PDF entscheidet, ob der Text auf eine Seite passt.
     hooks.useEffect(
@@ -369,6 +369,19 @@
           />
           ${b.dokumente.mitUnterschrift && html`<${UI.Alert} art="warning">${K.t("anschreiben.unterschriftWarnung")}<//>`}
           ${b.dokumente.mitUnterschrift && !p.unterschrift && html`<${UI.Alert} art="info">${K.t("anschreiben.unterschriftFehlt")}<//>`}
+        </section>
+        <section class="rj-card rj-stack">
+          <h2 class="h3">${K.t("anschreiben.post")}</h2>
+          <${UI.Switch}
+            label=${K.t("anschreiben.postSchalter")}
+            wert=${b.dokumente.postversand}
+            beiAenderung=${function (w) {
+              K.bewerbungen.aendern(b.id, function (x) {
+                x.dokumente.postversand = w;
+              });
+            }}
+          />
+          <p class="rj-hint">${K.t("anschreiben.postHinweis")}</p>
         </section>`}
         ${nr === 4 &&
         html`<section class="rj-card rj-stack">

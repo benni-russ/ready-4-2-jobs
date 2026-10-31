@@ -139,6 +139,7 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 - [x] Sicherheitsreview: CSP, keine Klartextreste in `export/`, keine Daten in Logs/Konsole (`docs/SICHERHEIT.md`).
 - [x] PDF-Schrift auf Latin Extended und Vietnamesisch erweitert.
 - [x] Feedback-Feinschliff: Name mit Unterzeile, 1920 × 1080, Brotkrumen, Suchleiste, Speicheranzeige, Formulare mit Bearbeiten, Anschreiben in Schritten, DIN 5008, Status-Icons, Kompetenzfilter, Anlagen-Vorschläge, Vergleichspunkte, Kataloge per KI, Wissen mit eigenen Artikeln, Quellen und Skizzen.
+- [x] Befunde aus dem USB-Lauf: Neuladen ohne Abmeldung, Meldungen verdecken keine Aktionen, Speicheranzeige nur beim Speichern, Filter mit Überschriften, Farbschema-Vorschau, Vorschläge für gespeicherte Anlagen, Postversand, Textwerkzeug und Kategorien im Wissen, Sprunglink, Taste `/` abschaltbar
 
 **Akzeptanz (offen):**
 - [ ] Nicht-technische Testperson schafft Onboarding + erste Bewerbung ohne Hilfe in < 30 min.

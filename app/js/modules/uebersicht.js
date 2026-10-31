@@ -243,8 +243,9 @@
       </section>`}
       <div class="rj-filterbar">
         <${UI.SearchField} label=${K.t("uebersicht.suchen")} platzhalter=${K.t("uebersicht.suchen")} wert=${f[0].suche} beiAenderung=${setzen("suche")} />
-        <${UI.FilterSelect} label=${K.t("bewerbung.status")} wert=${f[0].status} optionen=${optionenMit(K.t("uebersicht.alleStatus"), S.statusOptionen())} beiAenderung=${setzen("status")} />
+        <${UI.FilterSelect} icon="funnel" label=${K.t("bewerbung.status")} wert=${f[0].status} optionen=${optionenMit(K.t("uebersicht.alleStatus"), S.statusOptionen())} beiAenderung=${setzen("status")} />
         <${UI.FilterSelect}
+          icon="funnel"
           label=${K.t("bewerbung.ausrichtung")}
           wert=${f[0].ausrichtung}
           optionen=${optionenMit(
@@ -256,6 +257,7 @@
           beiAenderung=${setzen("ausrichtung")}
         />
         <${UI.FilterSelect}
+          icon="funnel"
           label=${K.t("uebersicht.zeitraum")}
           wert=${f[0].zeitraum}
           optionen=${optionenMit(
@@ -267,6 +269,7 @@
           beiAenderung=${setzen("zeitraum")}
         />
         <${UI.FilterSelect}
+          icon="arrow-up-down"
           label=${K.t("uebersicht.sortierung")}
           wert=${f[0].sortierung}
           optionen=${SORTIERUNGEN.map(function (s) {
@@ -274,15 +277,18 @@
           })}
           beiAenderung=${setzen("sortierung")}
         />
-        <${UI.SegmentedControl}
+        <div class="rj-filter">
+          <span class="rj-filter__titel" aria-hidden="true">${K.t("uebersicht.ansicht")}</span>
+          <${UI.SegmentedControl}
             label=${K.t("uebersicht.ansicht")}
             wert=${ansicht[0]}
             optionen=${[
-              { wert: "karten", label: K.t("uebersicht.karten") },
-              { wert: "liste", label: K.t("uebersicht.liste") },
+              { wert: "karten", icon: "layout-grid", label: K.t("uebersicht.karten") },
+              { wert: "liste", icon: "list", label: K.t("uebersicht.liste") },
             ]}
             beiAenderung=${ansicht[1]}
           />
+        </div>
       </div>
       <div class="rj-row" style="justify-content:space-between">
         <span class="rj-datatable__count" aria-live="polite">${K.t("tabelle.zaehler", { anzahl: treffer.length, gesamt: d.bewerbungen.length })}</span>

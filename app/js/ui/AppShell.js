@@ -92,7 +92,7 @@
           e.preventDefault();
           if (!dialogOffen) suchfeld.current.focus();
         }
-        if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !dialogOffen && !inEingabe(e.target)) {
+        if (e.key === "/" && K.tresor.daten().einstellungen.suchTaste && !e.ctrlKey && !e.metaKey && !e.altKey && !dialogOffen && !inEingabe(e.target)) {
           e.preventDefault();
           suchfeld.current.focus();
         }
@@ -122,6 +122,15 @@
     var labelTheme = K.t("shell.darstellung", { aktuell: K.t("theme." + z.theme) });
 
     return html`<div class="rj-shell" data-collapsed=${eingeklappt ? "true" : "false"}>
+      <a
+        class="rj-skiplink"
+        href="#rj-inhalt"
+        onClick=${function (e) {
+          e.preventDefault();
+          inhalt.current.focus();
+        }}
+        >${K.t("shell.zumInhalt")}</a
+      >
       <nav class="rj-sidebar" id="rj-navigation" aria-label=${K.t("shell.hauptnavigation")}>
         <div class="rj-brand">
           <span class="rj-brand__full"><${UI.Logo} size=${32} /></span>
@@ -182,7 +191,7 @@
             />
           </div>
         </div>
-        <main class="rj-content" tabindex="-1" ref=${inhalt}>
+        <main class="rj-content" id="rj-inhalt" tabindex="-1" ref=${inhalt}>
           <${UI.Breadcrumb} route=${props.route} />
           ${props.children}
         </main>

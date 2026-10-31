@@ -222,7 +222,7 @@
       </section>
       <section class="rj-card rj-stack">
         <h3 class="h3">${K.t("profil.bewerbung")}</h3>
-        <div class="rj-grid-2">
+        <div class="rj-grid-2 rj-grid-2--drei">
           ${text("fuehrerschein")}
           <${UI.DatePicker}
             label=${K.t("profil.verfuegbarAb")}

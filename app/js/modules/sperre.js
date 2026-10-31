@@ -38,7 +38,7 @@
       }
     }
 
-    return html`<${UI.Bildschirm} icon="lock" titel=${K.t("sperre.titel", { name: e.name })} text=${K.t("sperre.text")} beiAbsenden=${entsperren}>
+    return html`<${UI.Bildschirm} titel=${K.t("sperre.titel", { name: e.name })} text=${K.t("sperre.text")} beiAbsenden=${entsperren}>
       ${props.grund === "auto" && html`<${UI.Alert}>${K.t("sperre.auto")}<//>`}
       ${props.grund === "wiederhergestellt" && html`<${UI.Alert} art="success">${K.t("sperre.wiederhergestellt")}<//>`}
       <${UI.PasswordField} label=${K.t("passwort.label")} wert=${passwort[0]} beiAenderung=${passwort[1]} fehler=${fehler[0]} eingabeRef=${feld} />
@@ -81,7 +81,7 @@
       }
     }
 
-    return html`<${UI.Bildschirm} icon="key-round" titel=${K.t("sperre.schluesselTitel")} text=${K.t("sperre.schluesselText")} beiAbsenden=${entsperren}>
+    return html`<${UI.Bildschirm} titel=${K.t("sperre.schluesselTitel")} text=${K.t("sperre.schluesselText")} beiAbsenden=${entsperren}>
       ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
       <${UI.TextField} label=${K.t("schluessel.titel")} placeholder=${K.t("schluessel.titelPlatzhalter")} wert=${code[0]} beiAenderung=${code[1]} pflicht=${true} autocomplete="off" spellcheck="false" />
       <${UI.PasswordField} neu=${true} label=${K.t("passwort.neu")} hinweis=${K.t("passwort.hinweis")} wert=${neu[0]} beiAenderung=${neu[1]} />
