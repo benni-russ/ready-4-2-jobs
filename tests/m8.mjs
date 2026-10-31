@@ -1,6 +1,6 @@
 // M8: Checklisten, Wissen, Statistik. Testdaten frei erfunden.
 import { join } from "node:path";
-import { chromium, URLAPP, SP, kanaele } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, profilWaehlen } from "./hilfen.mjs";
 
 let fehlerZahl = 0;
 function ok(name, wahr, info) {
@@ -62,7 +62,7 @@ const inWissen = (p, name, text) =>
   );
 
 async function einloggen(p) {
-  await p.getByRole("button", { name: new RegExp(NAME) }).first().click();
+  await profilWaehlen(p, NAME);
   await p.locator('input[type="password"]').first().fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");

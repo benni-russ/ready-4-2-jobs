@@ -46,7 +46,12 @@ export function pdfInfo(pfad) {
 // Bleibt die Profilauswahl aus, zeigt die Ausgabe, was stattdessen auf dem Bildschirm stand.
 export async function profilWaehlen(p, name) {
   await p.getByRole("button", { name: new RegExp(name) }).click().catch(async (e) => {
-    const stand = await p.evaluate(() => ({ url: location.href, ablauf: window.R42J_CORE?.ablauf.get(), text: document.body.innerText.slice(0, 500) }));
+    const stand = await p.evaluate(async () => {
+      const K = window.R42J_CORE;
+      const zeitlimit = new Promise((fertig) => setTimeout(() => fertig("haengt"), 3000));
+      const liste = await Promise.race([K.profile.listeMitZeit().catch((e) => String(e)), zeitlimit]);
+      return { url: location.href, ablauf: K.ablauf.get().phase, liste, text: document.body.innerText.slice(0, 500) };
+    });
     console.log("Profilauswahl fehlt: " + JSON.stringify(stand));
     throw e;
   });
