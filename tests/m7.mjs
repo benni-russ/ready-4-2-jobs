@@ -99,7 +99,7 @@ for (const channel of kanaele()) {
   await p.getByRole("link", { name: "Vorbereitung" }).click();
   await p.getByRole("button", { name: "Interviewfragen lernen" }).waitFor();
   const bestand = await p.evaluate(() => window.R42J_CORE.fragen.gruppen("de").map((g) => [g.kategorie, g.fragen.length]));
-  ok("Sechs Kategorien auf Deutsch", bestand.length === 6 && bestand.every((g) => g[1] >= 50), bestand);
+  ok("Elf Kategorien auf Deutsch", bestand.length === 11 && bestand.every((g) => g[1] >= 50), bestand);
   await p.screenshot({ path: join(SP, `m7-lernen-${channel}.png`), fullPage: true });
 
   // Leitner ohne Oberfläche, jeder Tag über die eigene Uhr.
@@ -216,6 +216,8 @@ for (const channel of kanaele()) {
   }, erste);
   ok("Am selben Tag nicht mehr fällig", amselben.faellig === 0 && amselben.stand.box === 1 && amselben.stand.faellig === "2026-03-11", amselben);
 
+  // Der Zeitsprung gälte sonst als ein Tag ohne Aktivität und sperrte den Tresor.
+  await p.evaluate(() => { window.R42J_CORE.tresor.daten().einstellungen.sperreMinuten = 1e7; });
   await p.clock.setFixedTime(TAG2);
   await p.getByRole("tab", { name: "STAR-Training" }).click();
   await p.getByRole("tab", { name: "Lernen" }).click();

@@ -4,6 +4,7 @@
   var kr = K.krypto;
 
   var SPEICHERN_NACH_MS = 2000;
+  var GESPEICHERT_ZEIGEN_MS = 2500;
   var DARSTELLUNG = ["sprache", "theme", "farbschema", "schriftgroesse", "seitenleisteEingeklappt"];
 
   // Nur im Speicher, nie im Store: Datenschlüssel, Kopf der Datei und entschlüsselter Inhalt.
@@ -13,9 +14,11 @@
   var eintrag = null;
   var ungespeichert = false;
   var timer = null;
+  var anzeigeTimer = null;
   var warteschlange = Promise.resolve();
 
   K.tresorStand = K.beobachtbar({ offen: false, version: 0 });
+  K.speicherStand = K.beobachtbar({ stand: "leerlauf" });
 
   function melden() {
     K.tresorStand.set({ offen: !!dek, version: K.tresorStand.get().version + 1 });
@@ -47,6 +50,16 @@
     kopf = neu;
   }
 
+  // „Gespeichert“ bestätigt kurz und verschwindet. Dauerhaft sichtbar bleiben nur Entwurf und Fehler.
+  function standSetzen(stand) {
+    window.clearTimeout(anzeigeTimer);
+    K.speicherStand.set({ stand: stand });
+    if (stand !== "gespeichert") return;
+    anzeigeTimer = window.setTimeout(function () {
+      K.speicherStand.set({ stand: "leerlauf" });
+    }, GESPEICHERT_ZEIGEN_MS);
+  }
+
   function einreihen(aufgabe) {
     var lauf = warteschlange.then(aufgabe);
     warteschlange = lauf.catch(function () {});
@@ -57,10 +70,13 @@
     return einreihen(async function () {
       if (!dek || !ungespeichert) return;
       ungespeichert = false;
+      standSetzen("speichert");
       try {
         await schreiben();
+        if (!ungespeichert) standSetzen("gespeichert");
       } catch (e) {
         ungespeichert = true;
+        standSetzen("fehler");
         throw e;
       }
     });
@@ -68,6 +84,7 @@
 
   function vormerken() {
     ungespeichert = true;
+    standSetzen("speichert");
     window.clearTimeout(timer);
     timer = window.setTimeout(function () {
       speichern().catch(function (e) {
@@ -91,6 +108,7 @@
     eintrag = e;
     ungespeichert = migrieren;
     if (migrieren) await speichern();
+    standSetzen("leerlauf");
     K.store.set(darstellungAus(tresor.einstellungen));
     if (tresor.einstellungen.anzeigename !== e.name) {
       eintrag = Object.assign({}, e, { name: tresor.einstellungen.anzeigename });
@@ -132,9 +150,11 @@
       return daten;
     },
 
+    // Ein Aufruf, der nichts verändert, schreibt nicht und meldet kein Speichern.
     aendern: function (aufgabe) {
+      var vorher = JSON.stringify(daten);
       aufgabe(daten);
-      vormerken();
+      if (JSON.stringify(daten) !== vorher) vormerken();
       melden();
     },
 
@@ -192,6 +212,7 @@
       ungespeichert = true;
       await speichern();
       await K.profile.hinzufuegen(e);
+      await K.sitzung.merken(e.id, roh);
       melden();
       return e;
     },
@@ -199,13 +220,33 @@
     oeffnenMitPasswort: async function (e, passwort) {
       var inhalt = await kopfLesen(e);
       var schluessel;
+      var fuerSitzung;
       try {
         var huelle = await kr.ausPasswort(passwort, inhalt.kdf);
         schluessel = await kr.auspacken(inhalt.wrapped.pw, huelle, false);
+        fuerSitzung = await kr.auspacken(inhalt.wrapped.pw, huelle, true);
       } catch (fehler) {
         throw K.Fehler("fehler.passwortFalsch");
       }
       await laden(e, schluessel, inhalt);
+      await K.sitzung.merken(e.id, fuerSitzung);
+    },
+
+    // Nach dem Neuladen im selben Tab. Liefert false, wenn das Passwort nötig ist.
+    sitzungFortsetzen: async function () {
+      var s = await K.sitzung.fortsetzen();
+      if (!s) return false;
+      try {
+        var e = (await K.profile.liste()).filter(function (x) {
+          return x.id === s.id;
+        })[0];
+        if (!e) throw K.Fehler("fehler.tresorDefekt");
+        await laden(e, s.schluessel, await kopfLesen(e));
+        return true;
+      } catch (x) {
+        await K.sitzung.vergessen();
+        return false;
+      }
     },
 
     // Wer das Passwort vergessen hat, legt beim Entsperren gleich ein neues fest.
@@ -224,6 +265,7 @@
       inhalt = Object.assign({}, inhalt, { kdf: kdf, wrapped: { pw: wrappedPw, recovery: inhalt.wrapped.recovery } });
       await K.fs.schreibenAtomar(await K.profile.ordner(e), K.DATEI_TRESOR, new TextEncoder().encode(JSON.stringify(inhalt)));
       await laden(e, await kr.auspacken(wrappedPw, huellePw, false), inhalt);
+      await K.sitzung.merken(e.id, roh);
     },
 
     pruefenPasswort: async function (passwort) {
@@ -258,7 +300,9 @@
     // Der Datenschlüssel verschwindet auch dann, wenn das letzte Speichern scheitert.
     sperren: async function () {
       if (!dek) return null;
+      K.verlassenSchutz.entwurfSichern();
       window.clearTimeout(timer);
+      await K.sitzung.vergessen();
       var e = eintrag;
       var fehler = null;
       try {
@@ -283,6 +327,6 @@
   };
 
   window.addEventListener("beforeunload", function (e) {
-    if (ungespeichert) e.preventDefault();
+    if (ungespeichert || K.verlassenSchutz.aktiv()) e.preventDefault();
   });
 })();

@@ -168,13 +168,16 @@ for (const channel of kanaele()) {
   ok("Lücke wird Treffer", nachher > vorher, { vorher, nachher });
 
   // KI-Antwort über den Tresor-Workflow: Keyword kommt dazu.
+  await p.getByRole("button", { name: "Bearbeiten", exact: true }).click();
   await p.getByLabel("Name", { exact: true }).fill("Dr. Beispiel");
   await waehle(p, p.getByLabel("Anrede", { exact: true }), "frau");
   await p.getByLabel("Adresse", { exact: true }).fill("Beispiel Müller AG\nHauptstraße 5\n54321 Musterdorf");
-  await p.getByText("Anzeige mit einer KI auswerten").click();
+  await p.getByRole("button", { name: "Speichern", exact: true }).click();
+  await p.getByRole("button", { name: "Anzeige mit einer KI auswerten" }).click();
   await p.getByRole("textbox", { name: /Antwort/ }).first().fill('{"keywords":["Workday"],"anforderungen":["Erfahrung"],"branche":"Handel"}');
-  await p.getByRole("button", { name: /prüfen/i }).first().click();
-  await p.getByRole("button", { name: "Übernehmen" }).click();
+  await knopf(p, "Prüfen und übernehmen").click();
+  await knopf(p, "Übernehmen").click();
+  await p.locator(".rj-overlay").waitFor({ state: "detached" });
   z = await zustand();
   ok("KI-Keywords übernommen", z.keywords.manuell.includes("Workday") || z.keywords.fehlend.includes("Workday"), z.keywords);
   ok("KI füllt leere Felder", z.firma.branche === "Handel", z.firma.branche);
@@ -196,15 +199,19 @@ for (const channel of kanaele()) {
   ok("Vorschau: Anrede", brief.includes("Sehr geehrte Frau Beispiel"), brief);
   ok("Vorschau: Erfolg statt Sammelzeile", brief.includes("40 Stellen in 6 Monaten besetzt") && !brief.includes("Stärken zählen"), brief);
 
+  await p.getByRole("button", { name: "Weiter", exact: true }).click();
+  await p.getByRole("heading", { name: "Inhalt" }).waitFor();
   const v0 = await p.locator("textarea").first().inputValue();
   await p.getByRole("button", { name: "Anders formulieren" }).first().click();
   await p.waitForTimeout(100);
   ok("Andere Formulierung wechselt", (await p.locator("textarea").first().inputValue()) !== v0);
 
+  await p.getByRole("button", { name: "Zurück", exact: true }).click();
   await p.getByRole("switch", { name: "Eintrittstermin nennen" }).click();
   await p.waitForTimeout(100);
   ok("Rahmen in Vorschau", (await p.locator(".rj-letter").innerText()).includes("01.01.2027"));
 
+  for (let i = 0; i < 3; i++) await p.getByRole("button", { name: "Weiter", exact: true }).click();
   await p.getByRole("button", { name: "Anschreiben erstellen" }).click();
   await dokument("anschreiben");
   const pdfAus = async (art, name) => {
@@ -297,6 +304,7 @@ for (const channel of kanaele()) {
       if (png) {
         datei = new File([await new Promise((f) => c.toBlob(f, "image/png"))], "scan.png", { type: "image/png" });
       } else if (n % 2) {
+        await window.R42J_CORE.pdf.bibliothek();
         const doc = await window.PDFLib.PDFDocument.create();
         const j = await doc.embedJpg(await blob.arrayBuffer());
         doc.addPage([595, 842]).drawImage(j, { x: 0, y: 0, width: 595, height: 842 });

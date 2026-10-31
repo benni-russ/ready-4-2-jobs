@@ -442,13 +442,12 @@ async function mitteTesten(p) {
     await hin("#/stammdaten/persoenlich");
     const m = await p.evaluate(() => {
       const f = document.querySelector(".rj-main").getBoundingClientRect(), c = document.querySelector(".rj-content").getBoundingClientRect();
-      const kopf = document.querySelector(".rj-topbar").firstElementChild.getBoundingClientRect();
-      const stil = getComputedStyle(document.querySelector(".rj-content"));
-      return { links: c.left - f.left, rechts: f.right - c.right, breite: c.width, kopfLinks: kopf.left, textLinks: c.left + parseFloat(stil.paddingLeft) };
+      const kopf = document.querySelector(".rj-topbar").getBoundingClientRect(), rechts = document.querySelector(".rj-topbar__rechts").getBoundingClientRect();
+      return { links: c.left - f.left, rechts: f.right - c.right, breite: c.width, abstandRechts: kopf.right - rechts.right, polster: parseFloat(getComputedStyle(document.querySelector(".rj-topbar")).paddingRight) };
     });
     ok(`Inhalt mittig ${breite} px`, Math.abs(m.links - m.rechts) <= 1, m);
-    ok(`Inhalt behält die Breite ${breite} px`, m.breite <= 1120 + 0.5, m);
-    ok(`Kopfzeile fluchtet mit dem Inhalt ${breite} px`, Math.abs(m.kopfLinks - m.textLinks) <= 1, m);
+    ok(`Inhalt behält die Breite ${breite} px`, m.breite <= (breite >= 1800 ? 1560 : 1120) + 0.5, m);
+    ok(`Symbole stehen ganz rechts ${breite} px`, Math.abs(m.abstandRechts - m.polster) <= 1, m);
     await hin("#/vorbereitung/lernen");
     await p.getByRole("button", { name: "Interviewfragen lernen" }).click();
     await p.locator(".rj-flash").waitFor();

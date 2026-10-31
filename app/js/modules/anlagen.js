@@ -10,7 +10,23 @@
 
   function Bearbeiten(props) {
     var entwurf = hooks.useState(props.anlage);
+    var sucht = hooks.useState(false);
     var e = entwurf[0];
+
+    // Füllt nur aus: Gespeichert wird erst über den Dialog. Eigene Stichwörter bleiben stehen.
+    async function vorschlagen() {
+      sucht[1](true);
+      try {
+        var v = await K.anlagen.vorschlagFuer(e);
+        var n = Object.assign({}, e, { kategorie: v.kategorie || e.kategorie, tags: (e.tags || []).concat(v.stichwoerter.filter(function (t) { return (e.tags || []).indexOf(t) === -1; })) });
+        if (v.datum) n.datum = v.datum;
+        entwurf[1](n);
+        K.meldung(K.t("anlagen.vorschlagFertig"), "info");
+      } catch (x) {
+        K.meldung(K.fehlerText(x), "danger");
+      }
+      sucht[1](false);
+    }
 
     function setze(feld, wert) {
       var n = Object.assign({}, e);
@@ -30,6 +46,10 @@
       }}
       beiSchliessen=${props.beiSchliessen}
     >
+      <div class="rj-row" style="justify-content:space-between">
+        <span class="rj-muted">${K.t("anlagen.vorschlagText")}</span>
+        <${UI.Button} icon="sparkles" laedt=${sucht[0]} disabled=${sucht[0]} onClick=${vorschlagen}>${K.t("anlagen.vorschlaege")}<//>
+      </div>
       <${UI.TextField}
         label=${K.t("anlagen.titel")}
         placeholder=${K.t("anlagen.titelPlatzhalter")}
@@ -78,6 +98,7 @@
     var vorschau = hooks.useState(null);
     var bearbeiten = hooks.useState(null);
     var loeschen = hooks.useState(null);
+    var vorgeschlagen = hooks.useState([]);
     var id = props.teile[0];
 
     hooks.useEffect(
@@ -93,18 +114,39 @@
     async function hochladen(dateien) {
       laden[1](true);
       fehler[1]([]);
+      var neu = [];
       var probleme = [];
       for (var i = 0; i < dateien.length; i++) {
         try {
-          await K.anlagen.hinzufuegen(dateien[i]);
+          neu.push(await K.anlagen.hinzufuegen(dateien[i]));
         } catch (e) {
           probleme.push(dateien[i].name + ": " + K.fehlerText(e));
         }
       }
       fehler[1](probleme);
+      vorgeschlagen[1](neu);
       laden[1](false);
       var fertig = dateien.length - probleme.length;
       if (fertig) K.meldung(K.t("anlagen.hinzugefuegt", { n: fertig }));
+    }
+
+    function Vorschlagshinweis() {
+      var liste = vorgeschlagen[0];
+      if (!liste.length) return null;
+      if (liste.length > 1) return html`<${UI.Alert}>${K.t("anlagen.vorschlagMehrere", { n: liste.length })}<//>`;
+      return html`<${UI.Alert}>
+        <span>${K.t("anlagen.vorschlagEins", { name: liste[0].titel })}</span>
+        <div class="rj-row">
+          <${UI.Button}
+            icon="pencil"
+            onClick=${function () {
+              bearbeiten[1](liste[0]);
+              vorgeschlagen[1]([]);
+            }}
+            >${K.t("anlagen.vorschlagPruefen")}<//
+          >
+        </div>
+      <//>`;
     }
 
     async function entfernen() {
@@ -133,13 +175,14 @@
       </div>
       <${UI.FileDrop} hinweis=${K.t("drop.hinweis")} accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" beiDateien=${hochladen} />
       ${laden[0] && html`<p class="rj-muted" role="status"><span class="rj-spinner"></span> ${K.t("anlagen.verschluesselt")}</p>`}
+      <${Vorschlagshinweis} />
       ${fehler[0].length > 0 &&
       html`<${UI.Alert} art="danger">
         ${fehler[0].map(function (f, i) {
           return html`<div key=${i}>${f}</div>`;
         })}
       <//>`}
-      ${alle.length === 0 && !laden[0] && html`<${UI.EmptyState} icon="files" titel=${K.t("anlagen.leerTitel")} text=${K.t("anlagen.leerText")} />`}
+      ${alle.length === 0 && !laden[0] && html`<p class="rj-muted">${K.t("anlagen.leerText")}</p>`}
       ${alle.length > 0 &&
       html`<div class="rj-grid-2">
         <${UI.SearchField} label=${K.t("anlagen.suchen")} platzhalter=${K.t("anlagen.suchen")} wert=${suche[0]} beiAenderung=${suche[1]} />

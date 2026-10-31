@@ -233,13 +233,13 @@ for (const channel of kanaele()) {
   await p.waitForTimeout(50);
   ok("Filter Zeitraum", !(await karten()).includes("Altbau KG") && (await karten()).length === 5, await karten());
   await knopf(p, "Filter zurücksetzen").click();
-  await waehle(p, p.getByLabel("Sortierung", { exact: true }), "firma");
+  await waehle(p, p.getByLabel("Sortieren", { exact: true }), "firma");
   await p.waitForTimeout(50);
   ok("Sortierung Firma", (await karten())[0] === "Altbau KG", await karten());
-  await waehle(p, p.getByLabel("Sortierung", { exact: true }), "alt");
+  await waehle(p, p.getByLabel("Sortieren", { exact: true }), "alt");
   await p.waitForTimeout(50);
   ok("Sortierung Älteste", (await karten())[0] === "Altbau KG", await karten());
-  await waehle(p, p.getByLabel("Sortierung", { exact: true }), "neu");
+  await waehle(p, p.getByLabel("Sortieren", { exact: true }), "neu");
   await p.waitForTimeout(50);
   ok("Sortierung Neueste", (await karten())[0] === "Beispiel AG", await karten());
   await p.getByRole("button", { name: "Liste", exact: true }).click();
@@ -407,6 +407,10 @@ for (const channel of kanaele()) {
   await p.evaluate(() => {
     const K = window.R42J_CORE;
     window.__neu = K.bewerbungen.neu({ firma: "Vorbereitung GmbH", titel: "Einkauf", ausrichtungId: K.tresor.daten().ausrichtungen[0].id, sprache: "de", anrede: "sie" }).id;
+    // Die Warnung erscheint erst, wenn es etwas zu versenden gibt.
+    K.bewerbungen.aendern(window.__neu, (x) => {
+      x.dokumente.anlagenPdf = { erzeugtAm: new Date().toISOString(), dateiname: "anlagen.pdf", anlageId: "kopie", groesse: 1 };
+    });
     location.hash = "#/bewerbungen/" + window.__neu + "/versand";
   });
   await p.getByText("8 von 8 Punkten auf der Checkliste sind offen").waitFor();

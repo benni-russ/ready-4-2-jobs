@@ -9,6 +9,17 @@
     var id = hooks.useId();
     var leiste = hooks.useRef(null);
 
+    // Bei schmalem Fenster oder starkem Zoom bleibt der aktive Reiter sichtbar.
+    hooks.useEffect(
+      function () {
+        var l = leiste.current;
+        var aktiv = l && l.querySelector('[aria-selected="true"]');
+        if (!aktiv || l.scrollWidth <= l.clientWidth) return;
+        l.scrollLeft += aktiv.getBoundingClientRect().left - l.getBoundingClientRect().left - (l.clientWidth - aktiv.offsetWidth) / 2;
+      },
+      [props.wert],
+    );
+
     function taste(e) {
       var richtung = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
       if (!richtung) return;

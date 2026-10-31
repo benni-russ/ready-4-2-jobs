@@ -32,8 +32,8 @@
       K.update.beimStart();
     }, []);
     var bekannt = route.seite === "komponenten" || EIGENE.indexOf(route.seite) > -1;
-    document.title = (bekannt && route.seite !== "komponenten" ? K.t("nav." + route.seite) + " · " : "") + "R42J";
-    return html`<${UI.AppShell} seite=${route.seite} key=${z.sprache}>${seitenInhalt(route.seite, route.teile)}<//>`;
+    document.title = (bekannt && route.seite !== "komponenten" ? K.t("nav." + route.seite) + " · " : "") + "R42J – Ready 4 2 Jobs";
+    return html`<${UI.AppShell} seite=${route.seite} route=${route} key=${z.sprache}>${seitenInhalt(route.seite, route.teile)}<//>`;
   }
 
   function Ablauf() {
@@ -48,9 +48,9 @@
     if (a.phase === "schluessel") seite = html`<${S.SchluesselEntsperren} key=${schluessel} eintrag=${a.eintrag} />`;
     if (a.phase === "onboarding") seite = html`<${S.Onboarding} key=${a.schritt} name=${a.name} schritt=${a.schritt} />`;
     if (a.phase === "schluesselNeu") seite = html`<${S.SchluesselNeu} />`;
-    if (a.phase === "sperrt") seite = html`<${UI.Bildschirm} icon="lock" titel=${K.t("sperre.sperrt")} />`;
+    if (a.phase === "sperrt") seite = html`<${UI.Bildschirm} titel=${K.t("sperre.sperrt")} />`;
     if (a.phase === "app") seite = html`<${App} />`;
-    return html`${seite}<${UI.Toaster} />`;
+    return html`${seite}${a.phase === "app" && html`<${UI.SperrCountdown} />`}<${UI.Toaster} />`;
   }
 
   K.darstellungStarten();

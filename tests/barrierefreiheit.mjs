@@ -185,14 +185,13 @@ for (const channel of kanaele()) {
   ok("Tab erreicht viele Ziele", gesehen.size >= 15, [...gesehen]);
   ok("Fokus immer sichtbar", ohneFokus.length === 0, ohneFokus);
 
-  // Nur Tastatur: Palette öffnen, Dialog fangen, Escape schließt.
+  // Nur Tastatur: Suchleiste fokussieren, Escape verlässt sie wieder.
   await p.keyboard.press("Control+k");
-  await p.getByRole("dialog").waitFor();
-  await p.waitForFunction(() => document.querySelector("[role=dialog]")?.contains(document.activeElement));
-  ok("Fokus im Dialog", true);
+  await p.waitForFunction(() => document.activeElement?.closest(".rj-searchbar"));
+  ok("Fokus in der Suchleiste", true);
   await p.keyboard.press("Escape");
-  await p.getByRole("dialog").waitFor({ state: "detached" });
-  ok("Escape schließt", true);
+  await p.waitForFunction(() => !document.activeElement?.closest(".rj-searchbar"));
+  ok("Escape verlässt die Suche", true);
 
   // Bewegung: Mit reduzierter Bewegung läuft nichts Dauerhaftes.
   await p.emulateMedia({ reducedMotion: "reduce" });

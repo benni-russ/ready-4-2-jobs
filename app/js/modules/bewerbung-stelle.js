@@ -30,18 +30,6 @@
     unternehmensinfos: { typ: "text" },
   };
 
-  // Feld schreibt direkt in die Bewerbung, der Tresor speichert verzögert.
-  function feld(b, bereich, name) {
-    return {
-      wert: (bereich ? b[bereich][name] : b[name]) || "",
-      beiAenderung: function (w) {
-        K.bewerbungen.aendern(b.id, function (x) {
-          (bereich ? x[bereich] : x)[name] = w;
-        });
-      },
-    };
-  }
-
   // Vorhandene Eingaben bleiben, die KI füllt nur Lücken.
   function uebernehmen(b, r) {
     K.bewerbungen.aendern(b.id, function (x) {
@@ -94,8 +82,8 @@
             icon="check"
             onClick=${function () {
               uebernehmen(b, r);
-              ergebnis[1](null);
               K.meldung(K.t("stelle.kiUebernommen"));
+              props.beiFertig();
             }}
           >
             ${K.t("import.uebernehmen")}
@@ -124,10 +112,119 @@
     />`;
   }
 
+  // Nur diese Teile stehen unter Bearbeiten-Schutz. Keywords bleiben eine Arbeitsfläche.
+  function formularWerte(b) {
+    return {
+      stelle: b.stelle,
+      firma: b.firma,
+      ansprechpartner: b.ansprechpartner,
+      ausrichtungId: b.ausrichtungId,
+      sprache: b.sprache,
+      anrede: b.anrede,
+    };
+  }
+
+  function formularSchreiben(b, e) {
+    var anzeigeNeu = e.stelle.anzeigeText !== b.stelle.anzeigeText;
+    K.bewerbungen.aendern(b.id, function (x) {
+      var kopie = JSON.parse(JSON.stringify(e));
+      x.stelle = kopie.stelle;
+      x.firma = kopie.firma;
+      x.ansprechpartner = kopie.ansprechpartner;
+      x.ausrichtungId = kopie.ausrichtungId;
+      if (x.sprache !== e.sprache || x.anrede !== e.anrede) K.anschreiben.satzWechseln(x, e.sprache, e.anrede);
+    });
+    if (anzeigeNeu) K.bewerbungen.anzeigeAnalysieren(b.id);
+  }
+
+  function Lesen(props) {
+    var b = props.bewerbung;
+    var d = K.tresor.daten();
+    var a = b.ansprechpartner;
+    var ausrichtung = d.ausrichtungen.filter(function (x) {
+      return x.id === b.ausrichtungId;
+    })[0];
+    var anredeWort = a.anrede ? K.t(a.anrede === "frau" ? "stelle.anredeFrau" : "stelle.anredeHerr") : "";
+    return html`
+      <section class="rj-card rj-stack">
+        <h2 class="h3">${K.t("stelle.anzeige")}</h2>
+        <${UI.LeseListe}
+          eintraege=${[
+            [K.t("bewerbung.stelle"), b.stelle.titel],
+            [K.t("stelle.referenz"), b.stelle.referenz],
+            [K.t("stelle.quelle"), b.stelle.quelle],
+            [K.t("stelle.link"), b.stelle.link],
+            [K.t("bewerbung.ausrichtung"), ausrichtung && ausrichtung.name],
+            [K.t("bewerbung.sprache"), (S.sprachOptionen().filter(function (o) { return o.wert === b.sprache; })[0] || {}).label],
+            [K.t("bewerbung.anrede"), (S.anredeOptionen().filter(function (o) { return o.wert === b.anrede; })[0] || {}).label],
+          ]}
+        />
+        ${b.stelle.anzeigeText &&
+        html`<div class="rj-accordion">
+          <details>
+            <summary>${K.t("bewerbung.anzeige")}<${UI.Icon} name="chevron-down" /></summary>
+            <div style="white-space:pre-line">${b.stelle.anzeigeText}</div>
+          </details>
+        </div>`}
+      </section>
+      <div class="rj-cards">
+      <section class="rj-card rj-stack">
+        <h2 class="h3">${K.t("stelle.firma")}</h2>
+        <${UI.LeseListe}
+          eintraege=${[
+            [K.t("bewerbung.firma"), b.firma.name],
+            [K.t("stelle.adresse"), b.firma.adresse],
+            [K.t("stelle.website"), b.firma.website],
+            [K.t("stelle.branche"), b.firma.branche],
+          ]}
+        />
+      </section>
+      <section class="rj-card rj-stack">
+        <h2 class="h3">${K.t("stelle.ansprechpartner")}</h2>
+        <${UI.LeseListe}
+          leerAktion=${{ label: K.t("stelle.ansprechEintragen"), onClick: props.beiBearbeiten }}
+          eintraege=${[
+            [K.t("stelle.ansprechAnrede"), anredeWort],
+            [K.t("stelle.ansprechName"), a.name],
+            [K.t("stelle.ansprechPosition"), a.position],
+            [K.t("stelle.ansprechEmail"), a.email],
+            [K.t("stelle.ansprechTelefon"), a.telefon],
+          ]}
+        />
+      </section>
+      </div>
+    `;
+  }
+
   S.BewerbungStelle = function (props) {
     var b = props.bewerbung;
     var d = K.tresor.daten();
     var neu = hooks.useState("");
+    var kiOffen = hooks.useState(false);
+    var f = UI.useEntwurf({
+      lesen: function () {
+        return formularWerte(b);
+      },
+      schreiben: function (e) {
+        formularSchreiben(b, e);
+      },
+      pruefen: function (e) {
+        return e.stelle.titel.trim() && e.firma.name.trim() ? "" : K.t("stelle.pflichtFehlt");
+      },
+    });
+    var e = f.entwurf;
+
+    // Feld schreibt in den Entwurf, gespeichert wird erst über die Leiste.
+    function feld(bereich, name) {
+      return {
+        wert: (bereich ? e[bereich][name] : e[name]) || "",
+        beiAenderung: function (w) {
+          f.setze(function (x) {
+            (bereich ? x[bereich] : x)[name] = w;
+          });
+        },
+      };
+    }
 
     function luecke(name) {
       var id = K.stammdaten.kompetenzAnlegen(name);
@@ -146,6 +243,18 @@
     }
 
     return html`
+      ${!f.bearbeiten &&
+      html`<div class="rj-aktionen">
+        <${UI.Button}
+          icon="sparkles"
+          onClick=${function () {
+            kiOffen[1](true);
+          }}
+        >
+          ${K.t("stelle.kiTitel")}
+        <//>
+        <${UI.Button} icon="pencil" onClick=${f.starten}>${K.t("speichern.bearbeiten")}<//>
+      </div>`}
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("stelle.passung")}</h2>
         <${UI.KeywordMatch}
@@ -177,68 +286,60 @@
         </div>
       </section>
 
-      <section class="rj-card rj-stack">
+      ${!f.bearbeiten && html`<${Lesen} bewerbung=${b} beiBearbeiten=${f.starten} />`}
+      ${f.bearbeiten &&
+      html`<section class="rj-card rj-stack">
         <h2 class="h3">${K.t("stelle.anzeige")}</h2>
         <${UI.Textarea}
           label=${K.t("bewerbung.anzeige")}
           placeholder=${K.t("bewerbung.anzeigePlatzhalter")}
           rows="10"
-          ...${feld(b, "stelle", "anzeigeText")}
-          onBlur=${function () {
-            K.bewerbungen.anzeigeAnalysieren(b.id);
-          }}
+          ...${feld("stelle", "anzeigeText")}
         />
         <div class="rj-grid-2">
-          <${UI.TextField} label=${K.t("bewerbung.stelle")} placeholder=${K.t("bewerbung.stellePlatzhalter")} pflicht=${true} ...${feld(b, "stelle", "titel")} />
-          <${UI.TextField} label=${K.t("stelle.referenz")} placeholder=${K.t("stelle.referenzPlatzhalter")} ...${feld(b, "stelle", "referenz")} />
-          <${UI.TextField} label=${K.t("stelle.quelle")} placeholder=${K.t("stelle.quellePlatzhalter")} hinweis=${K.t("stelle.quelleHinweis")} ...${feld(b, "stelle", "quelle")} />
-          <${UI.TextField} label=${K.t("stelle.link")} placeholder=${K.t("stelle.linkPlatzhalter")} ...${feld(b, "stelle", "link")} />
+          <${UI.TextField} label=${K.t("bewerbung.stelle")} placeholder=${K.t("bewerbung.stellePlatzhalter")} pflicht=${true} ...${feld("stelle", "titel")} />
+          <${UI.TextField} label=${K.t("stelle.referenz")} placeholder=${K.t("stelle.referenzPlatzhalter")} ...${feld("stelle", "referenz")} />
+          <${UI.TextField} label=${K.t("stelle.quelle")} placeholder=${K.t("stelle.quellePlatzhalter")} hinweis=${K.t("stelle.quelleHinweis")} ...${feld("stelle", "quelle")} />
+          <${UI.TextField} label=${K.t("stelle.link")} placeholder=${K.t("stelle.linkPlatzhalter")} ...${feld("stelle", "link")} />
         </div>
-        <${UI.Select}
-          label=${K.t("bewerbung.ausrichtung")}
-          optionen=${d.ausrichtungen.map(function (a) {
-            return { wert: a.id, label: a.name };
-          })}
-          ...${feld(b, null, "ausrichtungId")}
-        />
         <div class="rj-grid-2">
+          <${UI.Select}
+            label=${K.t("bewerbung.ausrichtung")}
+            optionen=${d.ausrichtungen.map(function (a) {
+              return { wert: a.id, label: a.name };
+            })}
+            ...${feld(null, "ausrichtungId")}
+          />
           <div class="rj-field">
             <span class="rj-label">${K.t("bewerbung.sprache")}</span>
             <${UI.SegmentedControl}
               label=${K.t("bewerbung.sprache")}
-              wert=${b.sprache}
+              wert=${e.sprache}
               optionen=${S.sprachOptionen()}
-              beiAenderung=${function (w) {
-                K.bewerbungen.aendern(b.id, function (x) {
-                  K.anschreiben.satzWechseln(x, w, x.anrede);
-                });
-              }}
+              beiAenderung=${feld(null, "sprache").beiAenderung}
             />
           </div>
           <div class="rj-field">
             <span class="rj-label">${K.t("bewerbung.anrede")}</span>
             <${UI.SegmentedControl}
               label=${K.t("bewerbung.anrede")}
-              wert=${b.anrede}
+              wert=${e.anrede}
               optionen=${S.anredeOptionen()}
-              beiAenderung=${function (w) {
-                K.bewerbungen.aendern(b.id, function (x) {
-                  K.anschreiben.satzWechseln(x, x.sprache, w);
-                });
-              }}
+              beiAenderung=${feld(null, "anrede").beiAenderung}
             />
           </div>
         </div>
       </section>
 
+      <div class="rj-cards">
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("stelle.firma")}</h2>
-        <${UI.TextField} label=${K.t("bewerbung.firma")} placeholder=${K.t("bewerbung.firmaPlatzhalter")} pflicht=${true} ...${feld(b, "firma", "name")} />
-        <${UI.Textarea} label=${K.t("stelle.adresse")} placeholder=${K.t("stelle.adressePlatzhalter")} hinweis=${K.t("stelle.adresseHinweis")} rows="3" ...${feld(b, "firma", "adresse")} />
         <div class="rj-grid-2">
-          <${UI.TextField} label=${K.t("stelle.website")} placeholder=${K.t("stelle.websitePlatzhalter")} ...${feld(b, "firma", "website")} />
-          <${UI.TextField} label=${K.t("stelle.branche")} placeholder=${K.t("stelle.branchePlatzhalter")} ...${feld(b, "firma", "branche")} />
+          <${UI.TextField} label=${K.t("bewerbung.firma")} placeholder=${K.t("bewerbung.firmaPlatzhalter")} pflicht=${true} ...${feld("firma", "name")} />
+          <${UI.TextField} label=${K.t("stelle.website")} placeholder=${K.t("stelle.websitePlatzhalter")} ...${feld("firma", "website")} />
+          <${UI.TextField} label=${K.t("stelle.branche")} placeholder=${K.t("stelle.branchePlatzhalter")} ...${feld("firma", "branche")} />
         </div>
+        <${UI.Textarea} label=${K.t("stelle.adresse")} placeholder=${K.t("stelle.adressePlatzhalter")} hinweis=${K.t("stelle.adresseHinweis")} rows="3" ...${feld("firma", "adresse")} />
       </section>
 
       <section class="rj-card rj-stack">
@@ -251,24 +352,33 @@
               { wert: "frau", label: K.t("stelle.anredeFrau") },
               { wert: "herr", label: K.t("stelle.anredeHerr") },
             ]}
-            ...${feld(b, "ansprechpartner", "anrede")}
+            ...${feld("ansprechpartner", "anrede")}
           />
-          <${UI.TextField} label=${K.t("stelle.ansprechName")} placeholder=${K.t("stelle.ansprechNamePlatzhalter")} ...${feld(b, "ansprechpartner", "name")} />
-          <${UI.TextField} label=${K.t("stelle.ansprechPosition")} placeholder=${K.t("stelle.ansprechPositionPlatzhalter")} ...${feld(b, "ansprechpartner", "position")} />
-          <${UI.TextField} label=${K.t("stelle.ansprechEmail")} placeholder=${K.t("stelle.ansprechEmailPlatzhalter")} ...${feld(b, "ansprechpartner", "email")} />
-          <${UI.TextField} label=${K.t("stelle.ansprechTelefon")} placeholder=${K.t("stelle.ansprechTelefonPlatzhalter")} ...${feld(b, "ansprechpartner", "telefon")} />
+          <${UI.TextField} label=${K.t("stelle.ansprechName")} placeholder=${K.t("stelle.ansprechNamePlatzhalter")} ...${feld("ansprechpartner", "name")} />
+          <${UI.TextField} label=${K.t("stelle.ansprechPosition")} placeholder=${K.t("stelle.ansprechPositionPlatzhalter")} ...${feld("ansprechpartner", "position")} />
+          <${UI.TextField} label=${K.t("stelle.ansprechEmail")} placeholder=${K.t("stelle.ansprechEmailPlatzhalter")} ...${feld("ansprechpartner", "email")} />
+          <${UI.TextField} label=${K.t("stelle.ansprechTelefon")} placeholder=${K.t("stelle.ansprechTelefonPlatzhalter")} ...${feld("ansprechpartner", "telefon")} />
         </div>
       </section>
-
-      <div class="rj-accordion">
-        <details>
-          <summary>${K.t("stelle.kiTitel")}</summary>
-          <div class="rj-stack">
-            <p>${K.t("stelle.kiText")}</p>
-            <${KiAnalyse} bewerbung=${b} />
-          </div>
-        </details>
       </div>
+
+      <${UI.BearbeitenLeiste} form=${f} />`}
+      ${kiOffen[0] &&
+      html`<${UI.Dialog}
+        titel=${K.t("stelle.kiTitel")}
+        breit=${true}
+        beiSchliessen=${function () {
+          kiOffen[1](false);
+        }}
+      >
+        <p>${K.t("stelle.kiText")}</p>
+        <${KiAnalyse}
+          bewerbung=${b}
+          beiFertig=${function () {
+            kiOffen[1](false);
+          }}
+        />
+      <//>`}
     `;
   };
 })();

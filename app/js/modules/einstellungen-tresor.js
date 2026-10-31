@@ -151,11 +151,13 @@
       }
     }
 
-    return html`<section class="rj-card rj-stack">
+    return html`<section class="rj-card rj-card--breit rj-stack">
       <h2 class="h3">${K.t("backup.titel")}</h2>
       <p class="rj-muted">${K.t("backup.text")}</p>
       ${fehler[0] && html`<${UI.Alert} art="danger">${fehler[0]}<//>`}
       ${ziel2[0] && !erlaubt[0] && html`<${UI.Alert} art="warning">${K.t("backup.ziel2Erlaubnis", { name: ziel2[0].name })}<//>`}
+      <div class="rj-spalten">
+      <div class="rj-stack">
       <div class="rj-row">
         <${UI.Button} variante="primary" icon="hard-drive" laedt=${laedt[0]} disabled=${laedt[0]} onClick=${sichern}>${K.t("backup.jetzt")}<//>
       </div>
@@ -171,6 +173,8 @@
           >${K.t("backup.ziel2Entfernen")}<//
         >`}
       </div>
+      </div>
+      <div class="rj-stack">
       <h3 class="h3">${K.t("backup.liste")}</h3>
       ${liste[0].length === 0 && html`<p class="rj-muted">${K.t("backup.keine")}</p>`}
       <ul class="rj-checklist">
@@ -193,6 +197,8 @@
         })}
       </ul>
       <div class="rj-row"><${UI.Button} icon="upload" onClick=${dateiWaehlen}>${K.t("backup.ausDatei")}<//></div>
+      </div>
+      </div>
       ${auswahl[0] &&
       html`<${UI.Dialog}
         titel=${K.t("backup.ersetzenTitel")}
@@ -299,20 +305,36 @@
           <${UI.Button} icon="refresh-cw" onClick=${updateSuchen}>${K.t("update.jetzt")}<//>
           <${UI.Button} variante="ghost" icon="book-open" href="#/wissen/update-installieren">${K.t("update.anleitung")}<//>
         </div>`}
-        <div class="rj-row"><${UI.Button} onClick=${exportLeeren}>${K.t("einstellungen.exportLeeren")}<//></div>
         <div class="rj-row">
-          <${UI.Button}
-            variante="danger"
-            icon="trash-2"
-            onClick=${function () {
-              dialog[1]("loeschen");
-            }}
-            >${K.t("profil.loeschen")}<//
-          >
+          <${UI.Button} onClick=${exportLeeren}>${K.t("einstellungen.exportLeeren")}<//>
         </div>
       </section>
       ${dialog[0] === "passwort" && html`<${PasswortDialog} beiSchliessen=${schliessen} />`}
-      ${dialog[0] === "loeschen" && html`<${LoeschenDialog} beiSchliessen=${schliessen} />`}
     `;
+  };
+
+  // Steht als letzte Karte der Seite, weit weg von den täglichen Einstellungen.
+  S.ProfilLoeschenKarte = function () {
+    var offen = hooks.useState(false);
+    return html`<section class="rj-card rj-card--breit rj-kartenzeile rj-kartenzeile--letzte">
+      <div class="rj-stack">
+        <h2 class="h3">${K.t("profil.loeschen")}</h2>
+        <p class="rj-muted">${K.t("einstellungen.profilLoeschenText")}</p>
+      </div>
+      <${UI.Button}
+        variante="danger-quiet"
+        icon="trash-2"
+        onClick=${function () {
+          offen[1](true);
+        }}
+        >${K.t("profil.loeschen")}<//
+      >
+      ${offen[0] &&
+      html`<${LoeschenDialog}
+        beiSchliessen=${function () {
+          offen[1](false);
+        }}
+      />`}
+    </section>`;
   };
 })();

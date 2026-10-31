@@ -3,10 +3,79 @@
   "use strict";
   var liste = (window.R42J_WISSEN = window.R42J_WISSEN || []);
 
+  // Quellen und Skizze je Artikel. Die Quellen wurden abgerufen und geprüft.
+  var ZUSATZ = {
+    "einstellungstest": {
+      "sources": "Federal Employment Agency (Germany): Guide to selection tests (German) | https://www.arbeitsagentur.de/vor-ort/datei/orientierungshilfen_ba095452.pdf ;; Victoria University of Wellington: Psychometric testing | https://wgtn.ac.nz/careers/employment/jobs/psychometric-testing",
+      "image": "einstellungstest",
+      "imageAlt": "Four kinds of test: school knowledge, abilities, work sample and personality"
+    },
+    "foto-ja-nein": {
+      "sources": "EURES (European Commission): Living and working conditions in Germany, applications and photo | https://eures.europa.eu/living-and-working/living-and-working-conditions/living-and-working-conditions-germany_en ;; University of St Andrews Careers: CVs, no photo on UK CVs | https://www.st-andrews.ac.uk/careers/how-to-apply/cv/ ;; Pomona College Career Development: U.S. résumé tips for international students | https://cdo.pomona.edu/resources/u-s-resume-tips-for-international-students/",
+      "image": "foto-ja-nein",
+      "imageAlt": "Comparison of when a photo helps and when to leave it out"
+    },
+    "ats-erklaert": {
+      "sources": "Roche Careers: Resume parsing FAQ | https://careers.roche.com/global/en/resume-parsing-faq ;; UC Irvine Career Center: Mastering ATS career guide | https://career.uci.edu/wp-content/uploads/2025/03/2025-Mastering-ATS-Career-Guide-8.5x11.pdf",
+      "image": "ats-erklaert",
+      "imageAlt": "Flow: upload the application, software reads the text, skills are found, people decide"
+    },
+    "star-methode": {
+      "sources": "MIT Career Advising: Career toolkit for interviewing | https://capd.mit.edu/resources/career-toolkit-interviewing/ ;; University of Washington Career Center: STAR method of interviewing | https://careers.uw.edu/resources/star-method-of-interviewing/",
+      "image": "star-methode",
+      "imageAlt": "Four steps: situation, task, action and result"
+    },
+    "anschreiben-aufbau": {
+      "sources": "EURES (European Commission): Applying for a job in Germany, cover letter and CV | https://eures.europa.eu/living-and-working/living-and-working-conditions/living-and-working-conditions-germany_en ;; DIN Media: DIN 5008 topic page | https://www.dinmedia.de/en/topics/din-5008",
+      "image": "anschreiben-aufbau",
+      "imageAlt": "Page with sender, subject, opening, main part, closing and signature"
+    },
+    "gehaltsverhandlung": {
+      "sources": "MIT Career Advising: Negotiate job offers | https://capd.mit.edu/channels/negotiate-job-offers/ ;; University of Pennsylvania Career Services: Negotiating salary and evaluating an offer | https://careerservices.upenn.edu/blog/2019/08/19/negotiating-salary/ ;; German Federal Employment Agency: Entgeltatlas salary tool (in German) | https://web.arbeitsagentur.de/entgeltatlas/",
+      "image": "gehaltsverhandlung",
+      "imageAlt": "Range of minimum, target and wish"
+    },
+    "kuendigungsfristen": {
+      "sources": "Gesetze im Internet: German Civil Code in English, sections 622 and 623 (status 2021) | https://www.gesetze-im-internet.de/englisch_bgb/englisch_bgb.html ;; EURES (European Commission): Germany, employment contracts and end of employment | https://eures.europa.eu/living-and-working/living-and-working-conditions/living-and-working-conditions-germany_en",
+      "image": "kuendigungsfristen",
+      "imageAlt": "Staircase: after 2, 5, 8, 10, 12, 15 and 20 years notice rises from 1 to 7 months"
+    },
+    "arbeitsvertrag-pruefen": {
+      "sources": "EURES (European Commission): Germany, employment contracts | https://eures.europa.eu/living-and-working/living-and-working-conditions/living-and-working-conditions-germany_en ;; Gesetze im Internet: German Commercial Code in English, sections 74 and 74a | https://www.gesetze-im-internet.de/englisch_hgb/englisch_hgb.html ;; Gesetze im Internet: Section 2 Nachweisgesetz, written record of terms (in German) | https://www.gesetze-im-internet.de/nachwg/__2.html",
+      "image": "arbeitsvertrag-pruefen",
+      "imageAlt": "Contract page with role, pay, hours, holiday, probation and notice periods"
+    },
+    "vorstellungsgespraech": {
+      "sources": "Federal Anti-Discrimination Agency: Inadmissible questions in job interviews | https://www.antidiskriminierungsstelle.gov.de/SharedDocs/pressemitteilungen/EN/2018/20181205_Unangemessene_Fragen_Bewerbungsgespraeche.html ;; Gesetze im Internet: General Equal Treatment Act in English | https://www.gesetze-im-internet.de/englisch_agg/englisch_agg.html ;; MIT Career Advising: Career toolkit for interviewing | https://capd.mit.edu/resources/career-toolkit-interviewing/",
+      "image": "vorstellungsgespraech",
+      "imageAlt": "Five phases: arrive, introduce, questions, your turn and close"
+    },
+    "linkedin-xing-profil": {
+      "sources": "LinkedIn Help: Create a good LinkedIn profile | https://www.linkedin.com/help/linkedin/answer/a554351 ;; LinkedIn Help: Let recruiters know you're Open to Work | https://www.linkedin.com/help/linkedin/answer/a507508/let-recruiters-know-you-re-open-to-work?lang=en ;; LinkedIn Help: Edit your headline | https://www.linkedin.com/help/linkedin/answer/a542926/edit-your-headline?lang=en",
+      "image": "linkedin-xing-profil",
+      "imageAlt": "Profile with photo, headline, summary, experience and skills"
+    },
+    "serioese-email": {
+      "sources": "CISA: Turn on multifactor authentication | https://www.cisa.gov/secure-our-world/turn-mfa ;; University of Duisburg-Essen Career Service: Applying by email (in German) | https://www.uni-due.de/imperia/md/content/abz/career/bewerbung_permail_barrierefrei.pdf",
+      "image": "serioese-email",
+      "imageAlt": "Examples of professional and unsuitable email addresses"
+    },
+    "probezeit": {
+      "sources": "Gesetze im Internet: German Civil Code in English, section 622 (status 2021) | https://www.gesetze-im-internet.de/englisch_bgb/englisch_bgb.html ;; EURES (European Commission): Germany, probation and notice periods | https://eures.europa.eu/living-and-working/living-and-working-conditions/living-and-working-conditions-germany_en ;; Gesetze im Internet: Section 1 Protection Against Dismissal Act (in German) | https://www.gesetze-im-internet.de/kschg/__1.html",
+      "image": "probezeit",
+      "imageAlt": "Timeline: up to six months usually two weeks' notice, longer periods afterwards"
+    }
+  };
+
+  function zusatzZeilen(kennung) {
+    var z = ZUSATZ[kennung];
+    return z ? "sources: " + z.sources + "\nimage: " + z.image + "\nimage-alt: " + z.imageAlt + "\n" : "";
+  }
+
   function artikel(kennung, titel, kategorie, text) {
     liste.push({
       datei: kennung + ".en.md",
-      md: "---\ntitle: " + titel + "\ncategory: " + kategorie + "\nlang: en\n---\n\n" + text.trim() + "\n",
+      md: "---\ntitle: " + titel + "\ncategory: " + kategorie + "\nlang: en\n" + zusatzZeilen(kennung) + "---\n\n" + text.trim() + "\n",
     });
   }
 
@@ -15,8 +84,36 @@
   var GESPRAECH = "Interview";
   var AUFTRITT = "Online presence";
 
+  artikel("einstellungstest", "Understanding selection tests", BEWERBUNG, `
+Some companies and public bodies invite you to a test before the interview. This is especially common for apprenticeships. You don't need any special skill: if you know the task types, you can walk in calmer.
+
+## What may come up
+
+- **School knowledge:** Maths, spelling, general knowledge. These tasks resemble class tests, so practice helps most here.
+- **Abilities:** Logic, concentration, spatial reasoning. Many people find these unfamiliar at first.
+- **Work samples:** You complete a small task from everyday work.
+- **Personality:** You assess yourself. There are no right or wrong answers here.
+
+## How to prepare
+
+1. Practise the areas you find hard under [Preparation](#/vorbereitung).
+2. Set a timer while practising so you get used to time pressure.
+3. Get a good night's sleep and plan your journey so you arrive on time. Pack your glasses and something to drink.
+
+## During the test
+
+- Read the instructions carefully and ask if an example is unclear.
+- Don't get stuck on one task. Move on and come back later.
+- Don't worry if you can't finish. Time pressure is intended, and there are often more tasks than anyone can complete.
+- Only guess if wrong answers don't cost points.
+
+## Personality tests
+
+Answer honestly and the way you behave at work. Your goal is a job that suits you. The catalogue "Understanding personality tests" explains what typical statements are asking about.
+`);
+
   artikel("foto-ja-nein", "Photo or no photo?", BEWERBUNG, `
-In Germany, a photo on your CV is common but not required. Nobody can demand one, and you may leave it out.
+In Germany, a photo on your CV is common, but no law requires it. It is voluntary, and you may leave it out.
 
 ## When a photo helps
 
@@ -100,11 +197,11 @@ A cover letter fits on one page. It does not repeat your CV. It explains why you
 `);
 
   artikel("gehaltsverhandlung", "Negotiating your salary", GESPRAECH, `
-Salary negotiations are normal. Asking politely and with good preparation will not cost you an offer.
+Salary negotiations are normal. Asking politely and with good preparation will rarely cost you an offer.
 
 ## Preparation
 
-- **Check the market:** Compare salaries for your job, region and experience, for example in the salary atlas of the German Federal Employment Agency.
+- **Check the market:** Compare salaries for your job and region, for example in the salary atlas of the German Federal Employment Agency.
 - **Prove your value:** Collect achievements with numbers.
 - **Set a range:** Decide on your wish, target and minimum before the conversation.
 - **Think in gross per year:** Companies usually talk about annual gross salary.
@@ -125,7 +222,7 @@ This article gives an overview for employment in Germany. It does not replace le
 
 ## The basic legal rule
 
-Under Section 622 of the German Civil Code (BGB), the notice period is four weeks to the 15th or the end of a calendar month. For employees, this applies regardless of length of service, unless the contract says otherwise.
+Under Section 622 of the German Civil Code (BGB), the notice period is four weeks to the 15th or the end of a calendar month. For employees, this applies regardless of length of service.
 
 ## Notice given by the company
 
@@ -143,7 +240,8 @@ The period grows with length of service, each time to the end of a month:
 
 ## What to look out for
 
-- **Contract and collective agreement:** They can set different periods.
+- **Contract:** Longer periods are possible, but never longer for you than for the employer. Shorter ones are allowed only in narrow exceptions (Section 622(5) and (6) BGB).
+- **Collective agreement:** It can set different periods.
 - **Probation:** Two weeks usually apply here, see [Probation](#/wissen/probezeit).
 - **Written form:** Notice must be on paper with a signature. Email or messengers are not enough.
 - **Count backwards:** Before accepting, check the earliest date you can switch jobs.
@@ -158,7 +256,7 @@ Read the whole contract before you sign. You may take your time and ask question
 - **Probation:** Up to six months is common. See [Probation](#/wissen/probezeit).
 - **Notice period:** It is in the contract or follows the law, see [Notice periods](#/wissen/kuendigungsfristen).
 - **Overtime:** Clauses like "covered by your salary" are problematic if it is unclear how many hours are meant.
-- **Fixed term:** An end date or a valid reason must be agreed in writing before you start.
+- **Fixed term:** The end date or purpose must be agreed in writing before you start.
 - **Non-compete after leaving:** It lasts two years at most and requires compensation of at least half of your last pay.
 - **Repaying training costs:** Check the amount and the commitment period.
 - **Transfer:** Check whether the company may send you to other locations or tasks.
@@ -311,14 +409,12 @@ An update only replaces the program. Your data in the \`daten\` folder stays unt
 
 ## How to do it
 
-1. Lock R42J and close the browser tab.
-2. To be safe, back up the \`daten\` folder, for example by copying it to your computer.
-3. Download the ZIP file \`r42j-vX.Y.Z.zip\` from the release and unpack it.
-4. Delete the old \`app\` folder on the stick.
-5. Copy the new \`app\` folder from the ZIP to the same place.
-6. Start R42J as usual and unlock your profile.
+1. Click "Download update" on the overview and unpack the ZIP file.
+2. Lock R42J and close the browser tab.
+3. Replace the \`app\` folder on the stick with the new one from the ZIP.
+4. Start R42J as usual and unlock your profile.
 
-You only need to replace the start files if the release note says so. \`daten\` is not in the ZIP and is never overwritten. Never delete this folder.
+If the button is missing, download the file \`r42j-vX.Y.Z.zip\` from the release page on GitHub. You only need to replace the start files if the release note says so. \`daten\` is not in the ZIP and is never overwritten. Never delete this folder. To be extra safe, copy it to your computer first.
 
 ## Check for updates automatically
 

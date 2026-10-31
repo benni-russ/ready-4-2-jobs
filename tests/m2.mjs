@@ -119,11 +119,15 @@ for (const channel of kanaele()) {
   await p.waitForTimeout(200);
   await p.evaluate(() => { location.hash = "#/stammdaten"; });
   await p.getByRole("tab", { name: "Persönliches" }).waitFor();
+  await p.getByRole("button", { name: "Bearbeiten", exact: true }).click();
   await p.getByLabel("Ort").first().fill("Musterstadt");
   await p.getByLabel("Telefon").fill("+49 30 000000");
   await p.getByLabel("LinkedIn").fill("https://example.org/in/muster");
   await p.getByLabel("Kündigungsfrist").fill("3 Monate");
-  await p.waitForTimeout(100);
+  d = await daten(p);
+  ok("Entwurf bleibt vor dem Speichern draußen", !JSON.stringify(d.profil).includes("Musterstadt"), d.profil);
+  await p.getByRole("button", { name: "Speichern", exact: true }).click();
+  await p.getByRole("button", { name: "Bearbeiten", exact: true }).waitFor();
   await scr(p, `${channel}-persoenlich`);
   d = await daten(p);
   ok("Persönliches gespeichert", JSON.stringify(d.profil).includes("Musterstadt") && JSON.stringify(d.profil).includes("3 Monate"), d.profil);
@@ -202,7 +206,7 @@ for (const channel of kanaele()) {
 
   // Suche über Synonym.
   await p.keyboard.press("Control+k");
-  const such = p.locator(".rj-palette input");
+  const such = p.locator(".rj-searchbar input");
   await such.waitFor();
   await such.fill("payrol");
   await p.getByText("Entgeltabrechnung").first().waitFor();

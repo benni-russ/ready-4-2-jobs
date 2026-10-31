@@ -16,6 +16,7 @@
 
   async function seitenZaehlen(bytes) {
     try {
+      await K.pdf.bibliothek();
       var pdf = await window.PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true, updateMetadata: false });
       return pdf.getPageCount();
     } catch (e) {
@@ -39,14 +40,26 @@
         titel: datei.name.replace(/\.[^.]+$/, ""),
         tags: [],
       };
+      var text = "";
       if (mime === "application/pdf") {
         var seiten = await seitenZaehlen(bytes);
         if (seiten) eintrag.seiten = seiten;
+        text = await K.anlagen.pdfText(bytes);
       }
+      var vorschlag = K.anlagen.vorschlag(datei.name, text);
+      eintrag.kategorie = vorschlag.kategorie;
+      eintrag.tags = vorschlag.stichwoerter;
+      if (vorschlag.datum) eintrag.datum = vorschlag.datum;
       await K.tresor.anlageSchreiben(eintrag.id, bytes);
       K.stammdaten.speichern("anlagen", eintrag);
       await K.tresor.speichernJetzt();
       return eintrag;
+    },
+
+    // Für schon gespeicherte Anlagen: dieselbe Prüfung wie beim Hochladen, geändert wird nichts.
+    vorschlagFuer: async function (a) {
+      var text = a.mime === "application/pdf" ? await K.anlagen.pdfText(await K.tresor.anlageLesen(a.id)) : "";
+      return K.anlagen.vorschlag(a.dateiname, text);
     },
 
     // Umgekehrte Reihenfolge wie beim Anlegen: Eine verwaiste Datei stört nicht, ein toter Verweis schon.

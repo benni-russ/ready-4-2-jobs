@@ -16,7 +16,7 @@
 
   S.statusOptionen = function () {
     return Object.keys(window.R42J.statuses).map(function (s) {
-      return { wert: s, label: UI.statusText(s) };
+      return { wert: s, label: UI.statusText(s), icon: window.R42J.statuses[s].icon };
     });
   };
 
@@ -52,13 +52,12 @@
     var a = b.ansprechpartner || {};
     var route = K.termine.mapsLink(b.firma.adresse);
     var zeilen = [
-      [K.t("bewerbung.firma"), b.firma.name],
-      [K.t("bewerbung.stelle"), b.stelle.titel],
       [K.t("stelle.adresse"), b.firma.adresse],
       [K.t("stelle.ansprechpartner"), [a.name, a.position, a.email, a.telefon].filter(Boolean).join(" · ")],
     ].filter(function (z) {
       return z[1];
     });
+    if (zeilen.length === 0 && !route && !b.stelle.anzeigeText) return null;
     return html`<section class="rj-card rj-stack">
       <h2 class="h3">${K.t("details.stelle")}</h2>
       ${zeilen.map(function (z) {
@@ -135,7 +134,15 @@
           k === "recherche"
             ? html`<a class="rj-link rj-link--solo" style="font-size:.875rem" href=${"#/vorbereitung/unternehmen/" + b.id}>${K.t("vorbereitung.zuFragen")}</a>`
             : k === "rechtschreibung"
-            ? html`<a class="rj-link rj-link--solo" style="font-size:.875rem" href=${"#/bewerbungen/" + b.id + "/anschreiben"}>${K.t("bewerbungCheck.kiKorrektur")}</a>`
+            ? html`<a
+                class="rj-link rj-link--solo"
+                style="font-size:.875rem"
+                href=${"#/bewerbungen/" + b.id + "/anschreiben"}
+                onClick=${function () {
+                  S.anschreibenZuSchritt(b.id, 4);
+                }}
+                >${K.t("bewerbungCheck.kiKorrektur")}</a
+              >`
             : null,
       };
     });
@@ -158,7 +165,8 @@
 
   S.BewerbungDetails = function (props) {
     var b = props.bewerbung;
-    return html`
+    return html`<div class="rj-spalten">
+      <div class="rj-stack">
       <${Verlauf} bewerbung=${b} />
       <${S.BewerbungTermine} bewerbung=${b} />
       <section class="rj-card rj-stack">
@@ -175,6 +183,11 @@
           }}
         />
       </section>
+      <${Stelle} bewerbung=${b} />
+      </div>
+      <div class="rj-stack">
+      <${Checkliste} bewerbung=${b} />
+      <${Dokumente} bewerbung=${b} />
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("details.angebot")}</h2>
         <p>${K.t(b.angebot ? "details.angebotDa" : "details.angebotText")}</p>
@@ -182,9 +195,7 @@
           <${UI.Button} icon="scale" href=${"#/vergleich/angebot/" + b.id}>${K.t(b.angebot ? "angebot.bearbeiten" : "angebot.erfassen")}<//>
         </div>
       </section>
-      <${Checkliste} bewerbung=${b} />
-      <${Stelle} bewerbung=${b} />
-      <${Dokumente} bewerbung=${b} />
-    `;
+      </div>
+    </div>`;
   };
 })();

@@ -59,8 +59,21 @@
     return bereit;
   }
 
+  var bibliothekBereit = null;
+
+  function bibliothek() {
+    if (!bibliothekBereit) {
+      bibliothekBereit = skriptLaden("lib/pdf-lib.min.js").catch(function (e) {
+        bibliothekBereit = null;
+        throw e;
+      });
+    }
+    return bibliothekBereit;
+  }
+
   K.pdf = {
     FAMILIE: FAMILIE,
+    bibliothek: bibliothek,
 
     erzeugen: async function (definition) {
       await laden();
@@ -91,6 +104,7 @@
     },
 
     seiten: async function (bytes) {
+      await bibliothek();
       return (await window.PDFLib.PDFDocument.load(bytes, { updateMetadata: false })).getPageCount();
     },
   };

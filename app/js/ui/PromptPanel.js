@@ -38,7 +38,7 @@
         <span class="rj-prompt__num">1</span>
         <div>
           <strong>${K.t("ki.schritt1")}</strong>
-          <${UI.Switch} label=${K.t("ki.platzhalter")} wert=${props.platzhalter} beiAenderung=${props.beiPlatzhalter} />
+          ${props.beiPlatzhalter && html`<${UI.Switch} label=${K.t("ki.platzhalter")} wert=${props.platzhalter} beiAenderung=${props.beiPlatzhalter} />`}
           ${props.platzhalter && html`<span class="rj-hint">${K.t("ki.platzhalterHinweis")}</span>`}
           <textarea class="rj-textarea" rows="8" readonly aria-label=${K.t("ki.prompt")} value=${props.prompt}></textarea>
           <div class="rj-row"><${UI.CopyButton} text=${props.prompt} icon="clipboard-copy">${K.t("ki.kopieren")}<//></div>

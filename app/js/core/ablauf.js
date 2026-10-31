@@ -31,10 +31,11 @@
 
   async function ordnerBereit(ordner) {
     K.profile.setzenOrdner(ordner);
-    await K.wissen.kopieren(ordner);
+    await K.fs.ordner(ordner, ["wissen"]);
     await K.fs.ordner(ordner, ["fragen"]);
     await K.profile.exportLeeren();
-    gehe("profile");
+    if (await K.tresor.sitzungFortsetzen()) K.nachEntsperren();
+    else gehe("profile");
   }
 
   K.ablaufStarten = async function () {

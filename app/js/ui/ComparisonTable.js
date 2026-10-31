@@ -49,7 +49,7 @@
       role=${zuBreit[0] ? "region" : undefined}
       aria-label=${zuBreit[0] ? props.label : undefined}
     >
-      <table class="rj-table rj-table--kopfspalte">
+      <table class="rj-table rj-table--kopfspalte rj-table--streifen">
         <caption class="rj-sr-only">${props.label}</caption>
         <thead>
           <tr>

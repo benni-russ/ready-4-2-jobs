@@ -63,6 +63,7 @@
     var eintraege = K.tresor.daten()[def.liste];
     var offen = hooks.useState(null);
     var loeschen = hooks.useState(null);
+    var filterWert = hooks.useState("");
 
     // Treffer aus der Suche öffnen direkt ihren Eintrag.
     hooks.useEffect(
@@ -144,6 +145,21 @@
         ])
       : null;
     var sortiert = def.sortieren ? eintraege.slice().sort(def.sortieren) : eintraege;
+    if (def.filter && filterWert[0]) {
+      sortiert = sortiert.filter(function (e) {
+        return e[def.filter.feld] === filterWert[0];
+      });
+    }
+
+    var anlegen = html`<${UI.Button}
+      variante="primary"
+      icon="plus"
+      onClick=${function () {
+        offen[1]({ eintrag: def.leer(), neu: true });
+      }}
+    >
+      ${K.t(def.titel + ".hinzufuegen")}
+    <//>`;
 
     return html`<section class="rj-stack">
       <div class="rj-pagehead">
@@ -151,18 +167,18 @@
           <h2 class="h2">${K.t(def.titel)}</h2>
           ${def.erklaerung && html`<p class="rj-muted">${K.t(def.erklaerung)}</p>`}
         </div>
-        <${UI.Button}
-          variante="primary"
-          icon="plus"
-          onClick=${function () {
-            offen[1]({ eintrag: def.leer(), neu: true });
-          }}
-        >
-          ${K.t(def.titel + ".hinzufuegen")}
-        <//>
+        ${eintraege.length > 0 && anlegen}
       </div>
       ${!eintraege.length &&
-      html`<${UI.EmptyState} icon=${def.icon} titel=${K.t(def.titel + ".leerTitel")} text=${K.t(def.titel + ".leerText")} />`}
+      html`<${UI.EmptyState} icon=${def.icon} titel=${K.t(def.titel + ".leerTitel")} text=${K.t(def.titel + ".leerText")}>
+        ${anlegen}
+        ${(def.titel === "station" || def.titel === "kompetenz") && html`<${UI.Button} icon="sparkles" href="#/stammdaten/import">${K.t("import.knopf")}<//>`}
+      <//>`}
+      ${eintraege.length > 0 &&
+      def.filter &&
+      html`<div class="rj-filterbar">
+        <${UI.FilterSelect} label=${def.filter.label} wert=${filterWert[0]} optionen=${[{ wert: "", label: def.filter.alle }].concat(def.filter.optionen)} beiAenderung=${filterWert[1]} />
+      </div>`}
       ${eintraege.length > 0 && spalten && html`<${UI.DataTable} spalten=${spalten} zeilen=${sortiert} startSortierung=${def.startSortierung} />`}
       ${eintraege.length > 0 && !spalten && sortiert.map(karte)}
       ${offen[0] &&

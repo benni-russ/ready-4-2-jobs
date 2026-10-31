@@ -6,6 +6,9 @@
   var hooks = window.preactHooks;
   var S = (window.R42J_SEITEN = window.R42J_SEITEN || {});
 
+  // Bei wenigen Bewerbungen lenken Filter nur ab.
+  S.UEBERSICHT_FILTER_AB = 6;
+
   var ZEITRAEUME = [30, 90, 365];
   var SORTIERUNGEN = ["neu", "alt", "firma", "passung"];
   var FILTER_LEER = { suche: "", status: "", ausrichtung: "", zeitraum: "", sortierung: "neu" };
@@ -23,6 +26,16 @@
 
   function detailsLink(b) {
     return "#/bewerbungen/" + b.id + "/details";
+  }
+
+  // Reihenfolge wie in den Reitern. Ohne Dokument gilt der Schritt als offen.
+  function schritte(b) {
+    return [
+      { reiter: "lebenslauf", label: K.t("uebersicht.schrittLebenslauf"), erledigt: !!b.dokumente.lebenslauf },
+      { reiter: "anschreiben", label: K.t("uebersicht.schrittAnschreiben"), erledigt: !!b.dokumente.anschreiben },
+      { reiter: "anlagen", label: K.t("uebersicht.schrittAnlagen"), erledigt: !!b.dokumente.anlagenPdf },
+      { reiter: "versand", label: K.t("uebersicht.schrittVersand"), erledigt: !!b.versendetAm },
+    ];
   }
 
   function altersText(b) {
@@ -111,12 +124,28 @@
         var termin = K.termine.naechster(b);
         var meta = [
           { icon: "layers", text: ausrichtungName(b) },
-          termin ? { icon: "calendar", text: K.t("uebersicht.termin", { datum: S.datumAnzeige(termin.start) }) } : { icon: "send", text: altersText(b) },
+          termin ? { icon: "calendar", text: K.t("uebersicht.termin", { datum: S.datumAnzeige(termin.start) }) } : { icon: b.versendetAm ? "send" : "calendar", text: altersText(b) },
           { icon: "star", text: passungText(b) },
         ].filter(function (m) {
           return m.text;
         });
-        return html`<${UI.ApplicationCard} key=${b.id} href=${detailsLink(b)} titel=${b.firma.name} rolle=${b.stelle.titel} status=${K.bewerbungen.anzeigeStatus(b)} meta=${meta} />`;
+        // Nach dem Versand oder einer Absage gibt es keinen nächsten Schritt mehr.
+        var stand = K.bewerbungen.aktuellerStatus(b) === "vorbereitung" ? schritte(b) : null;
+        var naechster =
+          stand &&
+          stand.filter(function (s) {
+            return !s.erledigt;
+          })[0];
+        return html`<${UI.ApplicationCard}
+          key=${b.id}
+          href=${naechster ? "#/bewerbungen/" + b.id + "/" + naechster.reiter : detailsLink(b)}
+          titel=${b.firma.name}
+          rolle=${b.stelle.titel}
+          status=${K.bewerbungen.anzeigeStatus(b)}
+          meta=${meta}
+          schritte=${stand || undefined}
+          naechster=${naechster && K.t("uebersicht.naechster", { schritt: naechster.label })}
+        />`;
       })}
     </div>`;
   }
@@ -184,7 +213,7 @@
     return html`<${UI.Alert}
       titel=${K.t("update.titel", { version: h.version })}
       aktionen=${html`
-        <${UI.Button} icon="external-link" href=${h.link} target="_blank" rel="noopener noreferrer">${K.t("update.zumRelease")}<//>
+        <${UI.Button} icon="download" href=${h.zip} target="_blank" rel="noopener noreferrer">${K.t("update.zumRelease")}<//>
         <${UI.Button} icon="book-open" href="#/wissen/update-installieren">${K.t("update.anleitung")}<//>
         <${UI.Button} onClick=${K.update.ausblenden}>${K.t("update.ausblenden")}<//>
       `}
@@ -201,6 +230,7 @@
     var erinnerungen = K.erinnerungen.liste();
     var treffer = filtern(d.bewerbungen, f[0]);
     var gefiltert = f[0].suche || f[0].status || f[0].ausrichtung || f[0].zeitraum;
+    var filterZeigen = gefiltert || d.bewerbungen.length >= S.UEBERSICHT_FILTER_AB;
     var mitRoute = erinnerungen.some(function (e) {
       return e.art === "termin" && e.termin.art === "vor_ort" && K.termine.ort(e.termin, e.bewerbung);
     });
@@ -242,9 +272,11 @@
         ${mitRoute && html`<p class="rj-muted">${K.t("route.hinweis")}</p>`}
       </section>`}
       <div class="rj-filterbar">
-        <${UI.SearchField} label=${K.t("uebersicht.suchen")} platzhalter=${K.t("uebersicht.suchen")} wert=${f[0].suche} beiAenderung=${setzen("suche")} />
-        <${UI.FilterSelect} label=${K.t("bewerbung.status")} wert=${f[0].status} optionen=${optionenMit(K.t("uebersicht.alleStatus"), S.statusOptionen())} beiAenderung=${setzen("status")} />
+        ${filterZeigen &&
+        html`<${UI.SearchField} label=${K.t("uebersicht.suchen")} platzhalter=${K.t("uebersicht.suchen")} wert=${f[0].suche} beiAenderung=${setzen("suche")} />
+        <${UI.FilterSelect} icon="funnel" label=${K.t("bewerbung.status")} wert=${f[0].status} optionen=${optionenMit(K.t("uebersicht.alleStatus"), S.statusOptionen())} beiAenderung=${setzen("status")} />
         <${UI.FilterSelect}
+          icon="funnel"
           label=${K.t("bewerbung.ausrichtung")}
           wert=${f[0].ausrichtung}
           optionen=${optionenMit(
@@ -256,6 +288,7 @@
           beiAenderung=${setzen("ausrichtung")}
         />
         <${UI.FilterSelect}
+          icon="funnel"
           label=${K.t("uebersicht.zeitraum")}
           wert=${f[0].zeitraum}
           optionen=${optionenMit(
@@ -267,24 +300,29 @@
           beiAenderung=${setzen("zeitraum")}
         />
         <${UI.FilterSelect}
+          icon="arrow-up-down"
           label=${K.t("uebersicht.sortierung")}
           wert=${f[0].sortierung}
           optionen=${SORTIERUNGEN.map(function (s) {
             return { wert: s, label: K.t("uebersicht.sortierung." + s) };
           })}
           beiAenderung=${setzen("sortierung")}
-        />
-        <${UI.SegmentedControl}
+        />`}
+        <div class="rj-filter">
+          <span class="rj-filter__titel" aria-hidden="true">${K.t("uebersicht.ansicht")}</span>
+          <${UI.SegmentedControl}
             label=${K.t("uebersicht.ansicht")}
             wert=${ansicht[0]}
             optionen=${[
-              { wert: "karten", label: K.t("uebersicht.karten") },
-              { wert: "liste", label: K.t("uebersicht.liste") },
+              { wert: "karten", icon: "layout-grid", label: K.t("uebersicht.karten") },
+              { wert: "liste", icon: "list", label: K.t("uebersicht.liste") },
             ]}
             beiAenderung=${ansicht[1]}
           />
+        </div>
       </div>
-      <div class="rj-row" style="justify-content:space-between">
+      ${filterZeigen &&
+      html`<div class="rj-row" style="justify-content:space-between">
         <span class="rj-datatable__count" aria-live="polite">${K.t("tabelle.zaehler", { anzahl: treffer.length, gesamt: d.bewerbungen.length })}</span>
         ${gefiltert &&
         html`<${UI.Button}
@@ -294,7 +332,7 @@
           }}
           >${K.t("uebersicht.zuruecksetzen")}<//
         >`}
-      </div>
+      </div>`}
       ${treffer.length === 0 && html`<${UI.EmptyState} icon="search-x" titel=${K.t("uebersicht.keineTreffer")} text=${K.t("uebersicht.keineTrefferText")} />`}
       ${treffer.length > 0 && ansicht[0] === "karten" && html`<${Karten} liste=${treffer} />`}
       ${treffer.length > 0 && ansicht[0] === "liste" && html`<${Tabelle} liste=${treffer} />`}

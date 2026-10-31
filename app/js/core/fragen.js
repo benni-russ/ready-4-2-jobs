@@ -3,7 +3,7 @@
   var K = window.R42J_CORE;
 
   var TYPEN = ["karte", "mc", "mc-multi", "zahlenreihe"];
-  var KATEGORIEN = ["allgemeinwissen", "mathe", "logik", "deutsch", "englisch", "interview"];
+  var KATEGORIEN = ["allgemeinwissen", "mathe", "logik", "deutsch", "englisch", "interview", "konzentration", "raeumlich", "textverstaendnis", "fachwissen", "persoenlichkeit"];
   var INTERVALLE = [1, 2, 4, 8, 16];
   var MAX_BYTES = 2 * 1024 * 1024;
   var MAX_MELDUNGEN = 5;
@@ -153,6 +153,20 @@
         }
       }
       return ergebnis;
+    },
+
+    // Vergibt einen freien Dateinamen, damit nichts Vorhandenes überschrieben wird.
+    speichern: async function (katalog, wunschname) {
+      var griff = await ordner();
+      var belegt = {};
+      (await K.fs.dateien(griff)).forEach(function (d) {
+        belegt[d.name.toLowerCase()] = true;
+      });
+      var basis = dateiname(wunschname).slice(0, -ENDUNG.length);
+      var name = basis + ENDUNG;
+      for (var nr = 2; belegt[name.toLowerCase()]; nr++) name = basis + "-" + nr + ENDUNG;
+      await K.fs.schreibenAtomar(griff, name, new TextEncoder().encode(JSON.stringify(katalog, null, 2)));
+      return name;
     },
 
     entfernen: async function (datei) {

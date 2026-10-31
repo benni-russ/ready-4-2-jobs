@@ -50,7 +50,7 @@ for (const channel of kanaele()) {
   ok("Am nächsten Tag wieder", anfragen.length === 2, anfragen);
 
   const hinweis = await p.evaluate(() => window.R42J_CORE.update.hinweis());
-  ok("Link entsteht aus der Version, nicht aus der Antwort", hinweis?.link === "https://github.com/benni-russ/ready-4-2-jobs/releases/tag/v9.9.9", hinweis);
+  ok("Download entsteht aus der Version, nicht aus der Antwort", hinweis?.zip === "https://github.com/benni-russ/ready-4-2-jobs/releases/download/v9.9.9/r42j-v9.9.9.zip", hinweis);
   await p.evaluate(() => { location.hash = "#/uebersicht"; });
   await p.getByText("Version 9.9.9 ist verfügbar").waitFor();
   ok("Hinweis in der Übersicht", true);

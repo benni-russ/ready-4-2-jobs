@@ -5,6 +5,7 @@
   var ABSCHNITTE = ["einleitung", "motivation", "abgleich", "mehrwert", "rahmen", "schluss"];
   var MAX_TREFFER = 3;
   var MAX_SEITEN = 1;
+  var MAX_ANSCHRIFT_ZEILEN = 6;
   var UNTERSCHRIFT_HOEHE = 240;
   var PLATZHALTER_RE = /\{\{\s*([a-z0-9_]+)\s*\}\}/g;
 
@@ -142,7 +143,21 @@
   function absender(p) {
     var a = p.adresse || {};
     var ort = [a.plz, a.ort].filter(Boolean).join(" ");
-    return [[p.vorname, p.nachname].filter(Boolean).join(" "), a.strasse, ort, p.telefon, p.email].filter(Boolean).join(" · ");
+    return [
+      [[p.vorname, p.nachname].filter(Boolean).join(" "), a.strasse, ort],
+      [p.telefon, p.email],
+    ]
+      .map(function (zeile) {
+        return zeile.filter(Boolean).join(" · ");
+      })
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  // Eine Zeile im Sichtfenster, ohne Telefon und E-Mail.
+  function ruecksendeAngabe(p) {
+    var a = p.adresse || {};
+    return [[p.vorname, p.nachname].filter(Boolean).join(" "), a.strasse, [a.plz, a.ort].filter(Boolean).join(" ")].filter(Boolean).join(" · ");
   }
 
   function fertigBauen(b) {
@@ -158,6 +173,8 @@
     return {
       sprache: b.sprache,
       absender: absender(p),
+      ruecksende: b.dokumente.postversand ? ruecksendeAngabe(p) : "",
+      postversand: !!b.dokumente.postversand,
       empfaenger: [b.firma.name].concat(
         (b.ansprechpartner && b.ansprechpartner.name) || "",
         (b.firma.adresse || "").split(/\r?\n/).filter(function (z) {
@@ -170,9 +187,14 @@
       anrede: w.ansprechpartner_anrede,
       absaetze: absaetze,
       gruss: t.gruss,
-      name: [p.titel, p.vorname, p.nachname].filter(Boolean).join(" "),
+      name: (b.anschreiben.signatur || "").trim() || nameStandard(),
       offen: offen,
     };
+  }
+
+  function nameStandard() {
+    var p = K.tresor.daten().profil;
+    return [p.titel, p.vorname, p.nachname].filter(Boolean).join(" ");
   }
 
   function emailAus(b, betreff, text) {
@@ -249,6 +271,7 @@
     },
 
     fertig: fertigBauen,
+    nameStandard: nameStandard,
     datum: datumOderText,
 
     // Die Fassung für das Portal, ohne Briefkopf.
@@ -278,6 +301,8 @@
         if (!a || a.mime.indexOf("image/") !== 0) hinweise.push({ text: "anschreiben.hinweisUnterschrift" });
         else d.unterschrift = await K.pdf.bildDatenUrl(await K.tresor.anlageLesen(a.id), a.mime, UNTERSCHRIFT_HOEHE);
       }
+      if (d.postversand && d.empfaenger.length < 3) hinweise.push({ text: "anschreiben.hinweisAnschrift" });
+      if (d.postversand && d.empfaenger.length > MAX_ANSCHRIFT_ZEILEN) hinweise.push({ text: "anschreiben.hinweisAnschriftLang", werte: { n: MAX_ANSCHRIFT_ZEILEN } });
       var vorlage = K.anschreibenVorlage(d);
       var fremd = K.pdf.fremdeZeichen(vorlage);
       if (fremd.length) hinweise.push({ text: "cv.hinweisZeichen", werte: { zeichen: fremd.join(" ") } });

@@ -62,7 +62,7 @@
         <div class="rj-dialog__body rj-stack">${props.children}</div>
         <div class="rj-dialog__foot">
           ${props.bestaetigen
-            ? html`<${UI.Button} onClick=${props.beiSchliessen}>${K.t("aktion.abbrechen")}<//>
+            ? html`<${UI.Button} onClick=${props.beiSchliessen}>${props.abbrechen || K.t("aktion.abbrechen")}<//>
                 <${UI.Button} type="submit" variante=${props.gefahr ? "danger" : "primary"} laedt=${props.laedt} disabled=${props.laedt}>
                   ${props.bestaetigen}
                 <//>`

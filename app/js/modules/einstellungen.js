@@ -16,7 +16,7 @@
 
   S.DarstellungFelder = function () {
     var z = K.useStore();
-    return html`
+    return html`<div class="rj-felder">
         <${Zeile} label=${K.t("einstellungen.sprache")}>
           <${UI.SegmentedControl}
             label=${K.t("einstellungen.sprache")}
@@ -44,16 +44,6 @@
             }}
           />
         <//>
-        <${UI.Select}
-          label=${K.t("einstellungen.farbschema")}
-          wert=${z.farbschema}
-          optionen=${FARBSCHEMATA.map(function (f) {
-            return { wert: f, label: K.t("farbschema." + f) };
-          })}
-          beiAenderung=${function (w) {
-            K.store.set({ farbschema: w });
-          }}
-        />
         <${Zeile} label=${K.t("einstellungen.schriftgroesse")}>
           <${UI.SegmentedControl}
             label=${K.t("einstellungen.schriftgroesse")}
@@ -68,24 +58,50 @@
             }}
           />
         <//>
-    `;
+        <${UI.FarbschemaWahl}
+          label=${K.t("einstellungen.farbschema")}
+          wert=${z.farbschema}
+          optionen=${FARBSCHEMATA.map(function (f) {
+            return { wert: f, label: K.t("farbschema." + f) };
+          })}
+          beiAenderung=${function (w) {
+            K.store.set({ farbschema: w });
+          }}
+        />
+    </div>`;
   };
 
   S.Einstellungen = function () {
     return html`
       <div class="rj-pagehead"><h1 class="h1">${K.t("nav.einstellungen")}</h1></div>
-      <section class="rj-card rj-stack">
+      <div class="rj-cards">
+      <section class="rj-card rj-card--breit rj-stack">
         <h2 class="h3">${K.t("einstellungen.darstellung")}</h2>
         <${S.DarstellungFelder} />
       </section>
       <${S.TresorEinstellungen} />
       <section class="rj-card rj-stack">
-        <h2 class="h3">${K.t("einstellungen.komponenten")}</h2>
-        <p class="rj-muted">${K.t("einstellungen.komponentenText")}</p>
-        <div class="rj-row">
-          <${UI.Button} href="#/komponenten" iconHinten="arrow-right">${K.t("einstellungen.komponentenAktion")}<//>
-        </div>
+        <h2 class="h3">${K.t("einstellungen.tastatur")}</h2>
+        <${UI.Switch}
+          label=${K.t("einstellungen.suchTaste")}
+          wert=${K.tresor.daten().einstellungen.suchTaste}
+          beiAenderung=${function (w) {
+            K.tresor.aendern(function (t) {
+              t.einstellungen.suchTaste = w;
+            });
+          }}
+        />
+        <p class="rj-hint">${K.t("einstellungen.suchTasteHinweis")}</p>
       </section>
+      <section class="rj-card rj-card--breit rj-kartenzeile">
+        <div class="rj-stack">
+          <h2 class="h3">${K.t("einstellungen.komponenten")}</h2>
+          <p class="rj-muted">${K.t("einstellungen.komponentenText")}</p>
+        </div>
+        <${UI.Button} href="#/komponenten" iconHinten="arrow-right">${K.t("einstellungen.komponentenAktion")}<//>
+      </section>
+      <${S.ProfilLoeschenKarte} />
+      </div>
     `;
   };
 })();

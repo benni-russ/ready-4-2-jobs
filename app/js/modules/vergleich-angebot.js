@@ -44,6 +44,52 @@
     return { fehler: fehler, werte: werte };
   }
 
+  // Die Punkte entstehen im Vergleich mit den anderen Angeboten, darum zählt der aktuelle Entwurf mit.
+  function LivePunkte(props) {
+    var kriterien = K.vergleich.kriterien().filter(function (k) {
+      return k.gewicht > 0;
+    });
+    var andere = K.vergleich.mitAngebot().filter(function (x) {
+      return x.id !== props.id;
+    });
+    var eintraege = andere
+      .map(function (x) {
+        return { id: x.id, angebot: x.angebot };
+      })
+      .concat([{ id: props.id, angebot: props.angebot }]);
+    var teile = K.vergleich.teilpunkte(eintraege, kriterien, K.vergleich.feiertagsWochen());
+    var i = eintraege.length - 1;
+    return html`<section class="rj-card rj-stack">
+      <h2 class="h3">${K.t("angebot.punkteTitel")}</h2>
+      <p class="rj-muted">${K.t(andere.length ? "angebot.punkteText" : "angebot.punkteAllein")}</p>
+      <div class="rj-table-wrap">
+        <table class="rj-table rj-table--streifen">
+          <caption class="rj-sr-only">${K.t("angebot.punkteTitel")}</caption>
+          <thead>
+            <tr>
+              <th scope="col">${K.t("angebot.punkteKriterium")}</th>
+              <th scope="col" class="is-num">${K.t("angebot.punkteSpalte")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${kriterien.map(function (k) {
+              var w = teile[k.id][i];
+              var zahl = w === null ? "" : w.toLocaleString(K.sprache(), { maximumFractionDigits: 1 });
+              return html`<tr key=${k.id}>
+                <th scope="row">${K.vergleich.kriteriumName(k)}</th>
+                <td class="is-num">
+                  ${w === null
+                    ? html`<span class="rj-nodata">${K.t("angebot.punkteFehlt")}</span>`
+                    : K.t(k.typ === "auto" ? "angebot.punkteAuto" : "angebot.punkteHand", { punkte: zahl })}
+                </td>
+              </tr>`;
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>`;
+  }
+
   S.AngebotFormular = function (props) {
     var b = K.bewerbungen.holen(props.id);
     var a = (b && b.angebot) || {};
@@ -107,7 +153,6 @@
           <h1 class="h1">${K.t(b.angebot ? "angebot.bearbeiten" : "angebot.erfassen")}</h1>
           <p>${b.firma.name} · ${b.stelle.titel}</p>
         </div>
-        <${UI.Button} icon="chevron-left" href="#/vergleich">${K.t("nav.vergleich")}<//>
       </div>
       <section class="rj-card rj-stack">
         <h2 class="h3">${K.t("angebot.geld")}</h2>
@@ -144,6 +189,7 @@
           beiAenderung=${zusatz[1]}
         />
       </section>
+      <${LivePunkte} id=${b.id} angebot=${Object.assign({}, a, pruefen(eingaben[0]).werte)} />
       <div class="rj-row">
         <${UI.Button} variante="primary" icon="check" onClick=${speichern}>${K.t("angebot.speichern")}<//>
         ${b.angebot &&

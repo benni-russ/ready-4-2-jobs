@@ -3,7 +3,7 @@
   var K = window.R42J_CORE;
 
   var ADRESSE = "https://api.github.com/repos/benni-russ/ready-4-2-jobs/releases/latest";
-  var RELEASES = "https://github.com/benni-russ/ready-4-2-jobs/releases/tag/v";
+  var DOWNLOAD = "https://github.com/benni-russ/ready-4-2-jobs/releases/download/v";
   var VERSION = /^v?(\d{1,4})\.(\d{1,4})\.(\d{1,4})$/;
   var ZEITLIMIT = 10000;
 
@@ -64,7 +64,7 @@
     hinweis: function () {
       var s = K.store.get().updateStand;
       if (!erlaubt() || !s || !neuer(s.version, window.R42J_VERSION) || s.ausgeblendet === s.version) return null;
-      return { version: s.version, link: RELEASES + s.version };
+      return { version: s.version, zip: DOWNLOAD + s.version + "/r42j-v" + s.version + ".zip" };
     },
 
     ausblenden: function () {

@@ -88,7 +88,6 @@
     return html`
       <div class="rj-pagehead">
         <h1 class="h1">${K.t("nav.lebenslauf")}</h1>
-        <${UI.Button} icon="chevron-left" href="#/stammdaten">${K.t("nav.stammdaten")}<//>
       </div>
       <section class="rj-card rj-stack">
         <p>${K.t("cv.text")}</p>

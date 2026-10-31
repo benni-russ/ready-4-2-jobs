@@ -138,6 +138,11 @@
       return subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
     },
 
+    // Nur für die laufende Sitzung. Nicht extrahierbar, damit auch die Seite selbst sie nie im Klartext sieht.
+    neueSitzungsHuelle: function () {
+      return subtle.generateKey({ name: "AES-GCM", length: 256 }, false, ["wrapKey", "unwrapKey"]);
+    },
+
     verpacken: async function (dek, huelle) {
       var iv = zufall(IV_BYTES);
       var inhalt = await subtle.wrapKey("raw", dek, huelle, aes(iv));

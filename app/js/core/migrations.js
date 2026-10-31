@@ -2,10 +2,18 @@
   "use strict";
   var K = window.R42J_CORE;
 
-  K.SCHEMA = 1;
+  K.SCHEMA = 2;
 
   // Index = Schema, von dem aus migriert wird: SCHRITTE[1] macht aus Schema 1 Schema 2.
-  var SCHRITTE = {};
+  var SCHRITTE = {
+    1: function (t) {
+      t.bewerbungen.forEach(function (b) {
+        b.dokumente.postversand = false;
+      });
+      t.einstellungen.suchTaste = true;
+      return t;
+    },
+  };
 
   K.neuerTresor = function (anzeigename) {
     var z = K.store.get();
@@ -37,6 +45,7 @@
         updatePruefung: false,
         backupZiel2: false,
         kiPlatzhalter: true,
+        suchTaste: true,
         seitenleisteEingeklappt: z.seitenleisteEingeklappt,
         anzeigename: anzeigename,
         onboardingSchritt: 4,

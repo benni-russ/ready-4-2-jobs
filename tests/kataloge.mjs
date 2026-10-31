@@ -6,7 +6,7 @@ import vm from "node:vm";
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 const ORDNER = join(HIER, "..", "app", "fragen");
-const KATEGORIEN = ["allgemeinwissen", "mathe", "logik", "deutsch", "englisch", "interview"];
+const KATEGORIEN = ["allgemeinwissen", "mathe", "logik", "deutsch", "englisch", "interview", "konzentration", "raeumlich", "textverstaendnis", "fachwissen", "persoenlichkeit"];
 const MINDEST = { de: 50, en: 30 };
 const TYPEN = ["karte", "mc", "mc-multi", "zahlenreihe"];
 const EPS = 1e-9;
