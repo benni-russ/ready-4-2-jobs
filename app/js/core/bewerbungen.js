@@ -27,6 +27,8 @@
     return { felder: felder, rest: text.slice(m[0].length) };
   }
 
+  K.frontmatter = frontmatter;
+
   function wertLesen(w) {
     return w
       .trim()
@@ -51,6 +53,7 @@
       .trim();
   }
 
+  K.CHECKLISTE_EINMAL = ["postfach", "email", "telefon", "linkedin", "xing"];
   K.CHECKLISTE = ["recherche", "ansprechpartner", "keywords", "rechtschreibung", "anlagen", "dateinamen", "dateigroesse", "betreff"];
 
   K.bewerbungen = {

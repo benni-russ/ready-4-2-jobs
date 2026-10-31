@@ -61,7 +61,7 @@ for (const channel of kanaele()) {
 
   await p.getByRole("button", { name: "Ordner auswählen" }).click();
   await p.getByRole("button", { name: "Neues Profil anlegen" }).click();
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.activeElement.tagName === "INPUT");
   await p.keyboard.type(NAME);
   await p.keyboard.press("Enter");
   await p.getByRole("heading", { name: "Wie soll R42J aussehen?" }).waitFor();
@@ -234,6 +234,9 @@ for (const channel of kanaele()) {
     const K = window.R42J_CORE;
     const g = K.fragen.gruppen("de").find((x) => x.kategorie === "mathe");
     window.__frage = g.fragen.find((f) => f.typ === "mc");
+    // Die Reihenfolge ist zufällig, nur Auswahlfragen haben Tasten.
+    window.__sitzung = K.lernen.sitzung;
+    K.lernen.sitzung = (fragen) => fragen.filter((f) => f.typ === "mc").slice(0, 3);
   });
   await p.getByRole("button", { name: "Mathe & Dreisatz lernen" }).click();
   await p.locator(".rj-quiz button, .rj-quiz input").first().waitFor();
@@ -243,6 +246,9 @@ for (const channel of kanaele()) {
   ok("Auswahlfrage wird nach der Wahl aufgelöst", await p.getByText(/^(Richtig\.|Nicht ganz\.)/).first().isVisible());
   await p.screenshot({ path: join(SP, `m7-quiz-aufgeloest-${channel}.png`), fullPage: true });
   await knopf(p, "Sitzung beenden").click();
+  await p.evaluate(() => {
+    window.R42J_CORE.lernen.sitzung = window.__sitzung;
+  });
 
   // Unternehmensfragen
   const bid = await p.evaluate(() => {

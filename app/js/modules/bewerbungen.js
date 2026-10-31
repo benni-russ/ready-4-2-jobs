@@ -214,6 +214,7 @@
       ${hinweise[0].map(function (h) {
         return html`<${UI.Alert} art="warning" key=${h.text}>${K.t(h.text, h.werte)}<//>`;
       })}
+      <${S.WissenLink} artikel="ats-erklaert" />
       <${UI.Switch}
         label=${K.t("cv.foto")}
         wert=${b.dokumente.mitFoto}
@@ -223,6 +224,7 @@
           });
         }}
       />
+      <${S.WissenLink} artikel="foto-ja-nein" />
       <div class="rj-row">
         <${UI.Button} variante="primary" icon="file-text" laedt=${laedt[0]} disabled=${laedt[0]} onClick=${erstellen}>${K.t("cv.erstellen")}<//>
       </div>

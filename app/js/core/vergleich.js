@@ -20,7 +20,7 @@
 
   // artikel sind die Kennungen der Wissensartikel aus SPEC §6.13, M8 liefert sie aus.
   var PRUEFLISTE = [
-    { id: "probezeit", artikel: "arbeitsvertrag-pruefen" },
+    { id: "probezeit", artikel: "probezeit" },
     { id: "kuendigungsfrist", artikel: "kuendigungsfristen" },
     { id: "ueberstunden", artikel: "arbeitsvertrag-pruefen" },
     { id: "befristung", artikel: "arbeitsvertrag-pruefen" },

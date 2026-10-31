@@ -45,6 +45,7 @@
     return html`<section class="rj-card rj-stack">
       <h2 class="h3" lang=${props.sprache}>${f.frage}</h2>
       <p class="rj-hint">${K.t("star.anleitung")}</p>
+      <${S.WissenLink} artikel="star-methode" />
       <div class="rj-stack">
         <h3 class="body-strong">${K.t(hatTreffer ? "star.passend" : "star.anregung")}</h3>
         ${vorschlaege.length === 0

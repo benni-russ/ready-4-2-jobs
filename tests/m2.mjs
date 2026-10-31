@@ -1,4 +1,4 @@
-import { chromium, URLAPP, SP, kanaele, pdfInfo } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, pdfInfo, profilWaehlen } from "./hilfen.mjs";
 
 let fehlerZahl = 0;
 function ok(name, wahr, info) {
@@ -44,7 +44,7 @@ async function scr(p, name) { await p.screenshot({ path: `${SP}/m2-${name}.png`,
 async function neuLaden(p) {
   await p.evaluate(() => window.R42J_CORE.tresor.speichernJetzt());
   await p.goto("about:blank"); await p.goto(URLAPP);
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");
@@ -69,7 +69,7 @@ for (const channel of kanaele()) {
   // Onboarding bis Schritt 7.
   await p.getByRole("button", { name: "Ordner auswählen" }).click();
   await p.getByRole("button", { name: "Neues Profil anlegen" }).click();
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.activeElement.tagName === "INPUT");
   await p.keyboard.type(NAME);
   await p.keyboard.press("Enter");
   await p.getByRole("heading", { name: "Wie soll R42J aussehen?" }).waitFor();
@@ -216,7 +216,7 @@ for (const channel of kanaele()) {
   await p.keyboard.press("Enter");
   await dlg(p).getByRole("heading", { name: "Kompetenz bearbeiten" }).waitFor();
   ok("Enter öffnet den Eintrag", /stammdaten\/kompetenzen\//.test(p.url()));
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.activeElement.closest(".rj-dialog"));
   await p.keyboard.press("Escape");
   await dlg(p).waitFor({ state: "detached" });
   await p.waitForTimeout(100);
@@ -251,7 +251,7 @@ for (const channel of kanaele()) {
   // Neustart, Vorschau.
   await neuLaden(p);
   await p.goto("about:blank"); await p.goto(URLAPP + "#/anlagen");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");
@@ -292,7 +292,7 @@ for (const channel of kanaele()) {
 
   // KI-Import.
   await p.goto("about:blank"); await p.goto(URLAPP + "#/stammdaten/import");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.getByRole("heading", { name: "Lebenslauf importieren" }).first().waitFor();
@@ -349,7 +349,7 @@ for (const channel of kanaele()) {
 
   // Englisch und schmale Fenster, dunkler Modus.
   await p.goto("about:blank"); await p.goto(URLAPP + "#/stammdaten/stationen");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");

@@ -82,6 +82,10 @@ jobs:
         shell: bash
         run: node tests/m7.mjs
 
+      - name: M8 Checklisten, Wissen, Statistik
+        shell: bash
+        run: node tests/m8.mjs
+
       - name: Formulare
         shell: bash
         run: node tests/formulare.mjs

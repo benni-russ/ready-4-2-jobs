@@ -366,6 +366,8 @@ h1, h2, h3, p { margin: 0; }
 .rj-stat__basis { font-size: .875rem; color: var(--ink-muted); }
 
 .rj-chart { width: 100%; height: auto; display: block; }
+.rj-chart-wrap { overflow-x: auto; }
+.rj-chart-wrap .rj-chart { min-width: 460px; }
 .rj-chart .bar { fill: var(--accent); }
 .rj-chart .bar--muted { fill: var(--line-strong); }
 .rj-chart .axis { stroke: var(--line); stroke-width: 1; }

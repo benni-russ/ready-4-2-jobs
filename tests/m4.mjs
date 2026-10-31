@@ -1,6 +1,6 @@
 // M4: Bewerbung von der Stelle bis zum Versand. Testdaten frei erfunden.
 import { writeFileSync } from "node:fs";
-import { chromium, URLAPP, SP, kanaele, pdfInfo, waehle } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, pdfInfo, waehle, profilWaehlen } from "./hilfen.mjs";
 
 let fehlerZahl = 0;
 function ok(name, wahr, info) {
@@ -73,7 +73,7 @@ for (const channel of kanaele()) {
 
   await p.getByRole("button", { name: "Ordner auswählen" }).click();
   await p.getByRole("button", { name: "Neues Profil anlegen" }).click();
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.activeElement.tagName === "INPUT");
   await p.keyboard.type(NAME);
   await p.keyboard.press("Enter");
   await p.getByRole("heading", { name: "Wie soll R42J aussehen?" }).waitFor();
@@ -450,7 +450,7 @@ for (const channel of kanaele()) {
   ok("Export beim Sperren geleert", (await exportNamen()).length === 0);
   await p.goto("about:blank");
   await p.goto(URLAPP + "#/bewerbungen");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");

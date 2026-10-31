@@ -155,6 +155,7 @@
           ${K.t("termin.neu")}
         <//>
       </div>
+      <${S.WissenLink} artikel="vorstellungsgespraech" />
       ${b.termine.length === 0 && html`<p class="rj-muted">${K.t("termin.leer")}</p>`}
       ${b.termine.map(function (t) {
         return html`<${TerminKarte}

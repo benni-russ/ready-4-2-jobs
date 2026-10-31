@@ -1,0 +1,272 @@
+// Mitgelieferte Wissensartikel. Sie liegen als .js vor, weil file:// kein fetch() erlaubt,
+// und landen beim ersten Start als .md in daten/wissen/.
+(function () {
+  "use strict";
+  var liste = (window.R42J_WISSEN = window.R42J_WISSEN || []);
+
+  function artikel(kennung, titel, kategorie, text) {
+    liste.push({
+      datei: kennung + ".de.md",
+      md: "---\ntitle: " + titel + "\ncategory: " + kategorie + "\nlang: de\n---\n\n" + text.trim() + "\n",
+    });
+  }
+
+  var BEWERBUNG = "Bewerbung";
+  var RECHT = "Vertrag und Recht";
+  var GESPRAECH = "Gespräch";
+  var AUFTRITT = "Online-Auftritt";
+
+  artikel("foto-ja-nein", "Foto ja oder nein?", BEWERBUNG, `
+In Deutschland ist ein Bewerbungsfoto üblich, aber nicht vorgeschrieben. Niemand darf es von dir verlangen, und du darfst es weglassen.
+
+## Wann ein Foto hilft
+
+- bei kleinen und mittleren Unternehmen in Deutschland
+- in Berufen mit viel Kundenkontakt
+- wenn dein Foto professionell wirkt und aktuell ist
+
+## Wann du es besser weglässt
+
+- bei Bewerbungen im englischsprachigen Raum, vor allem in den USA und Großbritannien
+- bei internationalen Konzernen, die um anonyme Unterlagen bitten
+- wenn du nur ein Urlaubs- oder Automatenfoto hast
+
+## Worauf du achtest
+
+Nimm ein ruhiges Bild mit neutralem Hintergrund und passender Kleidung. Du schaust freundlich in die Kamera, Selfies und Ausschnitte aus Gruppenfotos wirken unpassend.
+
+> R42J setzt das Foto bei deutschen Bewerbungen automatisch ein. Du kannst es pro Bewerbung abschalten.
+`);
+
+  artikel("ats-erklaert", "Was ist ein ATS?", BEWERBUNG, `
+ATS steht für Applicant Tracking System, auf Deutsch Bewerbermanagement-System. Viele Unternehmen speichern Bewerbungen darin. Die Software liest deinen Lebenslauf aus und macht ihn durchsuchbar. Personalverantwortliche suchen dann zum Beispiel nach einer bestimmten Kompetenz.
+
+## Was das für deinen Lebenslauf heißt
+
+- **Einspaltig:** Spalten bringen die Lesereihenfolge durcheinander.
+- **Echter Text:** Text in Bildern kann die Software nicht lesen.
+- **Klare Überschriften:** „Berufserfahrung“ wird erkannt, ein Wortspiel nicht.
+- **Begriffe aus der Anzeige:** Nenne Kompetenzen so, wie sie in der Stelle stehen, wenn sie auf dich zutreffen.
+- **Keine Tabellen oder Textfelder** für wichtige Angaben.
+
+## So prüfst du es selbst
+
+Öffne die PDF, markiere alles und füge den Text in einen Editor ein. Steht er dort in der richtigen Reihenfolge, kann ihn auch die Software lesen.
+
+> Die Lebenslauf-Vorlage von R42J folgt diesen Regeln.
+`);
+
+  artikel("star-methode", "Die STAR-Methode", GESPRAECH, `
+Mit der STAR-Methode antwortest du im Gespräch auf Fragen wie „Erzählen Sie von einer schwierigen Situation“. Du erzählst ein echtes Beispiel in vier Schritten und bleibst dabei kurz und konkret.
+
+## Die vier Schritte
+
+| Schritt | Frage | Anteil |
+| --- | --- | --- |
+| Situation | Wo und wann war das? | kurz |
+| Task (Aufgabe) | Was war dein Auftrag? | kurz |
+| Action (Handlung) | Was hast du selbst getan? | der größte Teil |
+| Result (Ergebnis) | Was kam dabei heraus? | kurz, möglichst mit Zahl |
+
+## Ein Beispiel
+
+- **Situation:** Im Kundenservice stapelten sich vor Weihnachten die Anfragen.
+- **Aufgabe:** Ich sollte die Wartezeit senken.
+- **Handlung:** Ich habe die häufigsten Fragen ausgewertet und Antwortvorlagen geschrieben.
+- **Ergebnis:** Die Wartezeit sank in zwei Wochen von drei Tagen auf einen.
+
+## Tipps
+
+Sag „ich“ statt „wir“, denn es geht um deinen Beitrag. Bereite vier bis sechs Beispiele vor, die du für verschiedene Fragen nutzen kannst. Sprich sie laut, das Training unter „Vorbereitung“ hilft dir dabei.
+`);
+
+  artikel("anschreiben-aufbau", "So baust du ein Anschreiben auf", BEWERBUNG, `
+Ein Anschreiben passt auf eine Seite. Es wiederholt nicht den Lebenslauf, sondern erklärt, warum du und diese Stelle zusammenpassen.
+
+## Der Aufbau
+
+1. **Einleitung:** Warum diese Stelle, warum dieses Unternehmen? Verzichte auf „hiermit bewerbe ich mich“.
+2. **Motivation:** Was reizt dich an der Aufgabe?
+3. **Abgleich:** Nimm zwei oder drei Anforderungen aus der Anzeige und belege sie mit Beispielen.
+4. **Mehrwert:** Was bringst du mit, das andere vielleicht nicht haben?
+5. **Rahmen:** Eintrittstermin und, wenn verlangt, Gehaltsvorstellung.
+6. **Schluss:** Du freust dich auf ein Gespräch.
+
+## Worauf du achtest
+
+- Sprich eine Person mit Namen an, wenn du sie herausfinden kannst.
+- Schreib in kurzen Sätzen und vermeide Floskeln wie „teamfähig und belastbar“ ohne Beleg.
+- Prüfe den Firmennamen und die Stellenbezeichnung zweimal.
+- Lass jemanden gegenlesen.
+`);
+
+  artikel("gehaltsverhandlung", "Gehalt verhandeln", GESPRAECH, `
+Gehaltsverhandlungen sind normal. Wer freundlich und gut vorbereitet fragt, verliert dadurch kein Angebot.
+
+## Vorbereitung
+
+- **Markt prüfen:** Vergleiche Gehälter für Beruf, Region und Berufserfahrung, etwa im Entgeltatlas der Bundesagentur für Arbeit.
+- **Eigenen Wert belegen:** Sammle Erfolge mit Zahlen.
+- **Spanne festlegen:** Lege Wunsch, Ziel und Untergrenze fest, bevor du ins Gespräch gehst.
+- **Brutto im Jahr rechnen:** Unternehmen sprechen meist über das Jahresbrutto.
+
+## Im Gespräch
+
+Nenne eine konkrete Zahl oder eine enge Spanne und begründe sie mit deiner Erfahrung, nicht mit deinen Ausgaben. Halte eine kurze Pause aus, wenn du die Zahl genannt hast. Warte auf die Reaktion, bevor du sie relativierst.
+
+## Mehr als das Grundgehalt
+
+Vergleiche das ganze Paket: Bonus, Urlaubstage, Homeoffice, Fahrtkosten, betriebliche Altersvorsorge und Weiterbildung. Unter „Vergleich“ stellst du Angebote gegenüber.
+
+Vereinbare das Ergebnis schriftlich im Vertrag. Mündliche Zusagen lassen sich später schwer belegen.
+`);
+
+  artikel("kuendigungsfristen", "Kündigungsfristen", RECHT, `
+Dieser Artikel gibt einen Überblick für Arbeitsverhältnisse in Deutschland. Er ersetzt keine Rechtsberatung. Bei konkreten Fragen helfen Gewerkschaften, Fachanwältinnen und Fachanwälte für Arbeitsrecht.
+
+## Die gesetzliche Grundregel
+
+Nach § 622 BGB gilt: vier Wochen zum 15. oder zum Ende eines Kalendermonats. Das gilt für Beschäftigte unabhängig von der Dauer der Beschäftigung, solange der Vertrag nichts anderes regelt.
+
+## Kündigung durch das Unternehmen
+
+Die Frist wird mit der Dauer der Beschäftigung länger, jeweils zum Monatsende:
+
+| Beschäftigt seit | Frist |
+| --- | --- |
+| 2 Jahren | 1 Monat |
+| 5 Jahren | 2 Monate |
+| 8 Jahren | 3 Monate |
+| 10 Jahren | 4 Monate |
+| 12 Jahren | 5 Monate |
+| 15 Jahren | 6 Monate |
+| 20 Jahren | 7 Monate |
+
+## Worauf du achtest
+
+- **Vertrag und Tarifvertrag:** Sie können andere Fristen vorsehen.
+- **Probezeit:** Hier gelten meist zwei Wochen, siehe [Probezeit](#/wissen/probezeit).
+- **Schriftform:** Eine Kündigung muss auf Papier mit Unterschrift erfolgen. E-Mail oder Messenger reichen nicht.
+- **Rückwärts rechnen:** Prüfe vor einer Zusage, wann du frühestens wechseln kannst.
+`);
+
+  artikel("arbeitsvertrag-pruefen", "Arbeitsvertrag prüfen", RECHT, `
+Lies den Vertrag vollständig, bevor du unterschreibst. Du darfst dir dafür Zeit nehmen und nachfragen. Dieser Überblick gilt für Deutschland und ersetzt keine Rechtsberatung.
+
+## Die wichtigsten Punkte
+
+- **Stimmt alles mit dem Angebot überein?** Gehalt, Stunden, Urlaub, Einsatzort, Beginn.
+- **Probezeit:** Üblich sind bis zu sechs Monate. Mehr dazu unter [Probezeit](#/wissen/probezeit).
+- **Kündigungsfrist:** Sie steht im Vertrag oder folgt dem Gesetz, siehe [Kündigungsfristen](#/wissen/kuendigungsfristen).
+- **Überstunden:** Klauseln wie „mit dem Gehalt abgegolten“ sind heikel, wenn nicht klar ist, wie viele Stunden gemeint sind.
+- **Befristung:** Ein Ende mit Datum oder ein Sachgrund muss schriftlich vor Arbeitsbeginn feststehen.
+- **Wettbewerbsverbot nach dem Ausscheiden:** Es gilt höchstens zwei Jahre und setzt eine Entschädigung von mindestens der Hälfte der letzten Bezüge voraus.
+- **Rückzahlung von Fortbildungskosten:** Achte auf Höhe und Bindungsdauer.
+- **Versetzung:** Prüfe, ob das Unternehmen dich an andere Orte oder in andere Aufgaben schicken darf.
+
+## Wenn etwas unklar ist
+
+Frag schriftlich nach und bitte um eine Änderung im Vertrag. Bei Zweifeln prüfen Gewerkschaften, Fachanwältinnen und Fachanwälte für Arbeitsrecht den Vertrag. Unter „Vergleich“ findest du zu jedem Angebot eine Prüfliste.
+`);
+
+  artikel("vorstellungsgespraech", "Das Vorstellungsgespräch", GESPRAECH, `
+Ein Gespräch ist keine Prüfung, sondern ein Kennenlernen in beide Richtungen. Auch du findest heraus, ob die Stelle zu dir passt.
+
+## Vorbereitung
+
+- Lies die Stellenanzeige und deine eigene Bewerbung noch einmal.
+- Informiere dich über das Unternehmen, seine Produkte und aktuelle Nachrichten.
+- Bereite eine kurze Vorstellung von etwa zwei Minuten vor.
+- Übe Beispiele mit der [STAR-Methode](#/wissen/star-methode).
+- Schreib dir eigene Fragen auf, etwa zur Einarbeitung oder zum Team.
+
+## Typischer Ablauf
+
+1. Begrüßung und Vorstellung der Beteiligten
+2. Vorstellung des Unternehmens und der Stelle
+3. Dein Werdegang und deine Beispiele
+4. Deine Fragen
+5. Gehalt, Eintritt und nächste Schritte
+
+## Am Tag selbst
+
+Plane Zeit für die Anfahrt ein und sei etwa zehn Minuten vorher da. Beim digitalen Gespräch testest du Kamera, Ton und Verbindung vorab und wählst einen ruhigen Ort.
+
+## Unzulässige Fragen
+
+Fragen nach Schwangerschaft, Familienplanung oder Religion sind in der Regel nicht erlaubt. Du musst sie nicht wahrheitsgemäß beantworten.
+
+## Danach
+
+Notiere dir direkt, was gut lief und was du nachfragen möchtest. Ein kurzes Dankeschön per E-Mail am selben oder nächsten Tag ist ein guter Abschluss.
+`);
+
+  artikel("linkedin-xing-profil", "LinkedIn- und XING-Profil", AUFTRITT, `
+Viele Personalverantwortliche schauen sich Online-Profile an. Ein gepflegtes Profil unterstützt deine Bewerbung, ein veraltetes schadet ihr.
+
+## Die Grundlagen
+
+- **Foto:** freundlich, aktuell und passend zum Berufsumfeld
+- **Überschrift:** Was du tust und suchst, nicht nur die aktuelle Stelle
+- **Zusammenfassung:** drei bis fünf Sätze zu Stärken und Zielen
+- **Berufserfahrung:** dieselben Daten und Bezeichnungen wie im Lebenslauf
+- **Kompetenzen:** Begriffe, nach denen in deinem Beruf gesucht wird
+
+## Was du prüfst
+
+1. Stimmen Daten und Titel mit deinem Lebenslauf überein?
+2. Gibt es Rechtschreibfehler?
+3. Wirken frühere Beiträge und Kommentare noch passend?
+4. Ist die Einstellung „offen für Angebote“ so gewählt, wie du es möchtest? Prüfe, ob dein aktuelles Unternehmen sie sehen kann.
+
+## Ein Profil genügt
+
+Pflege lieber ein Profil gut als zwei schlecht. Nutzt du eins nicht mehr, lösche es oder weise dort auf das aktive Profil hin.
+`);
+
+  artikel("serioese-email", "Eine seriöse E-Mail-Adresse", AUFTRITT, `
+Deine E-Mail-Adresse ist oft das Erste, was ein Unternehmen von dir sieht. Sie sollte sachlich sein und deinen Namen enthalten.
+
+## So sieht sie aus
+
+- gut: vorname.nachname@beispiel.de
+- auch gut: v.nachname@beispiel.de
+- ungeeignet: Spitznamen, Geburtsjahre oder Fantasienamen
+
+## Ein eigenes Postfach für Bewerbungen
+
+Richte ein eigenes Postfach ein. So gehen Antworten nicht zwischen Newslettern unter, und du behältst den Überblick.
+
+## Darauf achtest du
+
+- Nutze nie die Adresse deines aktuellen Arbeitgebers.
+- Prüfe auch den Spam-Ordner regelmäßig.
+- Schalte, wenn du sie nutzt, die Zwei-Faktor-Anmeldung ein.
+- Der angezeigte Absendername ist dein vollständiger Name.
+`);
+
+  artikel("probezeit", "Probezeit", RECHT, `
+In der Probezeit lernen du und das Unternehmen sich kennen. Dieser Überblick gilt für Deutschland und ersetzt keine Rechtsberatung.
+
+## Das Wichtigste
+
+- **Dauer:** Eine verkürzte Kündigungsfrist darf für höchstens sechs Monate vereinbart werden (§ 622 Abs. 3 BGB).
+- **Kündigung:** In dieser Zeit genügen meist zwei Wochen, und zwar zu jedem beliebigen Tag und für beide Seiten.
+- **Kein Automatismus:** Eine Probezeit gilt nur, wenn sie im Vertrag steht. Sie kann auch kürzer sein.
+- **Befristete Verträge:** Die Probezeit muss im Verhältnis zur Laufzeit und zur Tätigkeit stehen.
+
+## Probezeit und Kündigungsschutz
+
+Das sind zwei getrennte Dinge. Der allgemeine Kündigungsschutz greift in Betrieben mit mehr als zehn Beschäftigten nach sechs Monaten im Unternehmen, unabhängig von der vereinbarten Probezeit.
+
+## Deine Rechte
+
+Auch in der Probezeit hast du Anspruch auf Lohn, Entgeltfortzahlung bei Krankheit (nach vier Wochen im Arbeitsverhältnis) und anteiligen Urlaub.
+
+## So nutzt du die Zeit
+
+Bitte früh um Rückmeldung und klär Erwartungen im Gespräch. Vereinbare nach etwa drei Monaten ein Zwischengespräch.
+
+R42J hält in der Statistik fest, wenn du die Probezeit bestanden hast: Setze dafür den Status der Bewerbung.
+`);
+})();

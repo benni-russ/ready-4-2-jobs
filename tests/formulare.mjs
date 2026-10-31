@@ -31,7 +31,7 @@ async function einrichten(p) {
   await p.goto(URLAPP);
   await p.getByRole("button", { name: "Ordner auswählen" }).click();
   await p.getByRole("button", { name: "Neues Profil anlegen" }).click();
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.activeElement.tagName === "INPUT");
   await p.keyboard.type(NAME);
   await p.keyboard.press("Enter");
   await p.getByRole("heading", { name: "Wie soll R42J aussehen?" }).waitFor();
@@ -376,6 +376,8 @@ async function lageTesten(p) {
         await dlg(p).waitFor();
         await p.waitForTimeout(100);
       }
+      // Die Seitenleiste animiert nach dem Größenwechsel, gemessen wird erst danach.
+      await p.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect.getTiming().iterations === Infinity));
       const f = await p.evaluate(pruefeLage);
       ok(`Lage ${stand} ${hash}`, f.length === 0, f);
       const felder = await p.evaluate(() =>

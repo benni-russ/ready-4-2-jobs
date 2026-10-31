@@ -5,12 +5,7 @@
   var K = window.R42J_CORE;
   var html = UI.html;
 
-  var PLATZHALTER = {
-    wissen: "book-open",
-    statistik: "chart-column",
-  };
-
-  var EIGENE = ["einstellungen", "stammdaten", "anlagen", "lebenslauf", "bewerbungen", "uebersicht", "vergleich", "vorbereitung"];
+  var EIGENE = ["einstellungen", "stammdaten", "anlagen", "lebenslauf", "bewerbungen", "uebersicht", "vergleich", "vorbereitung", "checklisten", "wissen", "statistik"];
 
   function seitenInhalt(seite, teile) {
     if (seite === "einstellungen") return html`<${S.Einstellungen} />`;
@@ -22,7 +17,9 @@
     if (seite === "uebersicht") return html`<${S.Uebersicht} />`;
     if (seite === "vergleich") return html`<${S.Vergleich} teile=${teile} />`;
     if (seite === "vorbereitung") return html`<${S.Vorbereitung} teile=${teile} />`;
-    if (PLATZHALTER[seite]) return html`<${S.Platzhalter} seite=${seite} icon=${PLATZHALTER[seite]} key=${seite} />`;
+    if (seite === "checklisten") return html`<${S.Checklisten} />`;
+    if (seite === "wissen") return html`<${S.Wissen} teile=${teile} />`;
+    if (seite === "statistik") return html`<${S.Statistik} />`;
     return html`<${UI.EmptyState} icon="search-x" titel=${K.t("fehler.seiteTitel")} text=${K.t("fehler.seiteText")}>
       <${UI.Button} variante="primary" href="#/uebersicht">${K.t("fehler.seiteAktion")}<//>
     <//>`;
@@ -31,7 +28,7 @@
   function App() {
     var z = K.useStore();
     var route = K.useRoute();
-    var bekannt = route.seite === "komponenten" || !!PLATZHALTER[route.seite] || EIGENE.indexOf(route.seite) > -1;
+    var bekannt = route.seite === "komponenten" || EIGENE.indexOf(route.seite) > -1;
     document.title = (bekannt && route.seite !== "komponenten" ? K.t("nav." + route.seite) + " · " : "") + "R42J";
     return html`<${UI.AppShell} seite=${route.seite} key=${z.sprache}>${seitenInhalt(route.seite, route.teile)}<//>`;
   }

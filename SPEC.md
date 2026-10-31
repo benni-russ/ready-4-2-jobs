@@ -73,7 +73,7 @@ R42J/
 │  ├─ i18n/                    # de.js, en.js (window.R42J_I18N = {...})
 │  ├─ templates/               # Textbausteine-Defaults, CV-Layout
 │  ├─ fragen/                  # mitgelieferte Fragenkataloge (*.js)
-│  ├─ wissen-default/          # mitgelieferte Wissensartikel (*.md)
+│  ├─ wissen-default/          # mitgelieferte Wissensartikel (de.js, en.js; file:// erlaubt kein fetch())
 │  └─ version.js
 └─ daten/                      # wird von Updates NIE angefasst
    ├─ profile.json             # unverschlüsselte Liste: id, Anzeigename, Datei
@@ -85,7 +85,7 @@ R42J/
    ├─ fragen/                  # eigene Fragenkataloge (*.json, unverschlüsselt, ohne personenbezogene Daten)
    └─ export/                  # temporär (.eml, PDFs) – wird beim Start geleert
 ```
-Beim ersten Start werden fehlende Ordner angelegt und `wissen-default/` nach `daten/wissen/` kopiert (nur wenn noch nicht vorhanden).
+Beim Start werden fehlende Ordner angelegt und die Artikel aus `wissen-default/` als `<kennung>.<sprache>.md` nach `daten/wissen/` geschrieben, wenn die Datei dort noch fehlt. Der Griff zeigt auf `daten/`, nach `app/` kommt er nicht; deshalb liegen die Artikel im Code. Geänderte Dateien bleiben unberührt, gelöschte kommen beim nächsten Start zurück.
 
 ---
 
@@ -367,11 +367,11 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 ### 6.13 Wissen
 - Markdown-Artikel aus `daten/wissen/` (Ordner-Handle), gerendert mit marked + DOMPurify.
 - Mitgeliefert (DE/EN): Foto ja/nein · ATS erklärt · STAR-Methode · Anschreiben-Aufbau · Gehaltsverhandlung · Kündigungsfristen · Arbeitsvertrag prüfen · Vorstellungsgespräch · LinkedIn-/XING-Profil · Seriöse E-Mail-Adresse · Probezeit.
-- Suche + Kategorien über Frontmatter (`title`, `category`, `lang`).
+- Suche + Kategorien über Frontmatter (`title`, `category`, `lang`). Die Kennung ist der Dateiname ohne Sprache und Endung; je Kennung gilt die Fassung der Oberflächensprache, sonst die vorhandene. Artikel sind fremder Text: Bilder und Einbettungen fallen weg, Links bleiben nur als App-Link (`#/…`) oder HTTPS.
 - Links aus der App kontextbezogen in passende Artikel (z. B. Foto-Schalter → „Foto ja/nein“).
 
 ### 6.14 Statistik
-- Bewerbungen pro Woche/Monat · Einladungsquote (Gespräch ÷ versendet) · Quote pro Ausrichtung · Quote pro Portal/Quelle · Ø Antwortzeit · Status-Verteilung (Trichter).
+- Bewerbungen pro Woche/Monat · Einladungsquote (Gespräch ÷ versendet; als Gespräch zählen Telefoninterview, Gespräch, Einstellungstest und alles danach, als versendet auch Bewerbungen, die ohne Versandeintrag weiter im Verlauf sind) · Quote pro Ausrichtung · Quote pro Portal/Quelle · Ø Antwortzeit · Status-Verteilung (Trichter).
 - Einfache SVG-Diagramme ohne externe Bibliothek; jede Zahl mit Basis („12 von 80“).
 
 ### 6.15 Einstellungen

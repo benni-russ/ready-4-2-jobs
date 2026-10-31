@@ -41,7 +41,7 @@ for (const channel of kanaele()) {
   // Onboarding bis Schritt 7.
   await p.getByRole("button", { name: "Ordner auswählen" }).click();
   await p.getByRole("button", { name: "Neues Profil anlegen" }).click();
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.activeElement.tagName === "INPUT");
   await p.keyboard.type(NAME);
   await p.keyboard.press("Enter");
   await p.getByRole("heading", { name: "Wie soll R42J aussehen?" }).waitFor();
