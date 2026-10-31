@@ -129,14 +129,20 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 **Akzeptanz:** Eigener Artikel in `daten/wissen/` erscheint nach Neustart; Statistik zeigt korrekte Quoten für Testdaten.
 
 ### M9 · Feinschliff & Release 1.0
-- [ ] Update-Prüfung (opt-in), Update-Anleitung.
-- [ ] GitHub Actions: Release-ZIP bauen (ohne `daten/`).
-- [ ] Barrierefreiheits-Audit (Tastatur, Screenreader NVDA/VoiceOver, Kontrast, Schriftgröße 130 %).
-- [ ] Endnutzer-Anleitung (`LIESMICH`, Wissensartikel „Erste Schritte“, Bildanleitungen für Ordnerwahl und Mac-Sicherheitswarnung).
-- [ ] Testdaten-Generator (Demo-Profil) für Screenshots und Tests.
-- [ ] Sicherheitsreview: CSP, keine Klartextreste in `export/`, keine Daten in Logs/Konsole.
+- [x] Update-Prüfung (opt-in), Update-Anleitung.
+- [x] GitHub Actions: Release-ZIP bauen (ohne `daten/`). Workflow steht, ausgelöst wurde er noch nicht.
+- [x] Barrierefreiheits-Audit, automatisierbarer Teil: Tastatur, Kontrast, Schriftgröße 130 %, Klickflächen, axe-core.
+- [ ] Barrierefreiheits-Audit, Handarbeit: Screenreader NVDA und VoiceOver.
+- [x] Endnutzer-Anleitung: `LIESMICH.html`, Wissensartikel „Erste Schritte“ und „Update installieren“, Bilder der App-Schritte.
+- [ ] Bilder der Fenster von Windows und macOS (Ordnerdialog, Mac-Sicherheitswarnung). Bis dahin stehen diese Schritte als Text in `LIESMICH.html`, die Mac-Schritte sind auf keinem echten Gerät nachgestellt.
+- [x] Testdaten-Generator (Demo-Profil) für Screenshots und Tests.
+- [x] Sicherheitsreview: CSP, keine Klartextreste in `export/`, keine Daten in Logs/Konsole (`docs/SICHERHEIT.md`).
+- [x] PDF-Schrift auf Latin Extended und Vietnamesisch erweitert.
 
-**Akzeptanz:** Nicht-technische Testperson schafft Onboarding + erste Bewerbung ohne Hilfe in < 30 min.
+**Akzeptanz (offen):**
+- [ ] Nicht-technische Testperson schafft Onboarding + erste Bewerbung ohne Hilfe in < 30 min.
+- [ ] ATS-Test des Lebenslaufs mit einem echten ATS-Checker.
+- [ ] Testlauf im Browser mit dem fertigen Stand vor dem Release.
 
 ---
 

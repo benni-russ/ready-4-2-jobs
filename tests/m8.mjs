@@ -82,7 +82,7 @@ for (const channel of kanaele()) {
   await p.getByRole("button", { name: "Ordner auswählen" }).click();
   await p.waitForFunction(() => window.R42J_CORE.ablauf.get().phase === "profile");
   const kopiert = await wissenDateien(p);
-  ok("22 Artikel kopiert", kopiert.filter((n) => n.endsWith(".md")).length === 22, kopiert);
+  ok("26 Artikel kopiert", kopiert.filter((n) => n.endsWith(".md")).length === 26, kopiert);
   ok("Prüfliste-Kennungen vorhanden", ["arbeitsvertrag-pruefen.de.md", "kuendigungsfristen.en.md", "probezeit.de.md"].every((n) => kopiert.includes(n)));
 
   await p.getByRole("button", { name: "Neues Profil anlegen" }).click();
@@ -203,7 +203,7 @@ for (const channel of kanaele()) {
   await p.getByRole("heading", { name: "Wissen", exact: true }).waitFor();
   await p.getByRole("link", { name: "Mein Testartikel" }).waitFor();
   ok("Eigener Artikel in der Liste", true);
-  ok("Je Kennung eine Zeile", (await p.locator(".rj-datatable tbody tr").count()) === 12, await p.locator(".rj-datatable tbody tr").count());
+  ok("Je Kennung eine Zeile", (await p.locator(".rj-datatable tbody tr").count()) === 14, await p.locator(".rj-datatable tbody tr").count());
   ok("Geänderte Datei bleibt", await p.getByRole("link", { name: "Geänderte Probezeit" }).isVisible());
   ok("Zu große Datei gemeldet", await p.getByText("Übersprungene Dateien: 1").isVisible());
 

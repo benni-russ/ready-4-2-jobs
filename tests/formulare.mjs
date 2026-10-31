@@ -346,6 +346,7 @@ const seiten = (id) => [
   ["#/bewerbungen/" + id + "/lebenslauf", null],
   ["#/bewerbungen/" + id + "/anschreiben", null],
   ["#/bewerbungen/" + id + "/anlagen", null],
+  ["#/bewerbungen/" + id + "/versand", "E-Mail-Entwurf erstellen"],
   ["#/bewerbungen/" + id + "/versand", "Als versendet markieren"],
   ["#/bewerbungen/" + id + "/details", "Status ändern"],
   ["#/bewerbungen/" + id + "/details", "Termin hinzufügen"],
@@ -363,6 +364,8 @@ async function lageTesten(p) {
   await p.getByRole("button", { name: "Bewerbung anlegen" }).click();
   await p.getByRole("tab", { name: "Stelle" }).waitFor();
   const id = await p.evaluate(() => window.R42J_CORE.tresor.daten().bewerbungen[0].id);
+  // Ohne Dokument bleibt der Knopf für den E-Mail-Entwurf gesperrt.
+  await p.evaluate((id) => window.R42J_CORE.bewerbungen.snapshotSpeichern(id, "lebenslauf", new TextEncoder().encode("%PDF-1.4"), "lebenslauf.pdf"), id);
   const SEITEN = seiten(id);
   for (const [breite, schrift, thema] of [[1280, "normal", "hell"], [1280, "sehr-gross", "dunkel"], [375, "normal", "dunkel"], [375, "sehr-gross", "hell"]]) {
     await p.setViewportSize({ width: breite, height: 800 });

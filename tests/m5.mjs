@@ -1,5 +1,5 @@
 // M5: Übersicht, Status, Erinnerungen, Termine, Checkliste. Testdaten frei erfunden.
-import { chromium, URLAPP, SP, kanaele, waehle } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, waehle, profilWaehlen } from "./hilfen.mjs";
 
 let fehlerZahl = 0;
 function ok(name, wahr, info) {
@@ -462,7 +462,7 @@ for (const channel of kanaele()) {
   await p.evaluate(() => window.R42J_CORE.tresor.speichernJetzt());
   await p.goto("about:blank");
   await p.goto(URLAPP + "#/uebersicht");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.waitForSelector(".rj-shell");

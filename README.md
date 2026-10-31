@@ -2,7 +2,7 @@
 
 Lokales, verschlüsseltes Bewerbungs-Tool. Läuft ohne Installation vom USB-Stick in Chrome oder Edge unter Windows und macOS. Kein Server, keine Cloud, kein Konto.
 
-**Stand:** in Entwicklung, noch nicht für echte Bewerbungsdaten geeignet.
+**Stand:** Version 1.0 in Vorbereitung, noch nicht veröffentlicht. Die Abnahme mit einer Testperson und mit Screenreadern steht aus. Anleitung für Nutzer: `LIESMICH.html`.
 
 ## Starten
 

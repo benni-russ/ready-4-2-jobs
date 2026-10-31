@@ -268,4 +268,64 @@ Ask for feedback early and clarify expectations. Arrange a review after about th
 
 R42J records in the statistics when you pass probation: Set the status of the application to do this.
 `);
+
+  artikel("erste-schritte", "Getting started", "Getting started", `
+How to get from first launch to your first application.
+
+## 1. Start
+
+- **Windows:** double-click \`Start (Windows).cmd\`.
+- **Mac:** right-click \`Start (Mac).command\`, choose “Open” and confirm the security question. You only need this the first time. If the Mac does not offer this, System Settings → Privacy & Security has an “Open Anyway” button.
+- **If neither works:** right-click \`Start.html\` and open it in Chrome or Edge.
+
+R42J only runs in Chrome and Edge.
+
+## 2. Choose the folder
+
+Pick the folder R42J is in and allow the changes. The \`daten\` folder with your encrypted data appears next to it.
+
+## 3. Create a profile
+
+The assistant guides you through your password and recovery key. **Print the key and keep it away from the stick.** Without password and key nobody can reach your data.
+
+## 4. Fill in your base data
+
+Enter your data once or use an AI prompt to take it from an existing CV. Add at least one job focus.
+
+## 5. First application
+
+Add a new one under **Applications**, paste the job ad and create your CV and cover letter. The application then guides you through sending, step by step.
+
+## Backups
+
+R42J backs up automatically on the stick. Choose a second location in the settings so a broken stick costs you nothing.
+
+## Read on
+
+- [How to install an update](#/wissen/update-installieren)
+- [What is an ATS?](#/wissen/ats-erklaert)
+`);
+
+  artikel("update-installieren", "Install an update", "Getting started", `
+An update only replaces the program. Your data in the \`daten\` folder stays untouched.
+
+## How to do it
+
+1. Lock R42J and close the browser tab.
+2. To be safe, back up the \`daten\` folder, for example by copying it to your computer.
+3. Download the ZIP file \`r42j-vX.Y.Z.zip\` from the release and unpack it.
+4. Delete the old \`app\` folder on the stick.
+5. Copy the new \`app\` folder from the ZIP to the same place.
+6. Start R42J as usual and unlock your profile.
+
+You only need to replace the start files if the release note says so. \`daten\` is not in the ZIP and is never overwritten. Never delete this folder.
+
+## Check for updates automatically
+
+Turn the check on in the settings. R42J then asks GitHub for the latest version at most once a day when it starts. None of your data is transferred. The check is off by default.
+
+## If something goes wrong
+
+Put the old \`app\` folder back. New versions convert your vault the first time you open it and create a backup first. If a new version has already converted the vault, use that backup.
+`);
 })();

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R42J: Liesmich</title>
+<style>
+  :root { color-scheme: light dark; --text: #1a2230; --grund: #fff; --rand: #c9d1dc; --link: #1d4fbd; }
+  @media (prefers-color-scheme: dark) { :root { --text: #e8ecf2; --grund: #141a24; --rand: #3a4556; --link: #9dbcff; } }
+  body { margin: 0 auto; max-width: 46rem; padding: 1.5rem 1rem 4rem; font: 1.0625rem/1.6 system-ui, sans-serif; color: var(--text); background: var(--grund); }
+  h1, h2, h3 { line-height: 1.25; }
+  a { color: var(--link); }
+  code { font-size: 0.95em; overflow-wrap: anywhere; }
+  img { display: block; max-width: 100%; height: auto; margin: 0.75rem 0; border: 1px solid var(--rand); border-radius: 8px; }
+  .warnung { padding: 0.75rem 1rem; border: 2px solid var(--rand); border-radius: 8px; }
+  @media print { :root { --text: #000; --grund: #fff; --link: #000; } }
+</style>
+</head>
+<body>
+<h1>R42J – Ready 4 2 Jobs</h1>
+<p>R42J hilft dir bei Bewerbungen: Stammdaten, Lebenslauf, Anschreiben, Versand, Termine und Vorbereitung. Es läuft ohne Installation vom USB-Stick, und deine Daten bleiben verschlüsselt bei dir. <a href="#en">English version below.</a></p>
+
+<h2>Du brauchst</h2>
+<ul>
+  <li>Windows oder macOS mit Google Chrome oder Microsoft Edge</li>
+  <li>einen USB-Stick oder einen Ordner auf deinem Rechner</li>
+  <li>einen Drucker oder einen sicheren Ort für den Wiederherstellungsschlüssel</li>
+</ul>
+
+<h2>Einrichten</h2>
+<ol>
+  <li>Entpacke die ZIP-Datei vollständig auf den Stick. Direkt aus der ZIP-Datei startet R42J nicht.</li>
+  <li>Starte R42J (siehe unten).</li>
+</ol>
+
+<h3>Unter Windows starten</h3>
+<p>Doppelklicke auf <code>Start (Windows).cmd</code>. Fragt Windows SmartScreen nach, wähle „Weitere Informationen“ und „Trotzdem ausführen“.</p>
+
+<h3>Auf dem Mac starten</h3>
+<p>Der Mac warnt beim ersten Start, weil R42J nicht bei Apple registriert ist.</p>
+<ol>
+  <li>Klicke mit der rechten Maustaste auf <code>Start (Mac).command</code> und wähle „Öffnen“.</li>
+  <li>Bestätige die Rückfrage mit „Öffnen“.</li>
+  <li>Bietet der Mac das nicht an: Öffne „Systemeinstellungen“ → „Datenschutz &amp; Sicherheit“, gehe nach unten zu „Sicherheit“ und klicke auf „Dennoch öffnen“.</li>
+</ol>
+<p>Klappt das nicht, öffne <code>Start.html</code> per Rechtsklick → „Öffnen mit“ in Chrome oder Edge. Die Anleitung für den Mac wurde noch nicht auf einem echten Gerät nachgestellt und kann je nach macOS-Version leicht abweichen.</p>
+
+<h3>Ordner wählen</h3>
+<p>R42J fragt beim ersten Start nach seinem Ordner. Klicke auf „Ordner auswählen“, wähle den Ordner mit den Startdateien und erlaube die Änderungen. Daneben entsteht der Ordner <code>daten</code>.</p>
+<img src="app/img/anleitung/ordner.png" alt="Startbildschirm von R42J mit drei Schritten und dem Knopf Ordner auswählen" width="900" height="640" loading="lazy">
+
+<h3>Profil anlegen</h3>
+<p>Wähle „Neues Profil anlegen“. Der Assistent führt dich durch Passwort, Wiederherstellungsschlüssel und deine ersten Angaben.</p>
+<img src="app/img/anleitung/profile.png" alt="Profilauswahl von R42J mit dem Knopf Neues Profil anlegen" width="900" height="640" loading="lazy">
+<p class="warnung"><strong>Wichtig:</strong> Drucke den Wiederherstellungsschlüssel aus und bewahre ihn getrennt vom Stick auf. Ohne Passwort und Schlüssel kommt niemand mehr an deine Daten.</p>
+
+<h3>Loslegen</h3>
+<p>Danach siehst du die Übersicht. Unter „Wissen“ findest du den Artikel „Erste Schritte“.</p>
+<img src="app/img/anleitung/uebersicht.png" alt="Übersicht von R42J mit erfundenen Beispielbewerbungen" width="900" height="640" loading="lazy">
+
+<h2>Update installieren</h2>
+<ol>
+  <li>Sperre R42J und schließe den Tab.</li>
+  <li>Kopiere den Ordner <code>daten</code> zur Sicherheit auf deinen Rechner.</li>
+  <li>Entpacke die neue ZIP-Datei und ersetze <strong>nur</strong> den Ordner <code>app</code>.</li>
+  <li>Starte R42J wie gewohnt.</li>
+</ol>
+<p class="warnung">Lösche oder ersetze den Ordner <code>daten</code> nie. Dort liegen deine Daten.</p>
+
+<h2>Datenschutz</h2>
+<p>R42J hat keinen Server und kein Konto. Ins Netz geht es nur bei Links, die du selbst anklickst, und bei der Update-Suche, wenn du sie einschaltest. Sie überträgt keine Daten von dir. Die KI-Funktionen laufen über Kopieren und Einfügen in einen Chat deiner Wahl. Persönliche Angaben werden dabei standardmäßig durch Platzhalter ersetzt.</p>
+
+<h2>Lizenz</h2>
+<p>R42J steht unter der GPL-3.0, siehe <code>LICENSE</code>. Mitgelieferte Bibliotheken und Schriften stehen unter ihren eigenen Lizenzen, siehe <code>app/lib/LICENSES</code>.</p>
+
+<hr>
+<h1 id="en" lang="en">R42J – English</h1>
+<div lang="en">
+<p>R42J helps you with job applications: base data, CV, cover letter, sending, appointments and preparation. It runs from a USB stick without installation, and your data stays encrypted with you.</p>
+
+<h2>You need</h2>
+<ul>
+  <li>Windows or macOS with Google Chrome or Microsoft Edge</li>
+  <li>a USB stick or a folder on your computer</li>
+  <li>a printer or a safe place for the recovery key</li>
+</ul>
+
+<h2>Set up</h2>
+<ol>
+  <li>Unpack the whole ZIP file to the stick. R42J does not start from inside the ZIP file.</li>
+  <li>On Windows, double-click <code>Start (Windows).cmd</code>. If SmartScreen asks, choose “More info” and “Run anyway”.</li>
+  <li>On a Mac, right-click <code>Start (Mac).command</code>, choose “Open” and confirm. If the Mac does not offer this, go to System Settings → Privacy &amp; Security, scroll to Security and click “Open Anyway”. These Mac steps have not been checked on a real device yet and may differ slightly by macOS version.</li>
+  <li>If neither works, right-click <code>Start.html</code> and open it in Chrome or Edge.</li>
+  <li>Click “Choose folder”, pick the folder with the start files and allow the changes. The <code>daten</code> folder appears next to it.</li>
+  <li>Choose “New profile”. The assistant guides you through password, recovery key and first details.</li>
+</ol>
+<p class="warnung"><strong>Important:</strong> Print the recovery key and keep it away from the stick. Without password and key nobody can reach your data.</p>
+
+<h2>Install an update</h2>
+<ol>
+  <li>Lock R42J and close the tab.</li>
+  <li>Copy the <code>daten</code> folder to your computer to be safe.</li>
+  <li>Unpack the new ZIP file and replace <strong>only</strong> the <code>app</code> folder.</li>
+  <li>Start R42J as usual.</li>
+</ol>
+<p class="warnung">Never delete or replace the <code>daten</code> folder. That is where your data lives.</p>
+
+<h2>Privacy</h2>
+<p>R42J has no server and no account. It only goes online for links you click yourself and for the update check if you turn it on, which transfers none of your data. AI features work by copy and paste into a chat of your choice. Personal details are replaced by placeholders by default.</p>
+
+<h2>Licence</h2>
+<p>R42J is licensed under GPL-3.0, see <code>LICENSE</code>. Bundled libraries and fonts have their own licences, see <code>app/lib/LICENSES</code>.</p>
+</div>
+</body>
+</html>

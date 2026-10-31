@@ -8,6 +8,11 @@
   S.OrdnerWahl = function (props) {
     return html`<${UI.Bildschirm} titel=${K.t("ordner.titel")} text=${K.t("ordner.text")}>
       ${props.fehler && html`<${UI.Alert} art="danger">${props.fehler}<//>`}
+      <ol class="rj-stack">
+        <li>${K.t("ordner.schritt1")}</li>
+        <li>${K.t("ordner.schritt2")}</li>
+        <li>${K.t("ordner.schritt3")}</li>
+      </ol>
       <${UI.Button} variante="primary" lg block icon="folder-open" onClick=${K.ordnerWaehlen}>${K.t("ordner.aktion")}<//>
     <//>`;
   };
