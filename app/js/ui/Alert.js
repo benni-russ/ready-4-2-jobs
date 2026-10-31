@@ -12,6 +12,7 @@
       <div class="rj-alert__body">
         ${props.titel && html`<span class="rj-alert__title">${props.titel}</span>`}
         <span>${props.children}</span>
+        ${props.aktionen && html`<div class="rj-alert__actions">${props.aktionen}</div>`}
       </div>
     </div>`;
   };

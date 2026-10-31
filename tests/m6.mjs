@@ -2,7 +2,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium, URLAPP, SP, kanaele, waehle } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, waehle, profilWaehlen } from "./hilfen.mjs";
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 const BEISPIEL = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(readFileSync(join(HIER, "..", "docs", "tests", "vergleich.md"), "utf8").replace(/\r\n/g, "\n"))[1]);
@@ -364,7 +364,7 @@ for (const channel of kanaele()) {
   await p.evaluate(() => window.R42J_CORE.tresor.speichernJetzt());
   await p.goto("about:blank");
   await p.goto(URLAPP + "#/vergleich");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.getByRole("table").waitFor();

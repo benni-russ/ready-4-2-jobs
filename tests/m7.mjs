@@ -1,6 +1,6 @@
 // M7: Vorbereitung. Leitner mit gefälschter Uhr, Katalog-Import, STAR, Unternehmensfragen. Testdaten frei erfunden.
 import { join } from "node:path";
-import { chromium, URLAPP, SP, kanaele } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, profilWaehlen } from "./hilfen.mjs";
 
 let fehlerZahl = 0;
 function ok(name, wahr, info) {
@@ -296,7 +296,7 @@ for (const channel of kanaele()) {
   await p.evaluate(() => window.R42J_CORE.tresor.speichernJetzt());
   await p.goto("about:blank");
   await p.goto(URLAPP + "#/vorbereitung");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await p.getByLabel("Passwort", { exact: true }).fill(PW);
   await p.getByRole("button", { name: "Entsperren" }).click();
   await p.getByRole("button", { name: "Interviewfragen lernen" }).waitFor();

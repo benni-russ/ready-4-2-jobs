@@ -111,6 +111,44 @@ for (const n of dateiliste) {
   }
 }
 
+// 6. Die Zeichenliste aus core/pdf.js muss jede PDF-Schrift wirklich abdecken.
+function cmapZeichen(pfad) {
+  const b = readFileSync(pfad);
+  const tabellen = b.readUInt16BE(4);
+  let cmap = -1;
+  for (let i = 0; i < tabellen; i++) if (b.toString("latin1", 12 + i * 16, 16 + i * 16) === "cmap") cmap = b.readUInt32BE(20 + i * 16);
+  const gefunden = new Set();
+  const anzahl = b.readUInt16BE(cmap + 2);
+  for (let i = 0; i < anzahl; i++) {
+    const t = cmap + b.readUInt32BE(cmap + 8 + i * 8);
+    if (b.readUInt16BE(t) !== 4) continue;
+    const seg = b.readUInt16BE(t + 6) / 2;
+    const ende = t + 14;
+    const start = ende + seg * 2 + 2;
+    const delta = start + seg * 2;
+    const versatz = delta + seg * 2;
+    for (let s = 0; s < seg; s++) {
+      const bis = b.readUInt16BE(ende + s * 2);
+      const von = b.readUInt16BE(start + s * 2);
+      const v = b.readUInt16BE(versatz + s * 2);
+      for (let c = von; c <= bis && c < 0xffff; c++) {
+        const g = v ? b.readUInt16BE(versatz + s * 2 + v + (c - von) * 2) : 1;
+        if (g) gefunden.add(c);
+      }
+    }
+  }
+  return gefunden;
+}
+const pdfCode = readFileSync(join(APP, "js", "core", "pdf.js"), "utf8");
+const zeichenListe = vm.runInNewContext(/var ZEICHEN =\s*([\s\S]*?);/.exec(pdfCode)[1]);
+const zeichenKlasse = new RegExp("[" + zeichenListe + "]");
+for (const name of readdirSync(join(WURZEL, "tools", "schrift")).filter((n) => n.endsWith(".ttf"))) {
+  const vorhanden = cmapZeichen(join(WURZEL, "tools", "schrift", name));
+  const fehlt = [];
+  for (let c = 0x20; c < 0xffff; c++) if (zeichenKlasse.test(String.fromCharCode(c)) && !vorhanden.has(c)) fehlt.push("U+" + c.toString(16));
+  if (fehlt.length) fehler.push(`PDF-Schrift: ${name} fehlen ${fehlt.slice(0, 8).join(" ")}`);
+}
+
 if (fehler.length) {
   console.error(fehler.join("\n"));
   console.error(`\n${fehler.length} Problem(e)`);

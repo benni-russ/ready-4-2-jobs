@@ -161,7 +161,7 @@ for (const channel of kanaele()) {
   const ohne = await erzeugen({ sprache: "de", mitFoto: false, ausrichtungId: "" }, "alle");
   ok("Alle Einträge", ohne.ganz.includes("Fremdstation"));
 
-  ok("fremde Zeichen erkannt", (await p.evaluate(() => window.R42J_CORE.pdf.fremdeZeichen({ content: [{ text: "Şahin Müller – Ş" }] }).join(""))) === "Ş");
+  ok("fremde Zeichen erkannt", (await p.evaluate(() => window.R42J_CORE.pdf.fremdeZeichen({ content: [{ text: "Şahin Łukasz Nguyễn Müller – Иван Ж" }] }).join(""))) === "ИванЖ");
   // Überlänge: viele Stationen. Keine darf über eine Seitengrenze laufen.
   await p.evaluate(async () => {
     const K = window.R42J_CORE;

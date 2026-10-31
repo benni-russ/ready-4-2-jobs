@@ -226,6 +226,16 @@
       };
     }
 
+    async function updateSuchen() {
+      try {
+        var version = await K.update.pruefen();
+        var neu = K.update.neuer(version, window.R42J_VERSION);
+        K.meldung(neu ? K.t("update.neu", { version: version }) : K.t("update.aktuell"));
+      } catch (x) {
+        K.meldung(K.fehlerText(x), "danger");
+      }
+    }
+
     async function exportLeeren() {
       try {
         await K.profile.exportLeeren();
@@ -283,6 +293,12 @@
             x.updatePruefung = w;
           })}
         />
+        <p class="rj-hint">${K.t("update.installiert", { version: window.R42J_VERSION })}</p>
+        ${e.updatePruefung &&
+        html`<div class="rj-row">
+          <${UI.Button} icon="refresh-cw" onClick=${updateSuchen}>${K.t("update.jetzt")}<//>
+          <${UI.Button} variante="ghost" icon="book-open" href="#/wissen/update-installieren">${K.t("update.anleitung")}<//>
+        </div>`}
         <div class="rj-row"><${UI.Button} onClick=${exportLeeren}>${K.t("einstellungen.exportLeeren")}<//></div>
         <div class="rj-row">
           <${UI.Button}

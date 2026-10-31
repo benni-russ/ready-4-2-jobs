@@ -291,7 +291,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Nutzer kann Keywords ergänzen/entfernen; Lücken mit einem Klick als Kompetenz anlegen.
 
 ### 6.5 Lebenslauf (PDF)
-- **Eine** geprüfte Vorlage, einspaltig, A4, 1–2 Seiten, Akzentfarbe aus den fünf Farbschemata (nur WCAG-taugliche Voreinstellungen, je Profil gemerkt in `cvAkzent`). Schrift ist fest IBM Plex Sans (Lateinisch-Teilmenge, eingebettet); fehlende Zeichen meldet die App vor dem Speichern.
+- **Eine** geprüfte Vorlage, einspaltig, A4, 1–2 Seiten, Akzentfarbe aus den fünf Farbschemata (nur WCAG-taugliche Voreinstellungen, je Profil gemerkt in `cvAkzent`). Schrift ist fest IBM Plex Sans (Lateinisch, Latin Extended und Vietnamesisch, eingebettet); fehlende Zeichen wie Kyrillisch oder Griechisch meldet die App vor dem Speichern.
 - Reihenfolge: Kopf (Name, Kontakt, Links, opt. Foto rechts oben) → Kurzprofil → Kernkompetenzen (Keyword-Zeile) → Berufserfahrung → Ausbildung → Zertifikate → Sprachen & IT → Interessen (optional).
 - Auswahl: nur Einträge der Ausrichtung; Erfolge und Kompetenzen nach Keyword-Treffern der Stelle priorisiert (max. 3–5 Stichpunkte pro Station).
 - Stichpunkte = `cvStichpunkt` (Aktion + Ergebnis, möglichst mit Zahl).
@@ -380,6 +380,8 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 ### 6.16 Updates
 - Opt-in: beim Start max. 1×/Tag `GET https://api.github.com/repos/benni-russ/ready-4-2-jobs/releases/latest` → Vergleich mit `app/version.js` → Hinweis mit Link zum Release.
 - Anleitung „Update installieren“: ZIP entpacken, **nur** Ordner `app/` ersetzen. Startdateien liegen im ZIP mit, `daten/` ist nicht enthalten.
+- Das ZIP enthält `app/`, die Startdateien, `LIESMICH.html` und `LICENSE` ohne Oberordner. Es entsteht mit `tools/release-zip.mjs`. Ein Tag `vX.Y.Z` legt nur einen Release-Entwurf an, veröffentlicht wird er nach dem Testlauf von Hand.
+- Der Stand der Prüfung (`updateStand`: letzter Tag, gefundene Version, ausgeblendete Version) liegt im `localStorage`. Er enthält keine persönlichen Daten und ändert den Tresor nicht. Von der Antwort wird nur `tag_name` gelesen, der Link entsteht aus der Versionsnummer.
 - Release-ZIP per GitHub Actions (`r42j-vX.Y.Z.zip`).
 
 ---

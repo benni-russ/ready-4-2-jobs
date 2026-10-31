@@ -1,1 +1,1 @@
-window.R42J_VERSION = "0.0.0";
+window.R42J_VERSION = "1.0.0";

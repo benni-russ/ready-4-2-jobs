@@ -28,6 +28,9 @@
   function App() {
     var z = K.useStore();
     var route = K.useRoute();
+    window.preactHooks.useEffect(function () {
+      K.update.beimStart();
+    }, []);
     var bekannt = route.seite === "komponenten" || EIGENE.indexOf(route.seite) > -1;
     document.title = (bekannt && route.seite !== "komponenten" ? K.t("nav." + route.seite) + " · " : "") + "R42J";
     return html`<${UI.AppShell} seite=${route.seite} key=${z.sprache}>${seitenInhalt(route.seite, route.teile)}<//>`;

@@ -168,6 +168,21 @@
     return [{ wert: "", label: alle }].concat(liste);
   }
 
+  function UpdateHinweis() {
+    K.useStore();
+    var h = K.update.hinweis();
+    if (!h) return null;
+    return html`<${UI.Alert}
+      titel=${K.t("update.titel", { version: h.version })}
+      aktionen=${html`
+        <${UI.Button} icon="external-link" href=${h.link} target="_blank" rel="noopener noreferrer">${K.t("update.zumRelease")}<//>
+        <${UI.Button} icon="book-open" href="#/wissen/update-installieren">${K.t("update.anleitung")}<//>
+        <${UI.Button} onClick=${K.update.ausblenden}>${K.t("update.ausblenden")}<//>
+      `}
+      >${K.t("update.text")}<//
+    >`;
+  }
+
   S.Uebersicht = function () {
     K.useBeobachtbar(K.tresorStand);
     var d = K.tresor.daten();
@@ -192,7 +207,8 @@
     var kopf = html`<div class="rj-pagehead">
       <h1 class="h1">${K.t("nav.uebersicht")}</h1>
       ${d.bewerbungen.length > 0 && html`<${UI.Button} variante="primary" icon="plus" href="#/bewerbungen/neu">${K.t("bewerbung.anlegen")}<//>`}
-    </div>`;
+    </div>
+    <${UpdateHinweis} />`;
 
     if (d.bewerbungen.length === 0) {
       return html`${kopf}

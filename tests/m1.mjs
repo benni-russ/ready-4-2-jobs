@@ -1,4 +1,4 @@
-import { chromium, URLAPP, SP, kanaele, pdfInfo } from "./hilfen.mjs";
+import { chromium, URLAPP, SP, kanaele, pdfInfo, profilWaehlen } from "./hilfen.mjs";
 
 let fehlerZahl = 0;
 function ok(name, wahr, info) {
@@ -110,7 +110,7 @@ for (const channel of kanaele()) {
   await p.getByRole("heading", { name: "Bereite dich vor" }).waitFor();
   await p.waitForTimeout(2400);
   await p.reload();
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await entsperren(p);
   await p.getByRole("heading", { name: "Bereite dich vor" }).waitFor({ timeout: 8000 });
   ok("Onboarding wird fortgesetzt", true);
@@ -139,7 +139,7 @@ for (const channel of kanaele()) {
 
   // Passwortwechsel
   await p.goto("about:blank"); await p.goto(URLAPP + "#/einstellungen");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   const t0 = Date.now();
   await entsperren(p);
   await p.waitForSelector(".rj-shell", { timeout: 8000 });
@@ -183,7 +183,7 @@ for (const channel of kanaele()) {
 
   // Backups: zweiter Ort, Rotation, Wiederherstellung
   await p.goto("about:blank"); await p.goto(URLAPP);
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await entsperren(p);
   await p.waitForSelector(".rj-shell", { timeout: 8000 });
   await p.evaluate(async () => {
@@ -225,7 +225,7 @@ for (const channel of kanaele()) {
     return K.tresor.speichernJetzt();
   });
   await p.goto("about:blank"); await p.goto(URLAPP + "#/einstellungen");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await entsperren(p);
   await p.waitForSelector(".rj-shell", { timeout: 8000 });
   await p.evaluate(async (n) => {
@@ -259,7 +259,7 @@ for (const channel of kanaele()) {
   // Auto-Sperre mit Testuhr
   await p.clock.install();
   await p.reload();
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await entsperren(p);
   await p.waitForSelector(".rj-shell", { timeout: 8000 });
   await p.evaluate(() => {
@@ -275,7 +275,7 @@ for (const channel of kanaele()) {
 
   // Profil löschen
   await p.goto("about:blank"); await p.goto(URLAPP + "#/einstellungen");
-  await p.getByRole("button", { name: new RegExp(NAME) }).click();
+  await profilWaehlen(p, NAME);
   await entsperren(p);
   await p.waitForSelector(".rj-shell", { timeout: 8000 });
   await p.screenshot({ path: SP + "/m1-" + channel + "-einstellungen.png", fullPage: true });

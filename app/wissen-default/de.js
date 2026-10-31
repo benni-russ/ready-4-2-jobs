@@ -269,4 +269,64 @@ Bitte früh um Rückmeldung und klär Erwartungen im Gespräch. Vereinbare nach 
 
 R42J hält in der Statistik fest, wenn du die Probezeit bestanden hast: Setze dafür den Status der Bewerbung.
 `);
+
+  artikel("erste-schritte", "Erste Schritte", "Erste Schritte", `
+So kommst du von der ersten Öffnung bis zur ersten Bewerbung.
+
+## 1. Starten
+
+- **Windows:** Doppelklick auf \`Start (Windows).cmd\`.
+- **Mac:** Rechtsklick auf \`Start (Mac).command\`, dann „Öffnen“ und die Sicherheitsfrage bestätigen. Das ist nur beim ersten Mal nötig. Bietet der Mac das nicht an, findest du unter Systemeinstellungen → Datenschutz & Sicherheit den Knopf „Dennoch öffnen“.
+- **Klappt beides nicht:** \`Start.html\` per Rechtsklick in Chrome oder Edge öffnen.
+
+R42J läuft nur in Chrome und Edge.
+
+## 2. Ordner wählen
+
+Wähle den Ordner, in dem R42J liegt, und erlaube die Änderungen. Daneben entsteht der Ordner \`daten\` mit deinen verschlüsselten Daten.
+
+## 3. Profil anlegen
+
+Der Assistent führt dich durch Passwort und Wiederherstellungsschlüssel. **Drucke den Schlüssel aus und bewahre ihn getrennt vom Stick auf.** Ohne Passwort und Schlüssel kommt niemand mehr an deine Daten.
+
+## 4. Stammdaten füllen
+
+Trage deine Daten einmal ein oder lass sie per KI-Prompt aus einem vorhandenen Lebenslauf übernehmen. Lege mindestens eine Ausrichtung an.
+
+## 5. Erste Bewerbung
+
+Lege unter **Bewerbungen** eine neue an, füge den Text der Stelle ein und erzeuge Lebenslauf und Anschreiben. Beim Versand hilft dir die Bewerbung Schritt für Schritt.
+
+## Sicherungen
+
+R42J sichert automatisch auf dem Stick. Wähle in den Einstellungen zusätzlich einen zweiten Ort, damit ein defekter Stick nichts kostet.
+
+## Weiterlesen
+
+- [So installierst du ein Update](#/wissen/update-installieren)
+- [Was ist ein ATS?](#/wissen/ats-erklaert)
+`);
+
+  artikel("update-installieren", "Update installieren", "Erste Schritte", `
+Ein Update ersetzt nur das Programm. Deine Daten im Ordner \`daten\` bleiben unberührt.
+
+## So gehst du vor
+
+1. Sperre R42J und schließe den Browser-Tab.
+2. Sichere zur Vorsicht den Ordner \`daten\`, zum Beispiel per Kopie auf den Rechner.
+3. Lade die ZIP-Datei \`r42j-vX.Y.Z.zip\` aus dem Release herunter und entpacke sie.
+4. Lösche auf dem Stick den alten Ordner \`app\`.
+5. Kopiere den neuen Ordner \`app\` aus dem ZIP an dieselbe Stelle.
+6. Starte R42J wie gewohnt und entsperre dein Profil.
+
+Die Startdateien musst du nur ersetzen, wenn die Release-Notiz das sagt. \`daten\` liegt nicht im ZIP und wird nie überschrieben. Lösche diesen Ordner nie.
+
+## Automatisch nach Updates suchen
+
+In den Einstellungen unter „Weiteres“ schaltest du die Suche ein. R42J fragt dann beim Start höchstens einmal am Tag bei GitHub nach der neuesten Version. Dabei werden keine Daten von dir übertragen. Die Suche ist standardmäßig aus.
+
+## Wenn etwas schiefgeht
+
+Lege den alten Ordner \`app\` zurück. Neue Versionen wandeln deinen Tresor beim ersten Öffnen um und legen vorher eine Sicherung an. Hat eine neue Version den Tresor schon umgewandelt, nimm diese Sicherung.
+`);
 })();
