@@ -64,7 +64,7 @@ for (const channel of kanaele()) {
 
   await p.getByRole("button", { name: "Ordner auswählen" }).click();
   await p.getByRole("button", { name: "Neues Profil anlegen" }).click();
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.activeElement.tagName === "INPUT");
   ok("Dialog: Fokus im Namensfeld", await p.evaluate(() => document.activeElement.tagName === "INPUT"));
   await p.keyboard.type(NAME);
   await p.keyboard.press("Enter");

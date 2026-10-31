@@ -86,7 +86,7 @@ for (const channel of kanaele()) {
   ok("Prüfliste-Kennungen vorhanden", ["arbeitsvertrag-pruefen.de.md", "kuendigungsfristen.en.md", "probezeit.de.md"].every((n) => kopiert.includes(n)));
 
   await p.getByRole("button", { name: "Neues Profil anlegen" }).click();
-  await p.waitForTimeout(100);
+  await p.waitForFunction(() => document.activeElement.tagName === "INPUT");
   await p.keyboard.type(NAME);
   await p.keyboard.press("Enter");
   await p.getByRole("heading", { name: "Wie soll R42J aussehen?" }).waitFor();
