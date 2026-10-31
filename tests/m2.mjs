@@ -95,6 +95,12 @@ for (const channel of kanaele()) {
   ok("Stepper 8 Schritte", (await p.locator(".rj-stepper > *, .rj-stepper li").count()) >= 8);
   await scr(p, `${channel}-onb7`);
   await p.setViewportSize({ width: 375, height: 760 });
+  await p.setViewportSize({ width: 1920, height: 1080 });
+  ok("Onboarding nutzt die Breite", (await p.locator("main").evaluate((e) => e.getBoundingClientRect().width)) > 1000);
+  if (process.env.R42J_AUSGABE) await p.screenshot({ path: process.env.R42J_AUSGABE + "/onboarding-1920.png" });
+  await p.setViewportSize({ width: 1280, height: 800 });
+  if (process.env.R42J_AUSGABE) await p.screenshot({ path: process.env.R42J_AUSGABE + "/onboarding-1280.png" });
+  await p.setViewportSize({ width: 375, height: 700 });
   ok("Onboarding 375 px ohne Querscroll", (await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)) <= 0);
   await scr(p, `${channel}-onb7-375`);
   await p.setViewportSize({ width: 1280, height: 900 });
