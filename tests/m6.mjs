@@ -328,8 +328,10 @@ for (const channel of kanaele()) {
     const b = K.tresor.daten().bewerbungen.find((x) => x.firma.name === "Waldblick KG");
     K.vergleich.angebotSpeichern(b.id, { pendelMinutenEinfach: null });
   });
-  const box = p.locator(".rj-fieldset input");
-  for (let i = 0; i < (await box.count()); i++) await box.nth(i).check().catch(() => {});
+  // Waldblick muss sicher gewählt sein, die Standardauswahl hängt von den Zeitstempeln ab.
+  const wald = p.locator(".rj-fieldset .rj-check", { hasText: "Waldblick KG" }).locator("input");
+  if (await wald.isChecked()) await p.locator(".rj-fieldset input:not(:checked)").first().check();
+  else await wald.check();
   await p.getByText(/Für Waldblick KG fehlt/).waitFor();
   ok("Fehlende Angabe wird benannt", await p.getByText("Fahrzeit einfach in Minuten", { exact: false }).first().isVisible());
 

@@ -509,7 +509,7 @@ window.R42J_I18N.en = {
   "nav.lebenslauf": "Resume",
   "fehler.pdfLaden": "The PDF components could not be loaded. Restart R42J and try again.",
   "fehler.cvName": "Enter your first and last name under Profile data first.",
-  "fehler.cvLeer": "There are no entries for this selection yet. Add an entry or choose “All entries”.",
+  "fehler.cvLeer": "There are no entries for this selection yet. In Profile data, assign a position to this focus area or add a new one.",
   "cv.text": "R42J builds your resume from your profile data: one column, real text, and readable by applicant tracking software.",
   "cv.ausrichtung": "Focus",
   "cv.alleEintraege": "All entries",

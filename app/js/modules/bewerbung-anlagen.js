@@ -68,7 +68,8 @@
     var alle = waehlbar();
     var stand = JSON.stringify([d.anlagenAuswahl, d.komprimierung, d.deckblatt]);
 
-    hooks.useEffect(function () {
+    // Läuft vor dem ersten Klick: Ein späterer Effekt würde eine frühe Auswahl überschreiben.
+    hooks.useLayoutEffect(function () {
       if (d.anlagenVorausgewaehlt) return;
       K.bewerbungen.aendern(b.id, function (x) {
         x.dokumente.anlagenAuswahl = vorauswahl(b);
