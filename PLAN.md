@@ -134,7 +134,8 @@ Stand: Rückfrage-Regel, `.ics`-Aufbau nach RFC 5545 und die Links sind automati
 - [x] Barrierefreiheits-Audit, automatisierbarer Teil: Tastatur, Kontrast, Schriftgröße 130 %, Klickflächen, axe-core.
 - [x] Barrierefreiheits-Audit, Handarbeit: Screenreader.
 - [x] Endnutzer-Anleitung: `LIESMICH.html`, Wissensartikel „Erste Schritte“ und „Update installieren“, Bilder der App-Schritte.
-- [ ] Bilder der Fenster von Windows und macOS (Ordnerdialog, Mac-Sicherheitswarnung). Bis dahin stehen diese Schritte als Text in `LIESMICH.html`, die Mac-Schritte sind auf keinem echten Gerät nachgestellt.
+- [x] Bilder der Fenster von Windows (Ordnerdialog, Frage nach dem Bearbeiten), aufgenommen mit `tools/anleitung-fenster.mjs`.
+- [ ] Optional: Bilder der Fenster von macOS (Ordnerdialog, Sicherheitswarnung). Bis dahin stehen die Mac-Schritte als Text in `LIESMICH.html` und sind auf keinem echten Gerät nachgestellt.
 - [x] Testdaten-Generator (Demo-Profil) für Screenshots und Tests.
 - [x] Sicherheitsreview: CSP, keine Klartextreste in `export/`, keine Daten in Logs/Konsole (`docs/SICHERHEIT.md`).
 - [x] PDF-Schrift auf Latin Extended und Vietnamesisch erweitert.
