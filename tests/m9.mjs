@@ -138,7 +138,7 @@ for (const channel of kanaele()) {
     for (const i of liste) { i.loading = "eager"; await i.decode().catch(() => {}); }
     return liste.map((i) => [i.getAttribute("src"), i.naturalWidth]);
   });
-  ok("LIESMICH zeigt seine Bilder", bilder.length === 3 && bilder.every((x) => x[1] > 0), bilder);
+  ok("LIESMICH zeigt seine Bilder", bilder.length === 5 && bilder.every((x) => x[1] > 0), bilder);
   await b2.close();
   rmSync(ziel, { recursive: true, force: true });
 }
