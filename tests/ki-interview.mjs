@@ -86,6 +86,7 @@ for (const channel of kanaele()) {
   await p.screenshot({ path: join(SP, channel + "-interview.png"), fullPage: true });
   let t = await prompt();
   ok("Prompt fragt einzeln nach", t.includes("nur eine Frage"));
+  ok("Prompt fragt einfach, auch ohne Berufserfahrung", t.includes("einfach und alltagsnah") && t.includes("Minijob") && t.includes("Ohne Zahl ist es genauso gut"));
   ok("Prompt nennt das Format", t.includes('"cvStichpunkt"') && t.includes("```json"));
   ok("Ohne Mitgeben kein Bestand im Prompt", !t.includes("Beispielwerk"));
   ok("Hinweis auf Namen Dritter", await sieht("keine Namen von Kolleginnen"));
