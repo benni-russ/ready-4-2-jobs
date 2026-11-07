@@ -271,7 +271,7 @@ Migrationen: `schema` hochzählen, Migrationsfunktionen in `app/js/core/migratio
 - Antworten in festem JSON-Format (im Prompt definiert, in ```json-Block). Parser toleriert Text drumherum, validiert Schema, zeigt Fehler verständlich.
 - Workflows:
   - Lebenslauf-Import (Text → Stammdaten-JSON)
-  - KI-Interview (Ausrichtungen, Erfolge, Kompetenzen, Interessen oder alles nacheinander): Die KI fragt im externen Chat einzeln nach und gibt am Ende festes JSON aus. Variante „Eigenen Text strukturieren“ für eingefügten Text. Vorhandene Bezeichnungen sind optional im Prompt und maskiert.
+  - KI-Interview (Ausrichtungen, Erfolge, Kompetenzen, Interessen oder alles nacheinander): Die KI fragt im externen Chat einzeln nach und gibt am Ende festes JSON aus. Sie fragt in einfacher Sprache, klärt zuerst die Lebenslage (Schule, Ausbildung, Beruf, Wiedereinstieg) und lässt Erfolge aus Schule, Praktikum, Minijob, Verein oder Alltag gelten; eine Kennzahl ist freiwillig. Variante „Eigenen Text strukturieren“ für eingefügten Text. Vorhandene Bezeichnungen sind optional im Prompt und maskiert.
   - Fehlende Übersetzungen ergänzen (offene i18n-Felder → `{ uebersetzungen: [{ id, text }] }`); vorhandene Fassungen werden nie überschrieben.
   - Stellenanalyse (Anzeige → Keywords, Anforderungen, Unternehmensinfos)
   - Anschreiben (Profil-Auszug + Anzeige → Abschnitte)
